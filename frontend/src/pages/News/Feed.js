@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import FeedSecondarySide from "./FeedSecondarySide";
 import FeedMainSide from "./FeedMainSide";
+import { useEffect } from "react";
 
 const Container = styled.div`
 display: flex;
@@ -9,6 +10,9 @@ width: 100%;
 `
 
 const Feed = () => {
+  useEffect(() => {
+    document.title = 'Feed';
+  }, []);
   return (
     <Container>
       <FeedMainSide></FeedMainSide>

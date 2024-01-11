@@ -4,6 +4,7 @@ import SecondarySide from "./ProfileSecondarySide";
 import backgroundImage from "../../images/posts_img/post_img2.jpg";
 import userImg from "../../images/posts_img/post_img4.jpg";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const Container = styled.div`
   width: 100%;
@@ -72,6 +73,8 @@ const UserImgContainer = styled.div`
   top: 0;
   left: 20px;
   width: 20%;
+  max-height: 150px;
+  max-width: 150px;
   height: auto;
   border-radius: 50%;
   border: 4px solid #222;
@@ -89,7 +92,7 @@ const UserInfoContainer = styled.div`
   min-height: 95px;
   background-color: #222222;
   padding: 20px;
-  padding-left: 30%;
+  padding-left: 25%;
 `;
 
 const UserInfo = styled.div`
@@ -147,6 +150,9 @@ const UserBody = styled.div`
 
 const Profile = () => {
   const navigate = useNavigate()
+  useEffect(() => {
+    document.title = 'My profile';
+  }, []);
   return (
     <Container>
       <UserHeaderContainer>

@@ -3,6 +3,12 @@
   padding: 0;
   box-sizing: border-box;
   color: #E1E3E6;
+  &::-webkit-scrollbar {
+    background-color: rgb(34, 34, 34);
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #383838;
+  }
 }
 
 html {
