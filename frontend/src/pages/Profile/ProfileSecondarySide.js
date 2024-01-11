@@ -6,6 +6,8 @@ width: 40%;
 `
 
 const FriendsContainer = styled.div`
+position: sticky;
+top: 72;
 display: flex;
 flex-direction: column;
 height: 215px;

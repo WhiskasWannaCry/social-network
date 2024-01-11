@@ -4,6 +4,7 @@ import messagesImg from '../images/icons/Navigation_icons/Messages.svg'
 import friendsImg from '../images/icons/Navigation_icons/Friends.svg'
 import photosImg from '../images/icons/Navigation_icons/Photos.svg'
 import newsImg from '../images/icons/Navigation_icons/News.svg'
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
 display: flex;
@@ -51,16 +52,17 @@ background-color: #363738;
 `
 
 const MainNavigation = () => {
+  const navigate = useNavigate()
   return (
     <Container>
       <NavBar>
-        <NavBtnContainer>
+        <NavBtnContainer onClick={() => navigate('/profile')}>
           <NavImg src={profileImg} alt="navImg"></NavImg>
           <NavText>Profile</NavText>
         </NavBtnContainer>
-        <NavBtnContainer>
+        <NavBtnContainer onClick={() => navigate('/feed')}>
           <NavImg src={newsImg} alt="navImg"></NavImg>
-          <NavText>News</NavText>
+          <NavText>Feed</NavText>
         </NavBtnContainer>
         <NavBtnContainer>
           <NavImg src={messagesImg} alt="navImg"></NavImg>

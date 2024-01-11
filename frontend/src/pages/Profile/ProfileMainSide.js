@@ -6,6 +6,7 @@ import nonePostsImg from "../../images/icons/none_posts.svg";
 import friendsIcon from "../../images/icons/Navigation_icons/Friends.svg";
 import educationIcon from "../../images/icons/education.png";
 import musicIcon from "../../images/icons/music.png";
+import AddNewPost from "../../shared/AddNewPost";
 
 const Container = styled.div`
   display: flex;
@@ -20,6 +21,7 @@ const BeginContainer = styled.div`
   background-color: #222222;
   box-shadow: 0px 0px 0px 1px #363738 inset;
   overflow: hidden;
+  margin-bottom: 16px;
 `;
 
 const BeginTopContainer = styled.div`
@@ -104,15 +106,6 @@ const BeginBlockDesctiption = styled.span`
   font-size: 12.492px;
   font-style: normal;
   font-weight: 400;
-`;
-
-const WhatNewContainer = styled.div`
-  margin-top: 16px;
-  width: 100%;
-  height: 52px;
-  border-radius: 12px;
-  background-color: #222;
-  box-shadow: 0px 0px 0px 1px #363738 inset;
 `;
 
 const PostsNav = styled.div`
@@ -232,7 +225,7 @@ const MainSide = () => {
           </BeginBlock>
         </BeginBlocksContainer>
       </BeginContainer>
-      <WhatNewContainer></WhatNewContainer>
+      <AddNewPost></AddNewPost>
       <PostsNav>
         <PostsNavBtn>All posts</PostsNavBtn>
         <PostsNavBtn>My posts</PostsNavBtn>

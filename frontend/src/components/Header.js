@@ -2,8 +2,10 @@ import styled from "styled-components";
 import logoImg from '../images/icons/logo.png'
 import notificationImg from '../images/icons/notification.svg'
 import openUserMenuImg from '../images/icons/open_user_menu.svg'
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
+position: fixed;
 display: flex;
 align-items: center;
 justify-content: space-around;
@@ -11,15 +13,23 @@ width: 100%;
 height: 48px;
 background-color: #222222;
 border-bottom: 1px solid #292929;
+z-index: 10;
 `
 
 const LogoContainer = styled.div`
-width: 136px;
+cursor: pointer;
+display: flex;
+gap: 12px;
+align-items: center;
 height: 24px;
 `
 
 const Logo = styled.img`
 height: 100%;
+`
+
+const LogoText = styled.span`
+
 `
 
 const SearchBarContainer = styled.div`
@@ -59,10 +69,12 @@ height: 8px;
 `
 
 const Header = () => {
+  const navigate = useNavigate()
   return (
     <Container>
-      <LogoContainer>
+      <LogoContainer onClick={() => navigate('/feed')}>
         <Logo src={logoImg} alt="logoImg"></Logo>
+        <LogoText>Social Network</LogoText>
       </LogoContainer>
       <SearchBarContainer></SearchBarContainer>
       <NotificationContainer>
