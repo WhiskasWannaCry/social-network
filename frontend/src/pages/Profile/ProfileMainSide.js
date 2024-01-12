@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import styled from "styled-components";
+import styled, { ThemeProvider } from "styled-components";
 import beginImg from "../../images/icons/begin.svg";
 import beginCloseImg from "../../images/icons/begin_close.svg";
 import nonePostsImg from "../../images/icons/none_posts.svg";
@@ -18,10 +18,13 @@ const BeginContainer = styled.div`
   width: 100%;
   height: 198px;
   border-radius: 12px;
-  background-color: #222222;
-  box-shadow: 0px 0px 0px 1px #363738 inset;
+  background-color: ${(props) => props.theme.mainBlockBg};
+  border: ${(props) => props.theme.mainBlockBorder};
   overflow: hidden;
   margin-bottom: 16px;
+  transition: background-color 0.3s;
+  transition: color 0.3s;
+  transition: border 0.3s;
 `;
 
 const BeginTopContainer = styled.div`
@@ -46,11 +49,13 @@ const BeginImg = styled.img`
 `;
 
 const BeginTitle = styled.span`
-  color: #e1e3e6;
+  color: ${(props) => props.theme.mainTextColor};
   font-family: Roboto;
   font-size: 16.734px;
   font-style: normal;
   font-weight: 600;
+  transition: background-color 0.3s;
+  transition: color 0.3s;
 `;
 
 const BeginCloseBtn = styled.div``;
@@ -69,11 +74,13 @@ const BeginBlocksContainer = styled.div`
   gap: 12px;
   overflow-x: scroll;
   padding-bottom: 8px;
+  transition: background-color 0.3s;
+  transition: color 0.3s;
   &::-webkit-scrollbar {
-    background-color: rgb(34, 34, 34);
+    background-color: ${(props) => props.theme.mainBlockBg};
   }
   &::-webkit-scrollbar-thumb {
-    background: #292929;
+    background: ${(props) => props.theme.scrollBtn};
   }
 `;
 
@@ -82,9 +89,10 @@ const BeginBlock = styled.div`
   flex-direction: column;
   min-width: 224px;
   height: 118px;
-  background: #292929;
+  background: ${(props) => props.theme.mainBlockBg};
   padding: 16px;
   border-radius: 10px;
+  border: ${(props) => props.theme.mainBlockBorder};
 `;
 
 const BeginBlockIcon = styled.img`
@@ -93,7 +101,7 @@ const BeginBlockIcon = styled.img`
 `;
 
 const BeginBlockTitle = styled.span`
-  color: #e1e3e6;
+  color: ${(props) => props.theme.mainTextColor};
   font-family: Roboto;
   font-size: 12.898px;
   font-style: normal;
@@ -120,8 +128,8 @@ const PostsNav = styled.div`
   height: 64px;
   width: 100%;
   border-radius: 12px 12px 0 0;
-  border: 1px solid #363738;
-  background-color: #222222;
+  border: ${(props) => props.theme.mainBlockBorder};
+  background: ${(props) => props.theme.mainBlockBg};
 `;
 
 const PostsNavBtn = styled.div`
@@ -140,11 +148,11 @@ const PostsNavBtn = styled.div`
 const PostsContainer = styled.div`
   min-height: 159px;
   width: 100%;
-  border-bottom: 1px solid #363738;
-  border-left: 1px solid #363738;
-  border-right: 1px solid #363738;
+  border-bottom: ${(props) => props.theme.mainBlockBorder};
+  border-left: ${(props) => props.theme.mainBlockBorder};
+  border-right: ${(props) => props.theme.mainBlockBorder};
   border-radius: 0 0 12px 12px;
-  background-color: #222222;
+  background: ${(props) => props.theme.mainBlockBg};
 `;
 
 const NonePostsContainer = styled.div`
@@ -167,6 +175,8 @@ const NonePostsTitle = styled.div`
   font-weight: 400;
 `;
 
+
+
 const MainSide = () => {
   const scrollContainerRef = useRef(null);
   const [scrollLeft, setScrollLeft] = useState(0);
@@ -187,6 +197,7 @@ const MainSide = () => {
     setScrollLeft(newScrollLeft);
   };
   return (
+    
     <Container>
       <BeginContainer>
         <BeginTopContainer>

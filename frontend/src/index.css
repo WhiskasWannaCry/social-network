@@ -9,6 +9,9 @@
   &::-webkit-scrollbar-thumb {
     background: #383838;
   }
+  transition: background-color 0.3s;
+  transition: color 0.3s;
+  transition: border 0.3s;
 }
 
 html {

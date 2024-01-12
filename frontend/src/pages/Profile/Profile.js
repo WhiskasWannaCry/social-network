@@ -17,10 +17,12 @@ const UserHeaderContainer = styled.div`
   justify-content: flex-end;
   width: 100%;
   height: 322px;
-  background-color: #222;
+  background-color: ${(props) => props.theme.mainBlockBg};
   border-radius: 12px;
-  border: 1px solid #363738;
+  border: ${(props) => props.theme.mainBlockBorder};
   overflow: hidden;
+  transition: background-color 0.3s;
+  transition: color 0.3s;
 `;
 
 const ChangeBackground = styled.div`
@@ -77,8 +79,10 @@ const UserImgContainer = styled.div`
   max-width: 150px;
   height: auto;
   border-radius: 50%;
-  border: 4px solid #222;
+  border: ${(props) => props.theme.userImgBorder};
   overflow: hidden;
+  transition: background-color 0.3s;
+  transition: color 0.3s;
 `;
 
 const UserImg = styled.img`
@@ -90,9 +94,11 @@ const UserInfoContainer = styled.div`
   justify-content: space-between;
   width: 100%;
   min-height: 95px;
-  background-color: #222222;
+  background-color: ${(props) => props.theme.mainBlockBg};
   padding: 20px;
   padding-left: 25%;
+  transition: background-color 0.3s;
+  transition: color 0.3s;
 `;
 
 const UserInfo = styled.div`
@@ -102,7 +108,7 @@ const UserInfo = styled.div`
 
 const UserName = styled.span`
   // пока что юзернейм если слишком большой то перенос не работает норм, надо фиксить
-  color: #e1e3e6;
+  color: ${(props) => props.theme.mainTextColor};
   font-family: Roboto;
   font-size: 20.836px;
   font-style: normal;
@@ -110,6 +116,8 @@ const UserName = styled.span`
   min-width: 100px;
   max-width: 150px;
   height: auto;
+  transition: background-color 0.3s;
+  transition: color 0.3s;
 `;
 
 const AddInfoBtn = styled.div`
@@ -129,15 +137,17 @@ const EditProfileBtn = styled.div`
   height: 32px;
   padding: 6px 16px 6px 16px;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.1);
-  color: #e1e3e6;
+  background: ${(props) => props.theme.btnBg};
+  color: ${(props) => props.theme.btnTextColor};
   text-align: center;
   font-family: Roboto;
   font-size: 13.781px;
   font-style: normal;
   font-weight: 500;
+  transition: background-color 0.3s;
+  transition: color 0.3s;
   &:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: ${(props) => props.theme.hoverBtnBg};
   }
 `;
 

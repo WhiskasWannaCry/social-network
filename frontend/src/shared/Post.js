@@ -10,8 +10,8 @@ gap: 12px;
 min-height: 200px;
 width: 100%;
 border-radius: 12px;
-background: #222;
-border: 1px solid #363738;
+background: ${(props) => props.theme.mainBlockBg};
+border: ${(props) => props.theme.mainBlockBorder};
 padding: 16px 20px 16px 20px;
 `
 
@@ -54,7 +54,7 @@ font-weight: 400;
 
 const Description = styled.div`
 width: 100%;
-color: #E1E3E6;
+color: ${(props) => props.theme.mainTextColor};
 font-family: Roboto;
 font-size: 13px;
 font-style: normal;
@@ -111,7 +111,7 @@ height: 100%;
 padding-left: 12px;
 padding-right: 12px;
 border-radius: 32px;
-background: #333;
+background: ${(props) => props.theme.btnBg};
 gap: 4px;
 `
 

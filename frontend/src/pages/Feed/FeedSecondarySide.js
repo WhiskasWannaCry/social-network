@@ -13,8 +13,8 @@ flex-direction: column;
 width: 100%;
 height: 458px;
 border-radius: 12px;
-background: #222;
-border: 1px solid #363738;
+background: ${(props) => props.theme.mainBlockBg};
+border: ${(props) => props.theme.mainBlockBorder};
 padding-left: 20px;
 padding-right: 20px;
 padding-top: 16px;
@@ -22,7 +22,7 @@ padding-bottom: 16px;
 `
 
 const FeaturedCommunitiesTitle = styled.span`
-color: #E1E3E6;
+color: ${(props) => props.theme.mainTextColor};
 font-family: Segoe UI;
 font-size: 14px;
 font-style: normal;
@@ -47,7 +47,7 @@ height: 48px;
 width: 100%;
 border-radius: 8px;
 &:hover {
-  background-color: #292929;
+  background-color: ${(props) => props.theme.hoverBtnBg};
 }
 `
 
@@ -62,7 +62,7 @@ flex-direction: column;
 `
 
 const CommunityTitle = styled.span`
-color: #E1E3E6;
+color: ${(props) => props.theme.mainTextColor};
 font-family: Segoe UI;
 font-size: 13px;
 font-style: normal;
@@ -84,9 +84,9 @@ justify-content: center;
 align-items: center;
 width: 100%;
 height: 27.99px;
-background: rgba(255, 255, 255, 0.10);
+background-color: ${(props) => props.theme.btnBg};
 border-radius: 8px;
-color: #E1E3E6;
+color: ${(props) => props.theme.btnTextColor};
 text-align: center;
 font-family: Segoe UI;
 font-size: 14px;

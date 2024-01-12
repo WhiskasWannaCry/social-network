@@ -28,7 +28,7 @@ height: 28px;
 padding: 8px;
 border-radius: 8px;
 &:hover {
-  background-color: #292929;
+  background: ${(props) => props.theme.hoverBtnBg};
 }
 `
 
@@ -37,7 +37,7 @@ width: 20px;
 `
 
 const NavText = styled.span`
-color: #E1E3E6;
+color: ${(props) => props.theme.mainTextColor};
 font-family: Roboto;
 font-size: 13px;
 font-style: normal;

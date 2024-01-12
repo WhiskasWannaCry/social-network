@@ -13,13 +13,13 @@ flex-direction: column;
 height: 215px;
 padding: 20px;
 border-radius: 12px;
-background-color: #292929;
-box-shadow: 0px 0px 0px 1px #363738 inset;
+background-color: ${(props) => props.theme.mainBlockBg};
+border: ${(props) => props.theme.mainBlockBorder};
 `
 
 const FriendsTitle = styled.span`
 width: 100%;
-color: #E1E3E6;
+color: ${(props) => props.theme.mainTextColor};
 font-family: Roboto;
 font-size: 13.781px;
 font-style: normal;
