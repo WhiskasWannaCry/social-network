@@ -3,6 +3,8 @@ import logoImg from "../images/icons/logo.png";
 import notificationImg from "../images/icons/notification.svg";
 import openUserMenuImg from "../images/icons/open_user_menu.svg";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { changeToDark, changeToLight } from "../shared/themeSlice";
 
 const Container = styled.div`
   position: fixed;
@@ -29,14 +31,14 @@ const Logo = styled.img`
 `;
 
 const LogoText = styled.span`
-color: ${(props) => props.theme.mainTextColor};
+  color: ${(props) => props.theme.mainTextColor};
 `;
 
 const SearchBarContainer = styled.div`
   width: 230px;
   height: 32px;
   border-radius: 8px;
-  background-color: ${(props) => props.theme.mainBg}
+  background-color: ${(props) => props.theme.mainBg};
 `;
 
 const NotificationContainer = styled.div`
@@ -76,7 +78,8 @@ const ChangeThemeContainer = styled.div`
   height: 32px;
   border-radius: 12px;
   padding: 4px;
-  background-color: ${(props) => props.theme.mainBg === "#dce1e6" ? "rgba(42, 88, 133, 0.13)": "#E1E3E6"};
+  background-color: ${(props) =>
+    props.theme.mainBg === "#dce1e6" ? "rgba(42, 88, 133, 0.13)" : "#E1E3E6"};
   border: ${(props) => props.theme.mainBlockBorder};
   transition: background-color 0.3s;
 `;
@@ -84,19 +87,22 @@ const ChangeThemeContainer = styled.div`
 const ChangeBtn = styled.div`
   position: absolute;
   top: 0;
-  left: ${(props) => props.theme.mainBg === "#dce1e6" ? 0: "50%"};
+  left: ${(props) => (props.theme.mainBg === "#dce1e6" ? 0 : "50%")};
   width: 50%;
   height: 100%;
   border-radius: 50%;
-  background-color: ${(props) => props.theme.mainBg === "#dce1e6" ? "#FFFFFF": "#222222"};
+  background-color: ${(props) =>
+    props.theme.mainBg === "#dce1e6" ? "#FFFFFF" : "#222222"};
   transition: left 0.3s;
 `;
 
-const Header = ({ theme, setTheme, darkTheme, lightTheme }) => {
+const Header = () => {
+  const theme = useSelector((state) => state.theme.value);
+  const dispatch = useDispatch();
   const invertTheme = () => {
-    return theme.mainBg === "#dce1e6"
-      ? setTheme(darkTheme)
-      : setTheme(lightTheme);
+    theme.title === "dark"
+      ? dispatch(changeToLight())
+      : dispatch(changeToDark());
   };
   const navigate = useNavigate();
   return (

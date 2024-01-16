@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import styled, { ThemeProvider } from "styled-components";
+import styled from "styled-components";
 import beginImg from "../../images/icons/begin.svg";
 import beginCloseImg from "../../images/icons/begin_close.svg";
 import nonePostsImg from "../../images/icons/none_posts.svg";
