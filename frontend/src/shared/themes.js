@@ -4,6 +4,7 @@ export const darkTheme = {
   mainBg : "#141414",
   mainBlockBg: "#222222",
   btnBg: "rgba(255, 255, 255, 0.1)",
+  greenBtnBg : "rgb(33 255 0 / 25%)",
   secondaryBlockBg: "rgb(41, 41, 41);",
   //Text
   mainTextColor: "#E1E3E6",

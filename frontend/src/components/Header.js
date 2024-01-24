@@ -118,9 +118,9 @@ const Header = () => {
           alt="notificationImg"
         ></NotificationImg>
       </NotificationContainer>
-      <ChangeThemeContainer onClick={invertTheme}>
+      {/* <ChangeThemeContainer onClick={invertTheme}>
         <ChangeBtn theme={theme}></ChangeBtn>
-      </ChangeThemeContainer>
+      </ChangeThemeContainer> */}
       <UserMenuContainer>
         <UserImg></UserImg>
         <OpenUserMenu src={openUserMenuImg} alt="openUserMenu"></OpenUserMenu>
