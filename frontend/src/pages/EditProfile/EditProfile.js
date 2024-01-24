@@ -1,9 +1,11 @@
 import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 
 const Container = styled.div`
   display: flex;
   width: 60%;
+  min-height: 100%;
 `;
 
 const EditMainInfo = styled.div`
@@ -11,7 +13,7 @@ const EditMainInfo = styled.div`
   flex-direction: column;
   width: 100%;
   height: 500px;
-  background: #222;
+  background-color: ${(props) => props.theme.mainBlockBg};
   border: 1px solid #363738;
   border-radius: 12px;
   overflow: hidden;
@@ -48,12 +50,10 @@ const InputInfo = styled.input`
   width: 100%;
   padding: 8px;
   height: ${({ height }) => height};
-  background: #292929;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: ${(props) => props.theme.mainBlockBg};
+  border: ${(props) => props.theme.mainBlockBorder};
   border-radius: 12px;
-  &:focus {
-    border: 1px solid rgba(255, 255, 255, 0.3);
-  }
+  color: ${(props) => props.theme.mainTextColor};
 `;
 
 const HR = styled.div`
@@ -63,6 +63,8 @@ const HR = styled.div`
 `;
 
 const EditProfile = () => {
+  const theme = useSelector((state) => state.theme.value);
+  const dispatch = useDispatch();
   useEffect(() => {
     document.title = "Editing my profile";
   }, []);
