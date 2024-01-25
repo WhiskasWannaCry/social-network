@@ -5,17 +5,29 @@ import openUserMenuImg from "../images/icons/open_user_menu.svg";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { changeToDark, changeToLight } from "../shared/themeSlice";
+import { Context } from '../shared/Context'
+import {useContext} from 'react'
 
-const Container = styled.div`
-  position: fixed;
+const OuterContainer = styled.div`
+position: fixed;
   display: flex;
+  justify-content: center;
   align-items: center;
-  justify-content: space-around;
-  width: 100%;
   height: 48px;
   background-color: ${(props) => props.theme.mainBlockBg};
   border-bottom: 1px solid #292929;
   z-index: 10;
+  width: 100%;
+  
+`;
+
+const Container = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+  max-width: 1248px;
+  height: 100%;
 `;
 
 const LogoContainer = styled.div`
@@ -32,6 +44,9 @@ const Logo = styled.img`
 
 const LogoText = styled.span`
   color: ${(props) => props.theme.mainTextColor};
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const SearchBarContainer = styled.div`
@@ -105,27 +120,32 @@ const Header = () => {
       : dispatch(changeToDark());
   };
   const navigate = useNavigate();
+  const isLoginedContext = useContext(Context)
+  const {isLogined,setIsLogined} = isLoginedContext
+  console.log(isLogined)
   return (
-    <Container>
-      <LogoContainer onClick={() => navigate("/feed")}>
-        <Logo src={logoImg} alt="logoImg"></Logo>
-        <LogoText>Social Network</LogoText>
-      </LogoContainer>
-      <SearchBarContainer></SearchBarContainer>
-      <NotificationContainer>
-        <NotificationImg
-          src={notificationImg}
-          alt="notificationImg"
-        ></NotificationImg>
-      </NotificationContainer>
-      {/* <ChangeThemeContainer onClick={invertTheme}>
+    <OuterContainer>
+      <Container>
+        <LogoContainer onClick={() => navigate("/feed")}>
+          <Logo src={logoImg} alt="logoImg"></Logo>
+          <LogoText>Social Network</LogoText>
+        </LogoContainer>
+        <SearchBarContainer></SearchBarContainer>
+        <NotificationContainer>
+          <NotificationImg
+            src={notificationImg}
+            alt="notificationImg"
+          ></NotificationImg>
+        </NotificationContainer>
+        {/* <ChangeThemeContainer onClick={invertTheme}>
         <ChangeBtn theme={theme}></ChangeBtn>
       </ChangeThemeContainer> */}
-      <UserMenuContainer>
-        <UserImg></UserImg>
-        <OpenUserMenu src={openUserMenuImg} alt="openUserMenu"></OpenUserMenu>
-      </UserMenuContainer>
-    </Container>
+        <UserMenuContainer>
+          <UserImg></UserImg>
+          <OpenUserMenu src={openUserMenuImg} alt="openUserMenu"></OpenUserMenu>
+        </UserMenuContainer>
+      </Container>
+    </OuterContainer>
   );
 };
 

@@ -4,13 +4,14 @@ import styled from "styled-components";
 
 const Container = styled.div`
   display: flex;
-  width: 60%;
+  width: 100%;
   min-height: 100%;
 `;
 
 const EditMainInfo = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
   width: 100%;
   height: 500px;
   background-color: ${(props) => props.theme.mainBlockBg};
@@ -26,6 +27,7 @@ const InfoContainer = styled.div`
   align-items: center;
   gap: 12px;
   min-height: 56px;
+  width: 100%;
 `;
 
 const InfoTitle = styled.div`
@@ -62,9 +64,19 @@ const HR = styled.div`
   background-color: rgba(255, 255, 255, 0.08);
 `;
 
+const SaveChangesBtn = styled.div`
+  cursor: pointer;
+  background-color: ${(props) => props.theme.btnBg};
+  border: ${(props) => props.theme.mainBlockBorder};
+  padding: 8px 16px 8px 16px;
+  max-width: 200px;
+  border-radius: 8px;
+  &:hover {
+  background-color: ${(props) => props.theme.hoverBtnBg};
+}
+`
+
 const EditProfile = () => {
-  const theme = useSelector((state) => state.theme.value);
-  const dispatch = useDispatch();
   useEffect(() => {
     document.title = "Editing my profile";
   }, []);
@@ -118,7 +130,7 @@ const EditProfile = () => {
           <InfoForChange>
             <InputInfo
               height={"32px"}
-              type="text"
+              type="tel"
               placeholder="Some info about you"
             ></InputInfo>
           </InfoForChange>
@@ -133,6 +145,7 @@ const EditProfile = () => {
             ></InputInfo>
           </InfoForChange>
         </InfoContainer>
+        <SaveChangesBtn>Save</SaveChangesBtn>
       </EditMainInfo>
     </Container>
   );
