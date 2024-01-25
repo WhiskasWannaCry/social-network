@@ -10,6 +10,9 @@ const Container = styled.div`
 display: flex;
 flex-direction: column;
 width: 15%;
+@media (max-width: 768px) {
+  width: 10%;
+}
 `
 
 const NavBar = styled.nav`
@@ -23,6 +26,7 @@ const NavBtnContainer = styled.div`
 cursor: pointer;
 display: flex;
 align-items: center;
+gap: 10px;
 width: 100%;
 height: 28px;
 padding: 8px;
@@ -42,7 +46,25 @@ font-family: Roboto;
 font-size: 13px;
 font-style: normal;
 font-weight: 400;
-margin-left: 10px;
+@media (max-width: 768px) {
+  display: none;
+}
+`
+
+const NavNotificationCounter = styled.div`
+display: flex;
+justify-content: center;
+align-items: center;
+width: 20px;
+height: 20px;
+border-radius: 50%;
+background-color: ${(props) => props.theme.grayBlockBg};
+font-family: Roboto;
+font-size: 13px;
+font-style: normal;
+font-weight: 400;
+padding: 4px;
+
 `
 
 const HR = styled.div`
@@ -67,8 +89,9 @@ const MainNavigation = () => {
         <NavBtnContainer>
           <NavImg src={messagesImg} alt="navImg"></NavImg>
           <NavText>Messages</NavText>
+          <NavNotificationCounter>5</NavNotificationCounter>
         </NavBtnContainer>
-        <NavBtnContainer>
+        <NavBtnContainer onClick={() => navigate('/friends')}>
           <NavImg src={friendsImg} alt="navImg"></NavImg>
           <NavText>Friends</NavText>
         </NavBtnContainer>
