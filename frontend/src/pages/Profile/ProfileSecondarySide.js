@@ -2,6 +2,9 @@ import styled from "styled-components";
 import addFriendsImg from '../../images/icons/add_friends.svg'
 
 const Container = styled.div`
+display: flex;
+flex-direction: column;
+gap: 16px;
 width: 40%;
 `
 
@@ -17,7 +20,7 @@ background-color: ${(props) => props.theme.mainBlockBg};
 border: ${(props) => props.theme.mainBlockBorder};
 `
 
-const FriendsTitle = styled.span`
+const ContainerTitle = styled.span`
 width: 100%;
 color: ${(props) => props.theme.mainTextColor};
 font-family: Roboto;
@@ -45,12 +48,18 @@ font-weight: 400;
 `
 
 const AddFriendsContainer = styled.div`
+cursor: pointer;
 display: flex;
 align-items: center;
+justify-content: center;
 gap: 6px;
+padding: 8px 16px 8px 16px;
 margin-top: 20px;
-height: 24px;
-width: 50%;
+width: 100%;
+border-radius: 8px;
+&:hover {
+  background-color: ${(props) => props.theme.hoverBtnBg};
+}
 `
 
 const AddFriendsImg = styled.img`
@@ -67,11 +76,23 @@ font-style: normal;
 font-weight: 500;
 `
 
+const FriendsRequestsContainer = styled.div`
+position: sticky;
+top: 287;
+display: flex;
+flex-direction: column;
+height: 215px;
+padding: 20px;
+border-radius: 12px;
+background-color: ${(props) => props.theme.mainBlockBg};
+border: ${(props) => props.theme.mainBlockBorder};
+`
+
 const SecondarySide = () => {
   return (
     <Container>
       <FriendsContainer>
-        <FriendsTitle>Friends</FriendsTitle>
+        <ContainerTitle>Friends</ContainerTitle>
         <NoneFriendsContainer>
           <NoneFriendsTitle>You don't have any friends yet</NoneFriendsTitle>
           <AddFriendsContainer>
@@ -80,6 +101,9 @@ const SecondarySide = () => {
           </AddFriendsContainer>
         </NoneFriendsContainer>
       </FriendsContainer>
+      <FriendsRequestsContainer>
+        <ContainerTitle>Friends requests</ContainerTitle>
+      </FriendsRequestsContainer>
     </Container>
   )
 }

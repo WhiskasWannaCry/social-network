@@ -58,7 +58,9 @@ const BeginTitle = styled.span`
   transition: color 0.3s;
 `;
 
-const BeginCloseBtn = styled.div``;
+const BeginCloseBtn = styled.div`
+cursor: pointer;
+`;
 
 const BeginCloseImg = styled.img`
   width: 24px;
@@ -85,6 +87,7 @@ const BeginBlocksContainer = styled.div`
 `;
 
 const BeginBlock = styled.div`
+cursor: pointer;
   display: flex;
   flex-direction: column;
   min-width: 224px;
@@ -93,6 +96,9 @@ const BeginBlock = styled.div`
   padding: 16px;
   border-radius: 10px;
   border: ${(props) => props.theme.mainBlockBorder};
+  &:hover {
+    background-color: ${(props) => props.theme.hoverBtnBg};
+  }
 `;
 
 const BeginBlockIcon = styled.img`
