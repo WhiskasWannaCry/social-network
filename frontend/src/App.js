@@ -1,5 +1,12 @@
 import styled, { ThemeProvider } from "styled-components";
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+  json,
+  Navigate,
+} from "react-router-dom";
 import Profile from "./pages/Profile/Profile";
 import Header from "./components/Header";
 import MainNavigation from "./components/MainNavigation";
@@ -9,8 +16,9 @@ import EditProfile from "./pages/EditProfile/EditProfile";
 import { useSelector } from "react-redux";
 import Login from "./pages/Auth/Login";
 import SignUp from "./pages/Auth/SignUp";
-import { Context } from './shared/Context.js';
+import { Context } from "./shared/Context.js";
 import Friends from "./pages/Friends/Friends.js";
+import { getIsValidToken } from "./shared/utils.js";
 
 const Container = styled.div`
   display: flex;
@@ -40,40 +48,91 @@ function App() {
   const theme = useSelector((state) => state.theme.value);
   const location = useLocation();
   const navigate = useNavigate();
-  const [isLogined, setIsLogined] = useState(true)
+  const [isLogined, setIsLogined] = useState(false);
 
   useEffect(() => {
-    !isLogined && navigate("/auth/login");
+    const tokenLS = JSON.parse(localStorage.getItem("token"));
+    if (!tokenLS) {
+      localStorage.setItem("token", JSON.stringify({ value: "0" }));
+      setIsLogined(false);
+      navigate("/");
+      return;
+    }
+
+    if (tokenLS.value === "0") {
+      setIsLogined(false);
+      return;
+    }
+
+    if (tokenLS.value !== "0") {
+      const fetchUserData = async () => {
+        try {
+          const res = await getIsValidToken(tokenLS);
+          if (res && res.data) {
+            const { data } = res;
+            const { success } = data;
+            if (!success) {
+              const { message } = data;
+              alert(message);
+              setIsLogined(false);
+              localStorage.setItem("token", JSON.stringify({ value: "0" }));
+              return;
+            }
+            const { foundUser } = data;
+          } else {
+            // Обработка ошибки
+            console.log("Token error");
+            localStorage.setItem("token", JSON.stringify({ value: "0" }));
+            return;
+          }
+
+          setIsLogined(true);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          setIsLogined(false);
+        }
+      };
+
+      fetchUserData();
+    }
+  }, []);
+
+  useEffect(() => {
+    !isLogined && navigate("/login");
   }, []);
   return (
-    <Context.Provider value={{isLogined, setIsLogined}}>
-    <ThemeProvider theme={theme}>
-      {location.pathname !== "/auth/login" &&
-        location.pathname !== "/auth/registration" && (
-          <Header theme={theme}></Header>
-        )}
-      <Container>
-        <Body pathname={location.pathname}>
-          {location.pathname !== "/auth/login" &&
-            location.pathname !== "/auth/registration" && (
-              <MainNavigation></MainNavigation>
-            )}
-          <ContentContainer>
-            <Routes>
-              <Route path="/profile" element={<Profile></Profile>}></Route>
-              <Route path="/feed" element={<Feed></Feed>}></Route>
-              <Route path="/edit" element={<EditProfile></EditProfile>}></Route>
-              <Route path="/auth/login" element={<Login></Login>}></Route>
-              <Route path="/friends" element={<Friends></Friends>}></Route>
-              <Route
-                path="/auth/registration"
-                element={<SignUp></SignUp>}
-              ></Route>
-            </Routes>
-          </ContentContainer>
-        </Body>
-      </Container>
-    </ThemeProvider>
+    <Context.Provider value={{ isLogined, setIsLogined }}>
+      <ThemeProvider theme={theme}>
+        {location.pathname !== "/login" &&
+          location.pathname !== "/registration" && (
+            <Header theme={theme}></Header>
+          )}
+        <Container>
+          <Body pathname={location.pathname}>
+            {location.pathname !== "/login" &&
+              location.pathname !== "/registration" && (
+                <MainNavigation></MainNavigation>
+              )}
+            <ContentContainer>
+              <Routes>
+                <Route path="/profile" element={<Profile></Profile>}></Route>
+                <Route path="/feed" element={<Feed></Feed>}></Route>
+                <Route
+                  path="/edit"
+                  element={<EditProfile></EditProfile>}
+                ></Route>
+                <Route path="/login" element={<Login></Login>}></Route>
+                <Route path="/friends" element={<Friends></Friends>}></Route>
+                <Route
+                  path="/registration"
+                  element={<SignUp></SignUp>}
+                ></Route>
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </ContentContainer>
+          </Body>
+        </Container>
+      </ThemeProvider>
     </Context.Provider>
   );
 }
