@@ -122,7 +122,6 @@ const Header = () => {
   const navigate = useNavigate();
   const isLoginedContext = useContext(Context)
   const {isLogined,setIsLogined} = isLoginedContext
-  console.log(isLogined)
   return (
     <OuterContainer>
       <Container>
