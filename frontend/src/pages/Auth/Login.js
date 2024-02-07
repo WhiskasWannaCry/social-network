@@ -93,7 +93,7 @@ const Login = () => {
         </InputsContainer>
         <Btn>Log In</Btn>
         <HaveNotAccountTitle>Haven't account?</HaveNotAccountTitle>
-        <Btn isSignUpBtn={true} onClick={() => navigate("/auth/registration")}>Sign Up</Btn>
+        <Btn isSignUpBtn={true} onClick={() => navigate("/registration")}>Sign Up</Btn>
       </LoginContainer>
     </Container>
   );
