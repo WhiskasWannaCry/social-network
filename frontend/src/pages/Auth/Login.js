@@ -1,6 +1,9 @@
+import { useContext, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { getLogin } from "../../shared/utils";
+import { Context } from "../../shared/Context";
 
 const Container = styled.div`
   display: flex;
@@ -71,6 +74,19 @@ const Btn = styled.div`
   &:hover {
     background-color: ${(props) => props.theme.hoverBtnBg};
   }
+  background-color: ${(props) =>
+    (props.isSignUpBtn && props.theme.greenBtnBg) || props.theme.btnBg};
+  ${({ disabled }) =>
+    disabled
+      ? `
+      background-color: #464646c2;
+      cursor:default;
+      color: grey;
+    `
+      : `
+    &:hover {
+    background-color: ${(props) => props.theme.hoverBtnBg};
+  }`}
 `;
 
 const HaveNotAccountTitle = styled.span`
@@ -82,18 +98,64 @@ const HaveNotAccountTitle = styled.span`
 `;
 
 const Login = () => {
-  const navigate = useNavigate()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const currentUserContext = useContext(Context)
+  const {setCurrentUser} = currentUserContext;
+
+  const emailRegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const disabled = !email || !emailRegExp.test(email) || !password;
+
+  const login = async (userData) => {
+    const {data} = await getLogin(userData);
+    const {success} = data;
+    if(!success) {
+      const {message} = data;
+      alert(message)
+      console.log(data)
+      return
+    }
+    const {token, user} = data;
+    localStorage.setItem("token", JSON.stringify(token))
+    setCurrentUser(user)
+    navigate(`/profile/${user._id}`)
+  }
+
+  const handleClickLogin = () => {
+    const userData = {email,password};
+    login(userData)
+  }
+
   return (
     <Container>
       <LoginContainer>
         <LoginTitle>Log In</LoginTitle>
         <InputsContainer>
-          <Input type="phone" placeholder="Email"></Input>
-          <Input type="password" placeholder="Password"></Input>
+          <Input
+            type="phone"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          ></Input>
+          <Input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          ></Input>
         </InputsContainer>
-        <Btn>Log In</Btn>
+        <Btn
+          disabled={disabled}
+          onClick={() => !disabled && handleClickLogin()}
+        >
+          Log In
+        </Btn>
         <HaveNotAccountTitle>Haven't account?</HaveNotAccountTitle>
-        <Btn isSignUpBtn={true} onClick={() => navigate("/registration")}>Sign Up</Btn>
+        <Btn isSignUpBtn={true} onClick={() => navigate("/registration")}>
+          Sign Up
+        </Btn>
       </LoginContainer>
     </Container>
   );

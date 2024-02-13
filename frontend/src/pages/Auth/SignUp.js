@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { getSignUp } from "../../shared/utils";
+import { Context } from "../../shared/Context";
 
 const Container = styled.div`
   display: flex;
@@ -67,12 +68,13 @@ const Btn = styled.div`
   ${({ disabled }) =>
     disabled
       ? `
-      background-color: #464646c2;
+      background-color: ${(props) => props.theme.btnBg};}
       cursor:default;
+      color: grey;
     `
       : `
     &:hover {
-    background-color: ${(props) => props.theme.hoverBtnBg};
+    background-color: ${(props) => props.theme.btnBg};
   }`}
   padding: 8px;
   border-radius: 8px;
@@ -96,6 +98,8 @@ const SignUp = () => {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [repeatPassword, setRepeatPassword] = useState(null);
+  const currentUserContext = useContext(Context)
+  const {setCurrentUser} = currentUserContext;
   const navigate = useNavigate();
   const disabled =
     !name ||
@@ -110,12 +114,37 @@ const SignUp = () => {
       surname,
       email,
       password,
+    };
+    function checkNamesFields(username) {
+      // Only words - ru, en, ua
+      const regex = /^[a-zA-Zа-яА-ЯёЁіІїЇґҐ]{2,15}$/;
+      return regex.test(username)
     }
     const signUp = async () => {
-      const res = await getSignUp(name, surname, email, password)
-      console.log(res)
-    }
-    signUp()
+      if(!checkNamesFields(name)) {
+        alert('The name is incorrect!')
+        return
+      }
+      if(!checkNamesFields(surname)) {
+        alert('The surname is incorrect!')
+        return
+      }
+      const res = await getSignUp(name, surname, email, password);
+      const {data} = res;
+      const {success} = data;
+      if(!success) {
+        const {message} = data;
+        alert(message)
+        return
+      }
+      const {user,token} = data;
+      const {_id} = user;
+      console.log(_id)
+      localStorage.setItem("token", JSON.stringify({ value: token }));
+      setCurrentUser(user)
+      navigate(`/profile/${_id}`)
+      }
+    return signUp();
   };
   return (
     <Container>

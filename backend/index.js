@@ -8,7 +8,7 @@ require("dotenv").config();
 
 const app = express();
 app.use(cors());
-app.use(express.static("public"));
+app.use(express.static("public/default"));
 
 app.use(express.json());
 app.use("/auth", authRouter);
@@ -57,10 +57,10 @@ app.get("/validation-token", async (req, res) => {
     if (decoded) {
       const { id: userID } = decoded;
       const foundUser = await User.findOne({ _id: userID });
-      const { _id, email, name, surname, role } = foundUser;
+      const { _id, email, name, surname, role,avatar,background } = foundUser;
       res.json({
         success: true,
-        foundUser: { _id, email, name, surname, },
+        foundUser: { _id, email, name, surname,role,avatar,background },
       });
     }
   } catch (err) {

@@ -44,23 +44,36 @@ const ContentContainer = styled.div`
   height: 100%;
 `;
 
+const userInit = {
+  name: "",
+  surname: "",
+  age: "",
+  avatar: "",
+  background: "",
+  email: "",
+  password: "",
+  role: "",
+};
+
 function App() {
   const theme = useSelector((state) => state.theme.value);
   const location = useLocation();
   const navigate = useNavigate();
-  const [isLogined, setIsLogined] = useState(false);
+  const [currentUser, setCurrentUser] = useState(userInit);
+  const [profileUser, setProfileUser] = useState(null);
 
   useEffect(() => {
     const tokenLS = JSON.parse(localStorage.getItem("token"));
     if (!tokenLS) {
       localStorage.setItem("token", JSON.stringify({ value: "0" }));
-      setIsLogined(false);
-      navigate("/");
+      setCurrentUser(userInit);
+      navigate("/login");
       return;
     }
 
     if (tokenLS.value === "0") {
-      setIsLogined(false);
+      setCurrentUser(userInit);
+      navigate("/login");
       return;
     }
 
@@ -74,34 +87,35 @@ function App() {
             if (!success) {
               const { message } = data;
               alert(message);
-              setIsLogined(false);
+              setCurrentUser(userInit);
               localStorage.setItem("token", JSON.stringify({ value: "0" }));
+              navigate("/login");
               return;
             }
+            // if success
             const { foundUser } = data;
+            console.log(foundUser)
+            setCurrentUser(foundUser);
           } else {
             // Обработка ошибки
             console.log("Token error");
             localStorage.setItem("token", JSON.stringify({ value: "0" }));
             return;
           }
-
-          setIsLogined(true);
         } catch (error) {
           console.error("Error fetching user data:", error);
-          setIsLogined(false);
+          setCurrentUser(userInit);
+          navigate("/login");
+          return;
         }
       };
-
       fetchUserData();
     }
   }, []);
 
-  useEffect(() => {
-    !isLogined && navigate("/login");
-  }, []);
+
   return (
-    <Context.Provider value={{ isLogined, setIsLogined }}>
+    <Context.Provider value={{ currentUser, setCurrentUser,profileUser,setProfileUser }}>
       <ThemeProvider theme={theme}>
         {location.pathname !== "/login" &&
           location.pathname !== "/registration" && (
@@ -115,7 +129,10 @@ function App() {
               )}
             <ContentContainer>
               <Routes>
-                <Route path="/profile" element={<Profile></Profile>}></Route>
+                <Route
+                  path="/profile/:_id"
+                  element={<Profile></Profile>}
+                ></Route>
                 <Route path="/feed" element={<Feed></Feed>}></Route>
                 <Route
                   path="/edit"
@@ -123,10 +140,7 @@ function App() {
                 ></Route>
                 <Route path="/login" element={<Login></Login>}></Route>
                 <Route path="/friends" element={<Friends></Friends>}></Route>
-                <Route
-                  path="/registration"
-                  element={<SignUp></SignUp>}
-                ></Route>
+                <Route path="/registration" element={<SignUp></SignUp>}></Route>
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </ContentContainer>

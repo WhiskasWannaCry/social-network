@@ -120,8 +120,8 @@ const Header = () => {
       : dispatch(changeToDark());
   };
   const navigate = useNavigate();
-  const isLoginedContext = useContext(Context)
-  const {isLogined,setIsLogined} = isLoginedContext
+  const currentUserContext = useContext(Context)
+  const {currentUser,setCurrentUser} = currentUserContext
   return (
     <OuterContainer>
       <Container>

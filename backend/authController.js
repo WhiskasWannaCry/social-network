@@ -17,13 +17,15 @@ class authController {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({ message: "Registration error:", errors });
+        return res
+          .status(400)
+          .json({ success: false, message: "Incorrect fields", errors });
       }
       const { name, surname, email, password, role } = req.body;
       const candidate = await User.findOne({ email });
       if (candidate) {
         return res.status(400).json({
-          success:false,
+          success: false,
           message: "User with this email is already registered",
           candidate,
         });
@@ -35,6 +37,8 @@ class authController {
         email,
         password: hashPassword,
         role,
+        avatar: "user-avatar.png",
+        background: "user-background.jpg",
       });
       await user.save();
       const token = generateAccessToken(user._id);
@@ -42,10 +46,24 @@ class authController {
         success: true,
         message: "User successful registered!",
         token,
-        user: { name, surname, email, role},
-      }); // нужно добавить отправку token
+        user: {
+          _id: user._id,
+          name,
+          surname,
+          email,
+          role,
+          avatar: user.avatar,
+          background: user.avatar,
+        },
+      });
     } catch (e) {
-      res.status(400).json({ success: false, message: "Registration error", error: e.toString() });
+      res
+        .status(400)
+        .json({
+          success: false,
+          message: "Registration error",
+          error: e.toString(),
+        });
     }
   }
 
@@ -53,27 +71,29 @@ class authController {
     try {
       const { email, password } = req.body;
       let user = await User.findOne({ email });
-      const token = generateAccessToken(user._id);
       if (!user) {
         return res.json({
           success: false,
-          message: `User with e-mail ${email} is not found`,
+          message: `User with e-mail (${email}) is not found`,
         });
       }
+      const token = (user && generateAccessToken(user._id)) || null;
       const validPassword = bcrypt.compareSync(password, user.password);
       if (!validPassword) {
         return res.json({ success: false, message: "Password is not valid" });
       }
-      const { _id, name, surname, role } = user;
-      let cart = user.cart || [];
-      let buyHistory = user.buyHistory || []
+      const { _id, name, surname, role, avatar, background } = user;
       return res.json({
         success: true,
         token,
-        user: { _id, name, surname, email, role, cart,buyHistory },
+        user: { _id, name, surname, email, role, avatar, background },
       });
     } catch (e) {
-      res.json({ success: false, message: "Login error", e });
+      res.json({
+        success: false,
+        message: "Something happened on server",
+        errors: e,
+      });
     }
   }
 }
