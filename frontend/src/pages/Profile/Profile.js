@@ -4,7 +4,8 @@ import SecondarySide from "./ProfileSecondarySide";
 import backgroundImage from "../../images/posts_img/post_img2.jpg";
 import userImg from "../../images/posts_img/post_img4.jpg";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
+import { Context } from '../../shared/Context'
 
 const Container = styled.div`
   width: 100%;
@@ -54,7 +55,7 @@ const UserBackground = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url(${backgroundImage});
+  background-image: url(${(props) => props.bgImg});
   background-size: 100%;
   background-repeat: no-repeat;
   z-index: 1;
@@ -72,6 +73,9 @@ const InfoOuterContainer = styled.div`
 
 const UserImgContainer = styled.div`
   position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   top: 0;
   left: 20px;
   width: 20%;
@@ -86,7 +90,7 @@ const UserImgContainer = styled.div`
 `;
 
 const UserImg = styled.img`
-  width: 100%;
+  width: 120%;
 `;
 
 const UserInfoContainer = styled.div`
@@ -159,6 +163,11 @@ const UserBody = styled.div`
 `;
 
 const Profile = () => {
+  const currentUserContext = useContext(Context)
+  const {currentUser,setCurrentUser,profileUser,setProfileUser} = currentUserContext; // нужно будет написать логику отображения профилей других юзеров
+  console.log(currentUser)
+  const avatarFullPath = `http://localhost:8000/${currentUser.avatar}`
+  const backgroundFullPath = `http://localhost:8000/${currentUser.background}`
   const navigate = useNavigate()
   useEffect(() => {
     document.title = 'My profile';
@@ -166,11 +175,11 @@ const Profile = () => {
   return (
     <Container>
       <UserHeaderContainer>
-        <UserBackground></UserBackground>
+        <UserBackground bgImg={backgroundFullPath}></UserBackground>
         <ChangeBackground>Change background</ChangeBackground>
         <InfoOuterContainer>
           <UserImgContainer>
-            <UserImg src={userImg} alt="user_img"></UserImg>
+            <UserImg src={avatarFullPath} alt="user_img"></UserImg>
           </UserImgContainer>
           <UserInfoContainer>
             <UserInfo>
