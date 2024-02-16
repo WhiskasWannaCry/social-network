@@ -164,7 +164,7 @@ const UserBody = styled.div`
 
 const Profile = () => {
   const currentUserContext = useContext(Context)
-  const {currentUser,setCurrentUser,profileUser,setProfileUser} = currentUserContext; // нужно будет написать логику отображения профилей других юзеров
+  const {currentUser,setCurrentUser} = currentUserContext; // нужно будет написать логику отображения профилей других юзеров
   console.log(currentUser)
   const avatarFullPath = `http://localhost:8000/${currentUser.avatar}`
   const backgroundFullPath = `http://localhost:8000/${currentUser.background}`

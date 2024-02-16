@@ -118,7 +118,7 @@ const Login = () => {
       return
     }
     const {token, user} = data;
-    localStorage.setItem("token", JSON.stringify(token))
+    localStorage.setItem("token", JSON.stringify({value:token}))
     setCurrentUser(user)
     navigate(`/profile/${user._id}`)
   }

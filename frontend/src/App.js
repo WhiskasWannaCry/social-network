@@ -45,6 +45,7 @@ const ContentContainer = styled.div`
 `;
 
 const userInit = {
+  _id: "",
   name: "",
   surname: "",
   age: "",
@@ -56,14 +57,37 @@ const userInit = {
 };
 
 function App() {
-  const theme = useSelector((state) => state.theme.value);
+  const theme = {
+    title: "dark",
+    //Background
+    mainBg: "#141414",
+    mainBlockBg: "#222222",
+    grayBlockBg: "rgba(255, 255, 255, 0.1)",
+    btnBg: "rgba(255, 255, 255, 0.1)",
+    greenBtnBg: "rgb(33 255 0 / 25%)",
+    lightBtnBg: "rgb(232 232 232)",
+    secondaryBlockBg: "rgb(41, 41, 41);",
+    //Text
+    mainTextColor: "#E1E3E6",
+    btnTextColor: "#E1E3E6",
+    btnDarkTextColor: "#222222",
+    //Border
+    mainBlockBorder: "1px solid rgb(54, 55, 56)",
+    userImgBorder: "4px solid #222",
+    secondaryBlockBorder: "rgb(54, 55, 56) 0px 0px 0px 1px inset",
+    //Hover
+    hoverBtnBg: "rgba(255, 255, 255, 0.2)",
+    hoverLightBtnBg: "rgb(232 232 232 / 77%)",
+    //Scroll
+    scrollBtn: "#292929",
+  };
   const location = useLocation();
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(userInit);
-  const [profileUser, setProfileUser] = useState(null);
 
   useEffect(() => {
     const tokenLS = JSON.parse(localStorage.getItem("token"));
+
     if (!tokenLS) {
       localStorage.setItem("token", JSON.stringify({ value: "0" }));
       setCurrentUser(userInit);
@@ -80,8 +104,9 @@ function App() {
     if (tokenLS.value !== "0") {
       const fetchUserData = async () => {
         try {
+          console.log(tokenLS);
           const res = await getIsValidToken(tokenLS);
-          if (res && res.data) {
+          if (res) {
             const { data } = res;
             const { success } = data;
             if (!success) {
@@ -94,8 +119,9 @@ function App() {
             }
             // if success
             const { foundUser } = data;
-            console.log(foundUser)
+            console.log(foundUser);
             setCurrentUser(foundUser);
+            navigate(`/profile/${foundUser._id}`);
           } else {
             // Обработка ошибки
             console.log("Token error");
@@ -113,9 +139,8 @@ function App() {
     }
   }, []);
 
-
   return (
-    <Context.Provider value={{ currentUser, setCurrentUser,profileUser,setProfileUser }}>
+    <Context.Provider value={{ currentUser, setCurrentUser, userInit }}>
       <ThemeProvider theme={theme}>
         {location.pathname !== "/login" &&
           location.pathname !== "/registration" && (
@@ -141,7 +166,16 @@ function App() {
                 <Route path="/login" element={<Login></Login>}></Route>
                 <Route path="/friends" element={<Friends></Friends>}></Route>
                 <Route path="/registration" element={<SignUp></SignUp>}></Route>
-                <Route path="*" element={<Navigate to="/" replace />} />
+                <Route
+                  path="*"
+                  element={
+                    currentUser._id ? (
+                      <Navigate to={`profile/${currentUser._id}`} replace />
+                    ) : (
+                      <Navigate to="/" replace />
+                    )
+                  }
+                />
               </Routes>
             </ContentContainer>
           </Body>

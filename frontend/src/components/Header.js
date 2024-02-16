@@ -5,11 +5,17 @@ import openUserMenuImg from "../images/icons/open_user_menu.svg";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { changeToDark, changeToLight } from "../shared/themeSlice";
-import { Context } from '../shared/Context'
-import {useContext} from 'react'
+import { Context } from "../shared/Context";
+import { useContext } from "react";
+import { useState } from "react";
+import * as React from "react";
+import Button from "@mui/material/Button";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Fade from "@mui/material/Fade";
 
 const OuterContainer = styled.div`
-position: fixed;
+  position: fixed;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -18,7 +24,6 @@ position: fixed;
   border-bottom: 1px solid #292929;
   z-index: 10;
   width: 100%;
-  
 `;
 
 const Container = styled.div`
@@ -73,12 +78,20 @@ const UserMenuContainer = styled.div`
   height: 32px;
 `;
 
-const UserImg = styled.div`
+const UserAvatarContainer = styled.div`
   // Will be styled.img, needs to add src
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 32px;
   height: 32px;
   background-color: white;
   border-radius: 50%;
+  overflow: hidden;
+`;
+
+const UserAvatar = styled.img`
+  width: 120%;
 `;
 
 const OpenUserMenu = styled.img`
@@ -99,29 +112,30 @@ const ChangeThemeContainer = styled.div`
   transition: background-color 0.3s;
 `;
 
-const ChangeBtn = styled.div`
-  position: absolute;
-  top: 0;
-  left: ${(props) => (props.theme.mainBg === "#dce1e6" ? 0 : "50%")};
-  width: 50%;
-  height: 100%;
-  border-radius: 50%;
-  background-color: ${(props) =>
-    props.theme.mainBg === "#dce1e6" ? "#FFFFFF" : "#222222"};
-  transition: left 0.3s;
-`;
-
 const Header = () => {
   const theme = useSelector((state) => state.theme.value);
+  const [anchorEl, setAnchorEl] = React.useState(null);
   const dispatch = useDispatch();
-  const invertTheme = () => {
-    theme.title === "dark"
-      ? dispatch(changeToLight())
-      : dispatch(changeToDark());
-  };
   const navigate = useNavigate();
-  const currentUserContext = useContext(Context)
-  const {currentUser,setCurrentUser} = currentUserContext
+  const currentUserContext = React.useContext(Context);
+  const { currentUser, setCurrentUser, userInit } = currentUserContext;
+
+  const avatarFullPath = `http://localhost:8000/${currentUser.avatar}`;
+
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(userInit);
+    localStorage.setItem("token", JSON.stringify({ value: "0" }));
+    navigate("/login");
+  };
+
   return (
     <OuterContainer>
       <Container>
@@ -136,12 +150,44 @@ const Header = () => {
             alt="notificationImg"
           ></NotificationImg>
         </NotificationContainer>
-        {/* <ChangeThemeContainer onClick={invertTheme}>
-        <ChangeBtn theme={theme}></ChangeBtn>
-      </ChangeThemeContainer> */}
         <UserMenuContainer>
-          <UserImg></UserImg>
-          <OpenUserMenu src={openUserMenuImg} alt="openUserMenu"></OpenUserMenu>
+          {/* <UserAvatarContainer>
+            <UserAvatar src={avatarFullPath} alt="avatar"></UserAvatar>
+          </UserAvatarContainer>
+          <OpenUserMenu src={openUserMenuImg} alt="openUserMenu"></OpenUserMenu> */}
+          <Button
+            id="fade-button"
+            aria-controls={open ? "fade-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+            onClick={handleClick}
+          >
+            <UserAvatarContainer>
+              <UserAvatar src={avatarFullPath} alt="avatar"></UserAvatar>
+            </UserAvatarContainer>
+          </Button>
+          <Menu
+            id="fade-menu"
+            MenuListProps={{
+              "aria-labelledby": "fade-button",
+              sx: { backgroundColor: (theme) => theme.mainBlockBg } // не работает!
+            }}
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            TransitionComponent={Fade}
+          >
+            <MenuItem onClick={handleClose}>Profile</MenuItem>
+            <MenuItem onClick={handleClose}>My account</MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleClose();
+                handleLogout();
+              }}
+            >
+              Logout
+            </MenuItem>
+          </Menu>
         </UserMenuContainer>
       </Container>
     </OuterContainer>
