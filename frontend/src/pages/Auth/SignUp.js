@@ -1,11 +1,10 @@
 import { useContext, useState } from "react";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
+import styled from "@emotion/styled";
 import { getSignUp } from "../../shared/utils";
 import { Context } from "../../shared/Context";
 
-const Container = styled.div`
+const Container = styled("div")`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -14,12 +13,12 @@ const Container = styled.div`
   height: 100%;
 `;
 
-const LoginContainer = styled.div`
+const LoginContainer = styled("div")`
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
-  border: ${(props) => props.theme.mainBlockBorder};
+  border: 1px solid ${({theme}) => theme.palette.primary.grey[3]};
   border-radius: 8px;
   padding: 8px 16px 8px 16px;
   width: 50%;
@@ -27,11 +26,11 @@ const LoginContainer = styled.div`
   gap: 12px;
 `;
 
-const LoginTitle = styled.div`
+const LoginTitle = styled("div")`
   display: flex;
   justify-content: center;
   align-items: center;
-  color: ${(props) => props.theme.mainTextColor};
+  color: ${({theme}) => theme.palette.primary.grey[1]};
   width: 100%;
   height: 10%;
   font-family: Roboto;
@@ -39,7 +38,7 @@ const LoginTitle = styled.div`
   font-weight: 500;
 `;
 
-const InputsContainer = styled.div`
+const InputsContainer = styled("div")`
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -47,9 +46,9 @@ const InputsContainer = styled.div`
   min-height: 30%;
 `;
 
-const Input = styled.input`
-  background-color: ${(props) => props.theme.mainBg};
-  border: ${(props) => props.theme.mainBlockBorder};
+const Input = styled("input")`
+  background-color: ${({theme}) => theme.palette.primary.grey[5]};
+  border: 1px solid ${({theme}) => theme.palette.primary.grey[3]};
   border-radius: 8px;
   padding: 8px;
   width: 100%;
@@ -58,23 +57,23 @@ const Input = styled.input`
   font-weight: 500;
 `;
 
-const Btn = styled.div`
-  cursor: pointer;
+const Btn = styled("div")`
+cursor: ${({disabled}) => !disabled && "pointer"};
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: ${(props) =>
-    (props.isSignUpBtn && props.theme.greenBtnBg) || props.theme.btnBg};
-  ${({ disabled }) =>
+    (props.isSignUpBtn && props.theme.palette.primary.green[1]) || props.theme.palette.primary.grey[5]};
+  ${({ disabled,theme }) =>
     disabled
       ? `
-      background-color: ${(props) => props.theme.btnBg};}
-      cursor:default;
+      background-color: ${theme.palette.primary.grey[5]};}
+      cursor:"";
       color: grey;
     `
       : `
     &:hover {
-    background-color: ${(props) => props.theme.btnBg};
+    background-color: ${(props) => props.theme.palette.primary.grey[5]};
   }`}
   padding: 8px;
   border-radius: 8px;
@@ -84,7 +83,7 @@ const Btn = styled.div`
   font-weight: 500;
 `;
 
-const HaveNotAccountTitle = styled.span`
+const HaveNotAccountTitle = styled("span")`
   width: 100%;
   font-size: 12px;
   font-family: Roboto;

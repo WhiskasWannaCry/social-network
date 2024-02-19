@@ -5,6 +5,8 @@ import friendsImg from '../images/icons/Navigation_icons/Friends.svg'
 import photosImg from '../images/icons/Navigation_icons/Photos.svg'
 import newsImg from '../images/icons/Navigation_icons/News.svg'
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { Context } from "../shared/Context";
 
 const Container = styled.div`
 display: flex;
@@ -75,10 +77,12 @@ background-color: #363738;
 
 const MainNavigation = () => {
   const navigate = useNavigate()
+  const currentUserContext = useContext(Context)
+  const {currentUser,setCurrentUser} = currentUserContext;
   return (
     <Container>
       <NavBar>
-        <NavBtnContainer onClick={() => navigate('/profile')}>
+        <NavBtnContainer onClick={() => navigate(`profile/${currentUser._id}`)}>
           <NavImg src={profileImg} alt="navImg"></NavImg>
           <NavText>Profile</NavText>
         </NavBtnContainer>

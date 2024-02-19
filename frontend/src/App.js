@@ -1,4 +1,4 @@
-import styled, { ThemeProvider } from "styled-components";
+import styled from "styled-components";
 import {
   Routes,
   Route,
@@ -13,12 +13,13 @@ import MainNavigation from "./components/MainNavigation";
 import { useEffect, useState } from "react";
 import Feed from "./pages/Feed/Feed";
 import EditProfile from "./pages/EditProfile/EditProfile";
-import { useSelector } from "react-redux";
 import Login from "./pages/Auth/Login";
 import SignUp from "./pages/Auth/SignUp";
 import { Context } from "./shared/Context.js";
 import Friends from "./pages/Friends/Friends.js";
 import { getIsValidToken } from "./shared/utils.js";
+import { theme } from "./shared/styles.js";
+import { ThemeProvider } from "@mui/material";
 
 const Container = styled.div`
   display: flex;
@@ -57,30 +58,6 @@ const userInit = {
 };
 
 function App() {
-  const theme = {
-    title: "dark",
-    //Background
-    mainBg: "#141414",
-    mainBlockBg: "#222222",
-    grayBlockBg: "rgba(255, 255, 255, 0.1)",
-    btnBg: "rgba(255, 255, 255, 0.1)",
-    greenBtnBg: "rgb(33 255 0 / 25%)",
-    lightBtnBg: "rgb(232 232 232)",
-    secondaryBlockBg: "rgb(41, 41, 41);",
-    //Text
-    mainTextColor: "#E1E3E6",
-    btnTextColor: "#E1E3E6",
-    btnDarkTextColor: "#222222",
-    //Border
-    mainBlockBorder: "1px solid rgb(54, 55, 56)",
-    userImgBorder: "4px solid #222",
-    secondaryBlockBorder: "rgb(54, 55, 56) 0px 0px 0px 1px inset",
-    //Hover
-    hoverBtnBg: "rgba(255, 255, 255, 0.2)",
-    hoverLightBtnBg: "rgb(232 232 232 / 77%)",
-    //Scroll
-    scrollBtn: "#292929",
-  };
   const location = useLocation();
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(userInit);
@@ -101,7 +78,7 @@ function App() {
       return;
     }
 
-    if (tokenLS.value !== "0") {
+    if (tokenLS && tokenLS.value !== "0") {
       const fetchUserData = async () => {
         try {
           console.log(tokenLS);
@@ -126,6 +103,7 @@ function App() {
             // Обработка ошибки
             console.log("Token error");
             localStorage.setItem("token", JSON.stringify({ value: "0" }));
+            navigate("/login");
             return;
           }
         } catch (error) {
@@ -144,7 +122,7 @@ function App() {
       <ThemeProvider theme={theme}>
         {location.pathname !== "/login" &&
           location.pathname !== "/registration" && (
-            <Header theme={theme}></Header>
+            <Header></Header>
           )}
         <Container>
           <Body pathname={location.pathname}>

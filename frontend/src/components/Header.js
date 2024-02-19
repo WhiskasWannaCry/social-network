@@ -1,10 +1,7 @@
-import styled from "styled-components";
 import logoImg from "../images/icons/logo.png";
 import notificationImg from "../images/icons/notification.svg";
 import openUserMenuImg from "../images/icons/open_user_menu.svg";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { changeToDark, changeToLight } from "../shared/themeSlice";
 import { Context } from "../shared/Context";
 import { useContext } from "react";
 import { useState } from "react";
@@ -13,20 +10,22 @@ import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Fade from "@mui/material/Fade";
+import { Box } from "@mui/material";
+import styled from "@emotion/styled";
 
-const OuterContainer = styled.div`
+const OuterContainer = styled("div")`
   position: fixed;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 48px;
-  background-color: ${(props) => props.theme.mainBlockBg};
+  background-color: ${({theme}) => theme.palette.primary.grey[5]};
   border-bottom: 1px solid #292929;
   z-index: 10;
   width: 100%;
 `;
 
-const Container = styled.div`
+const Container = styled("div")`
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -35,7 +34,7 @@ const Container = styled.div`
   height: 100%;
 `;
 
-const LogoContainer = styled.div`
+const LogoContainer = styled("div")`
   cursor: pointer;
   display: flex;
   gap: 12px;
@@ -43,34 +42,34 @@ const LogoContainer = styled.div`
   height: 24px;
 `;
 
-const Logo = styled.img`
+const Logo = styled("img")`
   height: 100%;
 `;
 
-const LogoText = styled.span`
-  color: ${(props) => props.theme.mainTextColor};
+const LogoText = styled("span")`
+  color: ${({theme}) => theme.palette.primary.grey[1]};
   @media (max-width: 768px) {
     display: none;
   }
 `;
 
-const SearchBarContainer = styled.div`
+const SearchBarContainer = styled("div")`
   width: 230px;
   height: 32px;
   border-radius: 8px;
-  background-color: ${(props) => props.theme.mainBg};
+  background-color: ${({theme}) => theme.palette.primary.grey[3]};
 `;
 
-const NotificationContainer = styled.div`
+const NotificationContainer = styled("div")`
   width: 24px;
   height: 24px;
 `;
 
-const NotificationImg = styled.img`
+const NotificationImg = styled("img")`
   width: 100%;
 `;
 
-const UserMenuContainer = styled.div`
+const UserMenuContainer = styled("div")`
   display: flex;
   align-items: center;
   gap: 8px;
@@ -78,7 +77,7 @@ const UserMenuContainer = styled.div`
   height: 32px;
 `;
 
-const UserAvatarContainer = styled.div`
+const UserAvatarContainer = styled("div")`
   // Will be styled.img, needs to add src
   display: flex;
   justify-content: center;
@@ -90,32 +89,12 @@ const UserAvatarContainer = styled.div`
   overflow: hidden;
 `;
 
-const UserAvatar = styled.img`
+const UserAvatar = styled("img")`
   width: 120%;
 `;
 
-const OpenUserMenu = styled.img`
-  width: 12px;
-  height: 8px;
-`;
-
-const ChangeThemeContainer = styled.div`
-  cursor: pointer;
-  position: relative;
-  width: 64px;
-  height: 32px;
-  border-radius: 12px;
-  padding: 4px;
-  background-color: ${(props) =>
-    props.theme.mainBg === "#dce1e6" ? "rgba(42, 88, 133, 0.13)" : "#E1E3E6"};
-  border: ${(props) => props.theme.mainBlockBorder};
-  transition: background-color 0.3s;
-`;
-
 const Header = () => {
-  const theme = useSelector((state) => state.theme.value);
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const currentUserContext = React.useContext(Context);
   const { currentUser, setCurrentUser, userInit } = currentUserContext;
@@ -151,10 +130,6 @@ const Header = () => {
           ></NotificationImg>
         </NotificationContainer>
         <UserMenuContainer>
-          {/* <UserAvatarContainer>
-            <UserAvatar src={avatarFullPath} alt="avatar"></UserAvatar>
-          </UserAvatarContainer>
-          <OpenUserMenu src={openUserMenuImg} alt="openUserMenu"></OpenUserMenu> */}
           <Button
             id="fade-button"
             aria-controls={open ? "fade-menu" : undefined}
@@ -170,14 +145,17 @@ const Header = () => {
             id="fade-menu"
             MenuListProps={{
               "aria-labelledby": "fade-button",
-              sx: { backgroundColor: (theme) => theme.mainBlockBg } // не работает!
+              sx: { backgroundColor: (theme) => theme.palette.primary.grey[4] }, // не работает!
             }}
             anchorEl={anchorEl}
             open={open}
             onClose={handleClose}
             TransitionComponent={Fade}
           >
-            <MenuItem onClick={handleClose}>Profile</MenuItem>
+            <MenuItem onClick={() => {
+              handleClose()
+              navigate(`profile/${currentUser._id}`)
+            }}>Profile</MenuItem>
             <MenuItem onClick={handleClose}>My account</MenuItem>
             <MenuItem
               onClick={() => {

@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import styled from "styled-components";
+// import styled from "styled-components";
 import beginImg from "../../images/icons/begin.svg";
 import beginCloseImg from "../../images/icons/begin_close.svg";
 import nonePostsImg from "../../images/icons/none_posts.svg";
@@ -7,19 +7,19 @@ import friendsIcon from "../../images/icons/Navigation_icons/Friends.svg";
 import educationIcon from "../../images/icons/education.png";
 import musicIcon from "../../images/icons/music.png";
 import AddNewPost from "../../shared/AddNewPost";
+import styled from "@emotion/styled";
 
-const Container = styled.div`
+const Container = styled("div")`
   display: flex;
   flex-direction: column;
   width: 60%;
 `;
 
-const BeginContainer = styled.div`
+const BeginContainer = styled("div")`
   width: 100%;
   height: 198px;
   border-radius: 12px;
-  background-color: ${(props) => props.theme.mainBlockBg};
-  border: ${(props) => props.theme.mainBlockBorder};
+  border: 1px solid ${({theme}) => theme.palette.primary.grey[4]};
   overflow: hidden;
   margin-bottom: 16px;
   transition: background-color 0.3s;
@@ -27,7 +27,7 @@ const BeginContainer = styled.div`
   transition: border 0.3s;
 `;
 
-const BeginTopContainer = styled.div`
+const BeginTopContainer = styled("div")`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -37,19 +37,19 @@ const BeginTopContainer = styled.div`
   padding-right: 20px;
 `;
 
-const BeginTitleContainer = styled.div`
+const BeginTitleContainer = styled("div")`
   display: flex;
   align-items: center;
   gap: 12px;
 `;
 
-const BeginImg = styled.img`
+const BeginImg = styled("img")`
   width: 28px;
   height: 28px;
 `;
 
-const BeginTitle = styled.span`
-  color: ${(props) => props.theme.mainTextColor};
+const BeginTitle = styled("span")`
+  color: ${({theme}) => theme.palette.primary.grey[1]};
   font-family: Roboto;
   font-size: 16.734px;
   font-style: normal;
@@ -58,16 +58,16 @@ const BeginTitle = styled.span`
   transition: color 0.3s;
 `;
 
-const BeginCloseBtn = styled.div`
-cursor: pointer;
+const BeginCloseBtn = styled("div")`
+  cursor: pointer;
 `;
 
-const BeginCloseImg = styled.img`
+const BeginCloseImg = styled("img")`
   width: 24px;
   height: 24px;
 `;
 
-const BeginBlocksContainer = styled.div`
+const BeginBlocksContainer = styled("div")`
   display: flex;
   align-items: center;
   padding-left: 20px;
@@ -79,42 +79,42 @@ const BeginBlocksContainer = styled.div`
   transition: background-color 0.3s;
   transition: color 0.3s;
   &::-webkit-scrollbar {
-    background-color: ${(props) => props.theme.mainBlockBg};
+    background-color: ${({theme}) => theme.palette.primary.grey[3]};
   }
   &::-webkit-scrollbar-thumb {
-    background: ${(props) => props.theme.scrollBtn};
+    background: ${({theme}) => theme.palette.primary.grey[3]};
   }
 `;
 
-const BeginBlock = styled.div`
-cursor: pointer;
+const BeginBlock = styled("div")`
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   min-width: 224px;
   height: 118px;
-  background: ${(props) => props.theme.mainBlockBg};
+  background: ${({theme}) => theme.palette.primary.grey[5]};
   padding: 16px;
   border-radius: 10px;
-  border: ${(props) => props.theme.mainBlockBorder};
+  border: 1px solid ${({theme}) => theme.palette.primary.grey[4]};
   &:hover {
-    background-color: ${(props) => props.theme.hoverBtnBg};
+    background-color: ${({theme}) => theme.palette.primary.grey[3]};
   }
 `;
 
-const BeginBlockIcon = styled.img`
+const BeginBlockIcon = styled("img")`
   width: 24px;
   height: 24px;
 `;
 
-const BeginBlockTitle = styled.span`
-  color: ${(props) => props.theme.mainTextColor};
+const BeginBlockTitle = styled("span")`
+  color: ${({theme}) => theme.palette.primary.grey[1]};
   font-family: Roboto;
   font-size: 12.898px;
   font-style: normal;
   font-weight: 500;
 `;
 
-const BeginBlockDesctiption = styled.span`
+const BeginBlockDesctiption = styled("span")`
   color: #828282;
   font-family: Roboto;
   font-size: 12.492px;
@@ -122,7 +122,7 @@ const BeginBlockDesctiption = styled.span`
   font-weight: 400;
 `;
 
-const PostsNav = styled.div`
+const PostsNav = styled("div")`
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -134,11 +134,11 @@ const PostsNav = styled.div`
   height: 64px;
   width: 100%;
   border-radius: 12px 12px 0 0;
-  border: ${(props) => props.theme.mainBlockBorder};
-  background: ${(props) => props.theme.mainBlockBg};
+  border: 1px solid ${({theme}) => theme.palette.primary.grey[3]};
+  background: ${({theme}) => theme.palette.primary.grey[5]};
 `;
 
-const PostsNavBtn = styled.div`
+const PostsNavBtn = styled("div")`
   height: 28px;
   border-radius: 8px;
   /* border: 1px solid #363738; */
@@ -151,17 +151,17 @@ const PostsNavBtn = styled.div`
   font-weight: 500;
 `;
 
-const PostsContainer = styled.div`
+const PostsContainer = styled("div")`
   min-height: 159px;
   width: 100%;
-  border-bottom: ${(props) => props.theme.mainBlockBorder};
-  border-left: ${(props) => props.theme.mainBlockBorder};
-  border-right: ${(props) => props.theme.mainBlockBorder};
+  border-bottom: 1px solid ${({theme}) => theme.palette.primary.grey[3]};
+  border-left: 1px solid ${({theme}) => theme.palette.primary.grey[3]};
+  border-right: 1px solid ${({theme}) => theme.palette.primary.grey[3]};
   border-radius: 0 0 12px 12px;
-  background: ${(props) => props.theme.mainBlockBg};
+  background: ${({theme}) => theme.palette.primary.grey[5]};
 `;
 
-const NonePostsContainer = styled.div`
+const NonePostsContainer = styled("div")`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -170,9 +170,9 @@ const NonePostsContainer = styled.div`
   height: 100%;
 `;
 
-const NonePostsImg = styled.img``;
+const NonePostsImg = styled("img")``;
 
-const NonePostsTitle = styled.div`
+const NonePostsTitle = styled("div")`
   color: #828282;
   text-align: center;
   font-family: Roboto;
@@ -180,8 +180,6 @@ const NonePostsTitle = styled.div`
   font-style: normal;
   font-weight: 400;
 `;
-
-
 
 const MainSide = () => {
   const scrollContainerRef = useRef(null);
@@ -203,7 +201,6 @@ const MainSide = () => {
     setScrollLeft(newScrollLeft);
   };
   return (
-    
     <Container>
       <BeginContainer>
         <BeginTopContainer>

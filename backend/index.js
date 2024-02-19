@@ -64,14 +64,17 @@ app.get("/validation-token", async (req, res) => {
       });
     }
   } catch (err) {
-    if(err instanceof jwt.JsonWebTokenError) {
+    if (err instanceof jwt.JsonWebTokenError) {
       console.log(err);
-      res.sendStatus(401)
-    }
-    if (err instanceof jwt.TokenExpiredError) {
+      res.sendStatus(401);
+    } else if (err instanceof jwt.TokenExpiredError) {
       // If token is expired
       console.log(err);
       res.json({ success: false, message: "Token expired" });
+    } else {
+      console.error(err);
+      res.sendStatus(500); // Internal server error for other errors
     }
+
   }
 });
