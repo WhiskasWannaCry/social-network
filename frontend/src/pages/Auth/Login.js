@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
-import { getLogin } from "../../shared/utils";
+import { postLogin } from "../../http/Fetches";
 import { Context } from "../../shared/Context";
 
 const Container = styled("div")`
@@ -108,7 +108,7 @@ const Login = () => {
   const disabled = !email || !emailRegExp.test(email) || !password;
 
   const login = async (userData) => {
-    const {data} = await getLogin(userData);
+    const {data} = await postLogin(userData);
     const {success} = data;
     if(!success) {
       const {message} = data;

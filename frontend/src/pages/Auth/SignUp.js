@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
-import { getSignUp } from "../../shared/utils";
+import { postSignUp } from "../../http/Fetches";
 import { Context } from "../../shared/Context";
 
 const Container = styled("div")`
@@ -128,7 +128,7 @@ const SignUp = () => {
         alert('The surname is incorrect!')
         return
       }
-      const res = await getSignUp(name, surname, email, password);
+      const res = await postSignUp(name, surname, email, password);
       const {data} = res;
       const {success} = data;
       if(!success) {
