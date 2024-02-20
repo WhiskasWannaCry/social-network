@@ -155,7 +155,7 @@ const FriendsFiltersSide = () => {
             age ? (
               <SortByAgeOption value={age}>From {age}</SortByAgeOption>
             ) : (
-              <SortByAgeOption value={age} selected>
+              <SortByAgeOption value={age} defaultValue>
                 From
               </SortByAgeOption>
             )
@@ -167,7 +167,7 @@ const FriendsFiltersSide = () => {
             age > 0 ? (
               <SortByAgeOption value={age}>To {age}</SortByAgeOption>
             ) : (
-              <SortByAgeOption value={age} selected>
+              <SortByAgeOption value={age} defaultValue>
                 To
               </SortByAgeOption>
             )
