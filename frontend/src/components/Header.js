@@ -131,7 +131,6 @@ const Header = () => {
                   alt="user-avatar"
                   src={(currentUser.avatar && avatarFullPath) || null}
                   sx={{
-                    left: "42px",
                     width: "32px",
                     height: "32px",
                     border: (theme) =>
