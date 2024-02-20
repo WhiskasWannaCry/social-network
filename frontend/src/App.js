@@ -17,7 +17,7 @@ import Login from "./pages/Auth/Login";
 import SignUp from "./pages/Auth/SignUp";
 import { Context } from "./shared/Context.js";
 import Friends from "./pages/Friends/Friends.js";
-import { getIsValidToken } from "./shared/utils.js";
+import { getIsValidToken } from "./http/Fetches.js";
 import { theme } from "./shared/styles.js";
 import { ThemeProvider } from "@mui/material";
 
@@ -98,7 +98,6 @@ function App() {
             const { foundUser } = data;
             console.log(foundUser);
             setCurrentUser(foundUser);
-            navigate(`/profile/${foundUser._id}`);
           } else {
             // Обработка ошибки
             console.log("Token error");
@@ -121,9 +120,7 @@ function App() {
     <Context.Provider value={{ currentUser, setCurrentUser, userInit }}>
       <ThemeProvider theme={theme}>
         {location.pathname !== "/login" &&
-          location.pathname !== "/registration" && (
-            <Header></Header>
-          )}
+          location.pathname !== "/registration" && <Header></Header>}
         <Container>
           <Body pathname={location.pathname}>
             {location.pathname !== "/login" &&
@@ -150,7 +147,14 @@ function App() {
                     currentUser._id ? (
                       <Navigate to={`profile/${currentUser._id}`} replace />
                     ) : (
-                      <Navigate to="/" replace />
+                      <Navigate
+                        to={
+                          currentUser._id
+                            ? `profile/${currentUser._id}`
+                            : "/login"
+                        }
+                        replace
+                      />
                     )
                   }
                 />
