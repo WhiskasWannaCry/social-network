@@ -1,6 +1,9 @@
 import styled from "@emotion/styled";
 import FriendsMainSide from "./FriendsMainSide";
 import FriendsFiltersSide from "./FriendsFiltersSide";
+import { useContext } from "react";
+import { Context } from "../../shared/Context";
+import { getUsersInfo } from "../../http/Fetches";
 
 const Container = styled("div")`
   display: flex;
@@ -8,12 +11,17 @@ const Container = styled("div")`
   width: 100%;
 `;
 
-
 const Friends = () => {
+  const currentUserContext = useContext(Context);
+  const { currentUser, setCurrentUser, userInit } = currentUserContext;
   return (
     <Container>
-      <FriendsMainSide></FriendsMainSide>
-      <FriendsFiltersSide></FriendsFiltersSide>
+      {currentUser.friends && currentUser.friends.length ? null : ( // нужно будет написать когда у юзера есть друзья
+        <>
+          <FriendsMainSide></FriendsMainSide>
+          <FriendsFiltersSide></FriendsFiltersSide>
+        </>
+      )}
     </Container>
   );
 };

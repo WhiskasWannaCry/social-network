@@ -1,6 +1,9 @@
 import styled from "@emotion/styled";
 import searchIcon from "../../images/icons/search.svg";
 import UserCardSearch from "../../shared/UserCardSearch";
+import { useContext, useState } from "react";
+import { Context } from "../../shared/Context";
+import { getUsersInfo } from "../../http/Fetches";
 
 const Container = styled("div")`
   display: flex;
@@ -62,7 +65,7 @@ const SearchBar = styled("input")`
   }
 `;
 
-const SearchBtn = styled("input")`
+const SearchBtn = styled("btn")`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -83,11 +86,24 @@ height: 100%;
 `
 
 const FriendsMainSide = () => {
+  const currentUserContext = useContext(Context);
+  const { currentUser, setCurrentUser, userInit } = currentUserContext;
+  const [users,setUsers] = useState([])
+
+  const fetchAllUsers = async () => {
+    const {data} = await getUsersInfo()
+    const {success} = data;
+    if(success) {
+      const {users} = data;
+      setUsers(users)
+    }
+  }
+  fetchAllUsers()
   return (
     <Container>
       <Header>
         <Title>People</Title>
-        <PeopleCounter>155 555</PeopleCounter>
+        <PeopleCounter>{users.length}</PeopleCounter>
       </Header>
       <SearchBarContainer>
         <SearchBar placeholder="Enter your request"></SearchBar>
@@ -96,6 +112,10 @@ const FriendsMainSide = () => {
         </SearchBtn>
       </SearchBarContainer>
       <UsersForSearch>
+        {users.length ? (
+          <UserCardSearch></UserCardSearch>
+        ) : null}
+        {/* <UserCardSearch></UserCardSearch>
         <UserCardSearch></UserCardSearch>
         <UserCardSearch></UserCardSearch>
         <UserCardSearch></UserCardSearch>
@@ -108,8 +128,7 @@ const FriendsMainSide = () => {
         <UserCardSearch></UserCardSearch>
         <UserCardSearch></UserCardSearch>
         <UserCardSearch></UserCardSearch>
-        <UserCardSearch></UserCardSearch>
-        <UserCardSearch></UserCardSearch>
+        <UserCardSearch></UserCardSearch> */}
       </UsersForSearch>
     </Container>
   );
