@@ -28,6 +28,9 @@ export const theme = createTheme({
   palette: {
     primary: {
       main: "#F1F1F1",
+      hover: {
+        1: "rgb(255 255 255 / 20%)",
+      },
       green: {
         1: "rgb(33 255 0 / 25%)",
       },
