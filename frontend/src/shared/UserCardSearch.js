@@ -1,5 +1,8 @@
 import styled from "@emotion/styled";
 import userImg from "../images/posts_img/post_img4.jpg";
+import { Avatar } from "@mui/material";
+import { useContext } from "react";
+import { Context } from "./Context";
 
 const Container = styled("div")`
   display: flex;
@@ -7,7 +10,7 @@ const Container = styled("div")`
   align-items: center;
   width: 100%;
   height: 100px;
-  border-bottom: ${(props) => props.theme.palette.primary.grey[3]};
+  border-bottom: 1px solid ${(props) => props.theme.palette.primary.grey[3]};
   padding: 16px 0 16px 0;
 `;
 
@@ -59,7 +62,8 @@ const DoBtn = styled("div")`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: ${(props) => props.theme.palette.primary.grey[5]};
+  background-color: ${(props) => props.theme.palette.primary.grey[4]};
+  border: 1px solid ${(props) => props.theme.palette.primary.grey[3]};
   color: ${(props) => props.theme.palette.primary.grey[1]};
   width: 30%;
   padding: 4px 8px 4px 8px;
@@ -69,19 +73,33 @@ const DoBtn = styled("div")`
   font-style: normal;
   font-weight: 400;
   &:hover {
-    background-color: ${(props) => props.theme.palette.primary.grey[4]};
+    background-color: ${(props) => props.theme.palette.primary.hover[1]};
   }
 `;
 
 // Возраст рендерить только если он указан у юзера!
 const UserCardSearch = () => {
+  const currentUserContext = useContext(Context);
+  const { currentUser, setCurrentUser } = currentUserContext; // нужно будет написать логику отображения профилей других юзеров
+  const avatarFullPath =
+    currentUser && `http://localhost:8000/${currentUser.avatar}`;
   return (
     <Container>
-      <UserImgContainer>
-        <UserImg src={userImg} alt="user_img"></UserImg>
-      </UserImgContainer>
+      <Avatar
+        alt="user-avatar"
+        src={(currentUser.avatar && avatarFullPath) || null}
+        sx={{
+          width: "64px",
+          height: "64px",
+          border: (theme) => "1px solid" + theme.palette.primary.grey[5],
+        }}
+      ></Avatar>
       <UserInfo>
-        <UserName>User Name</UserName>
+        <UserName>
+          {currentUser.name &&
+            currentUser.surname &&
+            currentUser.name + " " + currentUser.surname}
+        </UserName>
         <UserAge>24 years</UserAge>
       </UserInfo>
       <DoBtn>Add as Friend</DoBtn>
