@@ -47,7 +47,7 @@ async function start() {
 
 start();
 
-app.get("/validation-token", async (req, res) => {
+app.get("/api/validation-token", async (req, res) => {
   const tokenForValidation = req.query;
   console.log(tokenForValidation)
   let decoded;
@@ -76,5 +76,14 @@ app.get("/validation-token", async (req, res) => {
       res.sendStatus(500); // Internal server error for other errors
     }
 
+  }
+});
+
+app.get("/api/search/get-all-users", async (req, res) => {
+  const users = await User.find({}).limit(100);
+  if(users) {
+    res.json({success: true, users})
+  } else {
+    res.json({success: false, message: 'Something errors on /api/search/get-all-users'})
   }
 });
