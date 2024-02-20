@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from "@emotion/styled";
 import profileImg from '../images/icons/Navigation_icons/Profile.svg'
 import messagesImg from '../images/icons/Navigation_icons/Messages.svg'
 import friendsImg from '../images/icons/Navigation_icons/Friends.svg'
@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { Context } from "../shared/Context";
 
-const Container = styled.div`
+const Container = styled("div")`
 display: flex;
 flex-direction: column;
 width: 15%;
@@ -17,14 +17,14 @@ width: 15%;
 }
 `
 
-const NavBar = styled.nav`
+const NavBar = styled("nav")`
 display: flex;
 flex-direction: column;
 gap: 12px;
 width: 100%;
 `
 
-const NavBtnContainer = styled.div`
+const NavBtnContainer = styled("div")`
 cursor: pointer;
 display: flex;
 align-items: center;
@@ -34,16 +34,16 @@ height: 28px;
 padding: 8px;
 border-radius: 8px;
 &:hover {
-  background: ${(props) => props.theme.hoverBtnBg};
+  background: ${(props) => props.theme.palette.primary.grey[3]};
 }
 `
 
-const NavImg = styled.img`
+const NavImg = styled("img")`
 width: 20px;
 `
 
-const NavText = styled.span`
-color: ${(props) => props.theme.mainTextColor};
+const NavText = styled("span")`
+color: ${(props) => props.theme.palette.primary.grey[1]};
 font-family: Roboto;
 font-size: 13px;
 font-style: normal;
@@ -53,14 +53,14 @@ font-weight: 400;
 }
 `
 
-const NavNotificationCounter = styled.div`
+const NavNotificationCounter = styled("div")`
 display: flex;
 justify-content: center;
 align-items: center;
 width: 20px;
 height: 20px;
 border-radius: 50%;
-background-color: ${(props) => props.theme.grayBlockBg};
+background-color: ${(props) => props.theme.palette.primary.grey[5]};
 font-family: Roboto;
 font-size: 13px;
 font-style: normal;
@@ -69,7 +69,7 @@ padding: 4px;
 
 `
 
-const HR = styled.div`
+const HR = styled("div")`
 width: 80%;
 height: 1px;
 background-color: #363738;

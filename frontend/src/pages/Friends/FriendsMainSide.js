@@ -1,28 +1,28 @@
-import styled from "styled-components";
+import styled from "@emotion/styled";
 import searchIcon from "../../images/icons/search.svg";
 import UserCardSearch from "../../shared/UserCardSearch";
 
-const Container = styled.div`
+const Container = styled("div")`
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12px;
   width: 60%;
   min-height: 400px;
-  background-color: ${({ theme }) => theme.mainBlockBg};
+  background-color: ${(props) => props.theme.palette.primary.grey[5]};
   border-radius: 8px;
-  border: ${({ theme }) => theme.mainBlockBorder};
+  border: 1px solid ${(props) => props.theme.palette.primary.grey[3]};
   padding: 16px;
 `;
 
-const Header = styled.div`
+const Header = styled("div")`
   display: flex;
   align-items: center;
   gap: 8px;
   width: 100%;
 `;
 
-const Title = styled.div`
+const Title = styled("div")`
   text-align: center;
   font-family: Roboto;
   font-size: 14px;
@@ -30,7 +30,7 @@ const Title = styled.div`
   font-weight: 500;
 `;
 
-const PeopleCounter = styled.div`
+const PeopleCounter = styled("div")`
   color: rgb(130, 130, 130);
   font-family: Roboto;
   font-size: 12.492px;
@@ -38,20 +38,20 @@ const PeopleCounter = styled.div`
   font-weight: 400;
 `;
 
-const SearchBarContainer = styled.div`
+const SearchBarContainer = styled("div")`
   display: flex;
   width: 100%;
   height: 32px;
-  border: ${({ theme }) => theme.mainBlockBorder};
+  border: 1px solid ${(props) => props.theme.palette.primary.grey[3]};
   border-radius: 8px;
   overflow: hidden;
 `;
 
-const SearchBar = styled.input`
+const SearchBar = styled("input")`
   border: none;
   width: 90%;
   height: 100%;
-  background-color: ${({ theme }) => theme.mainBlockBg};
+  background-color: ${(props) => props.theme.palette.primary.grey[5]};
   padding: 4px;
   font-family: Roboto;
   font-size: 12.492px;
@@ -62,7 +62,7 @@ const SearchBar = styled.input`
   }
 `;
 
-const SearchBtn = styled.div`
+const SearchBtn = styled("input")`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -73,11 +73,11 @@ const SearchBtn = styled.div`
   padding: 4px;
 `;
 
-const SearchImage = styled.img`
+const SearchImage = styled("img")`
   height: 100%;
 `;
 
-const UsersForSearch = styled.div`
+const UsersForSearch = styled("div")`
 width: 100%;
 height: 100%;
 `

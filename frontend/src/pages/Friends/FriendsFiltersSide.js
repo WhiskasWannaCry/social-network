@@ -1,7 +1,7 @@
 import { useState } from "react";
-import styled from "styled-components";
+import styled from "@emotion/styled";
 
-const Container = styled.div`
+const Container = styled("div")`
   position: sticky;
   top: 64px;
   display: flex;
@@ -10,13 +10,13 @@ const Container = styled.div`
   gap: 12px;
   width: 40%;
   height: 500px;
-  background-color: ${({ theme }) => theme.mainBlockBg};
+  background-color: ${(props) => props.theme.palette.primary.grey[5]};
   border-radius: 8px;
-  border: ${({ theme }) => theme.mainBlockBorder};
+  border: 1px solid ${(props) => props.theme.palette.primary.grey[3]};
   padding: 8px;
 `;
 
-const SortTitle = styled.div`
+const SortTitle = styled("div")`
   width: 100%;
   font-family: Roboto;
   font-size: 12.492px;
@@ -24,23 +24,23 @@ const SortTitle = styled.div`
   font-weight: 400;
 `;
 
-const HR = styled.div`
+const HR = styled("div")`
   width: 100%;
-  border: ${({ theme }) => theme.mainBlockBorder};
+  border: ${(props) => props.theme.palette.primary.grey[3]};
 `;
 
-const SortByAgeContainer = styled.div`
+const SortByAgeContainer = styled("div")`
   display: flex;
   gap: 16px;
   width: 100%;
 `;
 
-const SortByAgeSelect = styled.select`
+const SortByAgeSelect = styled("select")`
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 4px 8px 4px 8px;
-  background-color: ${({ theme }) => theme.mainBlockBg};
+  background-color: ${(props) => props.theme.palette.primary.grey[5]};
   border-radius: 8px;
   font-family: Roboto;
   font-size: 12.492px;
@@ -49,20 +49,20 @@ const SortByAgeSelect = styled.select`
   outline: none;
 `;
 
-const SortByAgeOption = styled.option`
+const SortByAgeOption = styled("option")`
   font-family: Roboto;
   font-size: 12.492px;
   font-style: normal;
   font-weight: 400;
 `;
 
-const InputSexContainer = styled.div`
+const InputSexContainer = styled("div")`
   display: flex;
   gap: 12px;
   width: 100%;
 `;
 
-const InputSex = styled.input`
+const InputSex = styled("input")`
 
 `;
 

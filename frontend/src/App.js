@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from "@emotion/styled";
 import {
   Routes,
   Route,
@@ -21,16 +21,16 @@ import { getIsValidToken } from "./shared/utils.js";
 import { theme } from "./shared/styles.js";
 import { ThemeProvider } from "@mui/material";
 
-const Container = styled.div`
+const Container = styled("div")`
   display: flex;
   flex-direction: column;
-  background-color: ${(props) => props.theme.mainBg};
+  background-color: ${(props) => props.theme.palette.primary.grey[6]};
   min-height: 100%;
   width: 100%;
   max-width: 1248px;
 `;
 
-const Body = styled.div`
+const Body = styled("div")`
   display: flex;
   justify-content: center;
   margin-top: ${({ pathname }) =>
@@ -40,7 +40,7 @@ const Body = styled.div`
   min-height: 100%;
 `;
 
-const ContentContainer = styled.div`
+const ContentContainer = styled("div")`
   width: 70%;
   height: 100%;
 `;
@@ -138,7 +138,7 @@ function App() {
                 ></Route>
                 <Route path="/feed" element={<Feed></Feed>}></Route>
                 <Route
-                  path="/edit"
+                  path="/edit/:_id"
                   element={<EditProfile></EditProfile>}
                 ></Route>
                 <Route path="/login" element={<Login></Login>}></Route>

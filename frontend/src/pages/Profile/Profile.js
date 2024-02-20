@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from "@emotion/styled";
 import MainSide from "./ProfileMainSide";
 import SecondarySide from "./ProfileSecondarySide";
 import backgroundImage from "../../images/posts_img/post_img2.jpg";
@@ -6,27 +6,28 @@ import userImg from "../../images/posts_img/post_img4.jpg";
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { Context } from '../../shared/Context'
+import { Avatar } from "@mui/material";
 
-const Container = styled.div`
+const Container = styled("div")`
   width: 100%;
 `;
 
-const UserHeaderContainer = styled.div`
+const UserHeaderContainer = styled("div")`
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   width: 100%;
   height: 322px;
-  background-color: ${(props) => props.theme.mainBlockBg};
+  background-color: ${(props) => props.theme.palette.primary.grey[5]};
   border-radius: 12px;
-  border: ${(props) => props.theme.mainBlockBorder};
+  border: 1px solid ${(props) => props.theme.palette.primary.grey[3]};
   overflow: hidden;
   transition: background-color 0.3s;
   transition: color 0.3s;
 `;
 
-const ChangeBackground = styled.div`
+const ChangeBackground = styled("div")`
 cursor: pointer;
 position: absolute;
 display: flex;
@@ -49,7 +50,7 @@ font-weight: 500;
 }
 `
 
-const UserBackground = styled.div`
+const UserBackground = styled("div")`
   position: absolute;
   top: 0;
   left: 0;
@@ -61,58 +62,36 @@ const UserBackground = styled.div`
   z-index: 1;
 `;
 
-const InfoOuterContainer = styled.div`
+const InfoOuterContainer = styled("div")`
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   width: 100%;
-  min-height: 160px;
+  min-height: 144px;
   z-index: 2;
 `;
 
-const UserImgContainer = styled.div`
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  top: 0;
-  left: 20px;
-  width: 20%;
-  max-height: 150px;
-  max-width: 150px;
-  height: auto;
-  border-radius: 50%;
-  border: ${(props) => props.theme.userImgBorder};
-  overflow: hidden;
-  transition: background-color 0.3s;
-  transition: color 0.3s;
-`;
-
-const UserImg = styled.img`
-  width: 120%;
-`;
-
-const UserInfoContainer = styled.div`
+const UserInfoContainer = styled("div")`
   display: flex;
   justify-content: space-between;
   width: 100%;
   min-height: 95px;
-  background-color: ${(props) => props.theme.mainBlockBg};
+  background-color: ${(props) => props.theme.palette.primary.grey[5]};
   padding: 20px;
   padding-left: 25%;
   transition: background-color 0.3s;
   transition: color 0.3s;
 `;
 
-const UserInfo = styled.div`
+const UserInfo = styled("div")`
   display: flex;
   flex-direction: column;
 `;
 
-const UserName = styled.span`
+const UserName = styled("div")`
   // пока что юзернейм если слишком большой то перенос не работает норм, надо фиксить
-  color: ${(props) => props.theme.mainTextColor};
+  color: ${(props) => props.theme.palette.primary.grey[1]};
   font-family: Roboto;
   font-size: 20.836px;
   font-style: normal;
@@ -124,7 +103,7 @@ const UserName = styled.span`
   transition: color 0.3s;
 `;
 
-const AddInfoBtn = styled.div`
+const AddInfoBtn = styled("div")`
   cursor: pointer;
   color: #71aaeb;
   font-family: Roboto;
@@ -133,7 +112,7 @@ const AddInfoBtn = styled.div`
   font-weight: 400;
 `;
 
-const EditProfileBtn = styled.div`
+const EditProfileBtn = styled("div")`
   cursor: pointer;
   display: flex;
   justify-content: center;
@@ -141,8 +120,9 @@ const EditProfileBtn = styled.div`
   height: 32px;
   padding: 6px 16px 6px 16px;
   border-radius: 8px;
-  background: ${(props) => props.theme.btnBg};
-  color: ${(props) => props.theme.btnTextColor};
+  background: ${(props) => props.theme.palette.primary.grey[4]};
+  color: ${(props) => props.theme.palette.primary.grey[1]};
+  border: 1px solid ${(props) => props.theme.palette.primary.grey[3]};
   text-align: center;
   font-family: Roboto;
   font-size: 13.781px;
@@ -151,11 +131,11 @@ const EditProfileBtn = styled.div`
   transition: background-color 0.3s;
   transition: color 0.3s;
   &:hover {
-    background: ${(props) => props.theme.hoverBtnBg};
+    background: ${(props) => props.theme.palette.primary.grey[3]};
   }
 `;
 
-const UserBody = styled.div`
+const UserBody = styled("div")`
   display: flex;
   gap: 16px;
   margin-top: 16px;
@@ -178,15 +158,20 @@ const Profile = () => {
         <UserBackground bgImg={backgroundFullPath}></UserBackground>
         <ChangeBackground>Change background</ChangeBackground>
         <InfoOuterContainer>
-          <UserImgContainer>
-            <UserImg src={avatarFullPath} alt="user_img"></UserImg>
-          </UserImgContainer>
+          <Avatar alt="user-avatar" src={currentUser.avatar && avatarFullPath || null} sx={{
+            position: "absolute",
+            top:0,
+            left: "42px",
+            width: "112px",
+            height: "112px",
+            border:  (theme) => "1px solid" + theme.palette.primary.grey[5]
+          }}></Avatar>
           <UserInfoContainer>
             <UserInfo>
               <UserName>Karim Zerman</UserName>
               <AddInfoBtn>Provide information about yourself</AddInfoBtn>
             </UserInfo>
-            <EditProfileBtn onClick={() => navigate('/edit')}>Edit profile</EditProfileBtn>
+            <EditProfileBtn onClick={() => currentUser._id && navigate(`/edit/${currentUser._id}`)}>Edit profile</EditProfileBtn>
           </UserInfoContainer>
         </InfoOuterContainer>
       </UserHeaderContainer>

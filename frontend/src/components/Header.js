@@ -10,7 +10,7 @@ import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Fade from "@mui/material/Fade";
-import { Box } from "@mui/material";
+import { Avatar, Box, IconButton, Tooltip } from "@mui/material";
 import styled from "@emotion/styled";
 
 const OuterContainer = styled("div")`
@@ -19,7 +19,7 @@ const OuterContainer = styled("div")`
   justify-content: center;
   align-items: center;
   height: 48px;
-  background-color: ${({theme}) => theme.palette.primary.grey[5]};
+  background-color: ${({ theme }) => theme.palette.primary.grey[5]};
   border-bottom: 1px solid #292929;
   z-index: 10;
   width: 100%;
@@ -47,7 +47,7 @@ const Logo = styled("img")`
 `;
 
 const LogoText = styled("span")`
-  color: ${({theme}) => theme.palette.primary.grey[1]};
+  color: ${({ theme }) => theme.palette.primary.grey[1]};
   @media (max-width: 768px) {
     display: none;
   }
@@ -57,7 +57,7 @@ const SearchBarContainer = styled("div")`
   width: 230px;
   height: 32px;
   border-radius: 8px;
-  background-color: ${({theme}) => theme.palette.primary.grey[3]};
+  background-color: ${({ theme }) => theme.palette.primary.grey[3]};
 `;
 
 const NotificationContainer = styled("div")`
@@ -77,20 +77,10 @@ const UserMenuContainer = styled("div")`
   height: 32px;
 `;
 
-const UserAvatarContainer = styled("div")`
-  // Will be styled.img, needs to add src
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 32px;
-  height: 32px;
-  background-color: white;
-  border-radius: 50%;
-  overflow: hidden;
-`;
-
-const UserAvatar = styled("img")`
-  width: 120%;
+const StyledMenuItem = styled(MenuItem)`
+  &:hover {
+    background-color: ${({ theme }) => theme.palette.primary.grey[3]};
+  }
 `;
 
 const Header = () => {
@@ -130,41 +120,59 @@ const Header = () => {
           ></NotificationImg>
         </NotificationContainer>
         <UserMenuContainer>
-          <Button
-            id="fade-button"
-            aria-controls={open ? "fade-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
-            onClick={handleClick}
-          >
-            <UserAvatarContainer>
-              <UserAvatar src={avatarFullPath} alt="avatar"></UserAvatar>
-            </UserAvatarContainer>
-          </Button>
+          <Box sx={{ flexGrow: 0 }}>
+            <Tooltip title="Open settings">
+              <IconButton onClick={handleClick} sx={{ p: 0 }}>
+                <Avatar
+                  id="fade-button"
+                  aria-controls={open ? "fade-menu" : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? "true" : undefined}
+                  alt="user-avatar"
+                  src={(currentUser.avatar && avatarFullPath) || null}
+                  sx={{
+                    left: "42px",
+                    width: "32px",
+                    height: "32px",
+                    border: (theme) =>
+                      "1px solid" + theme.palette.primary.grey[5],
+                  }}
+                ></Avatar>
+              </IconButton>
+            </Tooltip>
+          </Box>
+
           <Menu
             id="fade-menu"
             MenuListProps={{
               "aria-labelledby": "fade-button",
-              sx: { backgroundColor: (theme) => theme.palette.primary.grey[4] }, // не работает!
+              sx: {
+                backgroundColor: (theme) => theme.palette.primary.grey[4],
+                padding: 0,
+              },
             }}
             anchorEl={anchorEl}
             open={open}
             onClose={handleClose}
             TransitionComponent={Fade}
           >
-            <MenuItem onClick={() => {
-              handleClose()
-              navigate(`profile/${currentUser._id}`)
-            }}>Profile</MenuItem>
-            <MenuItem onClick={handleClose}>My account</MenuItem>
-            <MenuItem
+            <StyledMenuItem
+              onClick={() => {
+                handleClose();
+                navigate(`profile/${currentUser._id}`);
+              }}
+            >
+              Profile
+            </StyledMenuItem>
+            <StyledMenuItem onClick={handleClose}>Settings</StyledMenuItem>
+            <StyledMenuItem
               onClick={() => {
                 handleClose();
                 handleLogout();
               }}
             >
               Logout
-            </MenuItem>
+            </StyledMenuItem>
           </Menu>
         </UserMenuContainer>
       </Container>

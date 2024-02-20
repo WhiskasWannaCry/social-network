@@ -1,17 +1,17 @@
-import styled from "styled-components";
+import styled from "@emotion/styled";
 import userImg from "../images/posts_img/post_img4.jpg";
 
-const Container = styled.div`
+const Container = styled("div")`
   display: flex;
   justify-content: space-around;
   align-items: center;
   width: 100%;
   height: 100px;
-  border-bottom: ${({ theme }) => theme.mainBlockBorder};
+  border-bottom: ${(props) => props.theme.palette.primary.grey[3]};
   padding: 16px 0 16px 0;
 `;
 
-const UserImgContainer = styled.div`
+const UserImgContainer = styled("div")`
   cursor: pointer;
   display: flex;
   justify-content: center;
@@ -22,11 +22,11 @@ const UserImgContainer = styled.div`
   overflow: hidden;
 `;
 
-const UserImg = styled.img`
+const UserImg = styled("img")`
   width: 100%;
 `;
 
-const UserInfo = styled.div`
+const UserInfo = styled("div")`
   display: flex;
   flex-direction: column;
   width: 50%;
@@ -34,7 +34,7 @@ const UserInfo = styled.div`
   padding: 0 8px 0 8px;
 `;
 
-const UserName = styled.div`
+const UserName = styled("div")`
   cursor: pointer;
   color: rgb(113, 170, 235);
   font-family: Roboto;
@@ -46,7 +46,7 @@ const UserName = styled.div`
   }
 `;
 
-const UserAge = styled.div`
+const UserAge = styled("div")`
   color: rgb(130, 130, 130);
   font-family: Roboto;
   font-size: 12.492px;
@@ -54,13 +54,13 @@ const UserAge = styled.div`
   font-weight: 400;
 `;
 
-const DoBtn = styled.div`
+const DoBtn = styled("div")`
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: ${({ theme }) => theme.lightBtnBg};
-  color: ${({ theme }) => theme.btnDarkTextColor};
+  background-color: ${(props) => props.theme.palette.primary.grey[5]};
+  color: ${(props) => props.theme.palette.primary.grey[1]};
   width: 30%;
   padding: 4px 8px 4px 8px;
   border-radius: 4px;
@@ -69,7 +69,7 @@ const DoBtn = styled.div`
   font-style: normal;
   font-weight: 400;
   &:hover {
-    background-color: ${({ theme }) => theme.hoverLightBtnBg};
+    background-color: ${(props) => props.theme.palette.primary.grey[4]};
   }
 `;
 

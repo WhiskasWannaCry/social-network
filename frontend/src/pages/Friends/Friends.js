@@ -1,8 +1,8 @@
-import styled from "styled-components";
+import styled from "@emotion/styled";
 import FriendsMainSide from "./FriendsMainSide";
 import FriendsFiltersSide from "./FriendsFiltersSide";
 
-const Container = styled.div`
+const Container = styled("div")`
   display: flex;
   gap: 16px;
   width: 100%;

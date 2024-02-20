@@ -1,9 +1,9 @@
-import styled from "styled-components";
+import styled from "@emotion/styled";
 import FeedSecondarySide from "./FeedSecondarySide";
 import FeedMainSide from "./FeedMainSide";
 import { useEffect } from "react";
 
-const Container = styled.div`
+const Container = styled("div")`
 display: flex;
 gap: 16px;
 width: 100%;

@@ -1,21 +1,21 @@
-import styled from "styled-components";
+import styled from "@emotion/styled";
 import authorImg from '../images/posts_img/avatar.png'
 import likeImg from '../images/icons/like.svg'
 import commentImg from '../images/icons/comment.svg'
 
-const Container = styled.div`
+const Container = styled("div")`
 display: flex;
 flex-direction: column;
 gap: 12px;
 min-height: 200px;
 width: 100%;
 border-radius: 12px;
-background: ${(props) => props.theme.mainBlockBg};
-border: ${(props) => props.theme.mainBlockBorder};
+background: ${(props) => props.theme.palette.primary.grey[5]};
+border: 1px solid ${(props) => props.theme.palette.primary.grey[3]};
 padding: 16px 20px 16px 20px;
 `
 
-const HeaderContainer = styled.div`
+const HeaderContainer = styled("div")`
 display: flex;
 align-items: center;
 gap: 12px;
@@ -23,12 +23,12 @@ width: 100%;
 height: 40px;
 `
 
-const AuthorImg = styled.img`
+const AuthorImg = styled("img")`
 width: 40px;
 height: 40px;
 `
 
-const InfoContainer = styled.div`
+const InfoContainer = styled("div")`
 display: flex;
 justify-content: center;
 flex-direction: column;
@@ -36,7 +36,7 @@ width: 100%;
 height: 100%;
 `
 
-const AuthorName = styled.div`
+const AuthorName = styled("div")`
 color: #71AAEB;
 font-family: Roboto;
 font-size: 13px;
@@ -44,7 +44,7 @@ font-style: normal;
 font-weight: 500;
 `
 
-const PostDate = styled.div`
+const PostDate = styled("div")`
 color: #828282;
 font-family: Roboto;
 font-size: 13px;
@@ -52,16 +52,16 @@ font-style: normal;
 font-weight: 400;
 `
 
-const Description = styled.div`
+const Description = styled("div")`
 width: 100%;
-color: ${(props) => props.theme.mainTextColor};
+color: ${(props) => props.theme.palette.primary.grey[1]};
 font-family: Roboto;
 font-size: 13px;
 font-style: normal;
 font-weight: 400;
 `
 
-const ImgContainer = styled.div`
+const ImgContainer = styled("div")`
   position: relative;
   display: flex;
   justify-content: center;
@@ -73,12 +73,12 @@ const ImgContainer = styled.div`
   overflow: hidden;
 `;
 
-const Image = styled.img` 
+const Image = styled("img")` 
   width: 100%;
   z-index: 2;
 `;
 
-const BlurredBackground = styled.div`
+const BlurredBackground = styled("div")`
   position: absolute;
   display: flex;
   justify-content: center;
@@ -94,14 +94,14 @@ const BlurredBackground = styled.div`
   filter: blur(30px);
 `;
 
-const Footer = styled.div`
+const Footer = styled("div")`
 display: flex;
 width: 100%;
 height: 32px;
 gap: 8px;
 `
 
-const FooterBtnContainer = styled.div`
+const FooterBtnContainer = styled("div")`
 display: flex;
 justify-content: center;
 align-items: center;
@@ -111,16 +111,16 @@ height: 100%;
 padding-left: 12px;
 padding-right: 12px;
 border-radius: 32px;
-background: ${(props) => props.theme.btnBg};
+background: ${(props) => props.theme.palette.primary.grey[3]};
 gap: 4px;
 `
 
-const FooterBtnImg = styled.img`
+const FooterBtnImg = styled("img")`
 width: 24px;
 height: 24px;
 `
 
-const FooterBtnCounter = styled.span`
+const FooterBtnCounter = styled("span")`
 display: flex;
 justify-content: center;
 align-items: center;
@@ -129,6 +129,7 @@ font-family: Roboto;
 font-size: 13px;
 font-style: normal;
 font-weight: 500;
+color: ${(props) => props.theme.palette.primary.grey[1]};
 `
 
 const Post = ({postImg}) => {

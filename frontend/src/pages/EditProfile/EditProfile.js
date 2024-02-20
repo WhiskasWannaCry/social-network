@@ -1,20 +1,21 @@
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import styled from "styled-components";
+import styled from "@emotion/styled";
+import { Context } from "../../shared/Context";
 
-const Container = styled.div`
+const Container = styled("div")`
   display: flex;
   width: 100%;
   min-height: 100%;
 `;
 
-const EditMainInfo = styled.div`
+const EditMainInfo = styled("div")`
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
   height: 500px;
-  background-color: ${(props) => props.theme.mainBlockBg};
+  background-color: ${(props) => props.theme.palette.primary.grey[5]};
   border: 1px solid #363738;
   border-radius: 12px;
   overflow: hidden;
@@ -22,7 +23,7 @@ const EditMainInfo = styled.div`
   padding: 16px 20px;
 `;
 
-const InfoContainer = styled.div`
+const InfoContainer = styled("div")`
   display: flex;
   align-items: center;
   gap: 12px;
@@ -30,7 +31,7 @@ const InfoContainer = styled.div`
   width: 100%;
 `;
 
-const InfoTitle = styled.div`
+const InfoTitle = styled("div")`
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -43,36 +44,36 @@ const InfoTitle = styled.div`
   font-weight: 400;
 `;
 
-const InfoForChange = styled.div`
+const InfoForChange = styled("div")`
   width: 70%;
 `;
 
-const InputInfo = styled.input`
+const InputInfo = styled("input")`
   outline: none;
   width: 100%;
   padding: 8px;
   height: ${({ height }) => height};
-  background-color: ${(props) => props.theme.mainBlockBg};
-  border: ${(props) => props.theme.mainBlockBorder};
+  background-color: ${(props) => props.theme.palette.primary.grey[5]};
+  border: 1px solid ${(props) => props.theme.palette.primary.grey[3]};
   border-radius: 12px;
-  color: ${(props) => props.theme.mainTextColor};
+  color: ${(props) => props.theme.palette.primary.grey[1]};
 `;
 
-const HR = styled.div`
+const HR = styled("div")`
   width: 100%;
   height: 1px;
   background-color: rgba(255, 255, 255, 0.08);
 `;
 
-const SaveChangesBtn = styled.div`
+const SaveChangesBtn = styled("div")`
   cursor: pointer;
-  background-color: ${(props) => props.theme.btnBg};
-  border: ${(props) => props.theme.mainBlockBorder};
+  background-color: ${(props) => props.theme.palette.primary.grey[5]};
+  border: 1px solid ${(props) => props.theme.palette.primary.grey[3]};
   padding: 8px 16px 8px 16px;
   max-width: 200px;
   border-radius: 8px;
   &:hover {
-  background-color: ${(props) => props.theme.hoverBtnBg};
+  background-color: ${(props) => props.theme.palette.primary.grey[4]};
 }
 `
 
@@ -80,6 +81,9 @@ const EditProfile = () => {
   useEffect(() => {
     document.title = "Editing my profile";
   }, []);
+  const currentUserContext = useContext(Context);
+  const { currentUser, setCurrentUser, userInit } = currentUserContext;
+
   return (
     <Container>
       <EditMainInfo>
@@ -90,6 +94,7 @@ const EditProfile = () => {
               height={"32px"}
               type="text"
               placeholder="Some info about you"
+              value={currentUser.name || ""}
             ></InputInfo>
           </InfoForChange>
         </InfoContainer>
@@ -100,6 +105,7 @@ const EditProfile = () => {
               height={"32px"}
               type="text"
               placeholder="Some info about you"
+              value={currentUser.surname || ""}
             ></InputInfo>
           </InfoForChange>
         </InfoContainer>

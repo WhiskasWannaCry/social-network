@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from "@emotion/styled";
 import AddNewPost from "../../shared/AddNewPost";
 import Post from "../../shared/Post";
 import postImg from '../../images/posts_img/post_img.png'
@@ -6,11 +6,11 @@ import postImg2 from '../../images/posts_img/post_img2.jpg'
 import postImg3 from '../../images/posts_img/post_img3.jpeg'
 import postImg4 from '../../images/posts_img/post_img4.jpg'
 
-const Container = styled.div`
+const Container = styled("div")`
   width: 60%;
 `;
 
-const PostsContainer = styled.div`
+const PostsContainer = styled("div")`
   display: flex;
   flex-direction: column;
   gap: 16px;
