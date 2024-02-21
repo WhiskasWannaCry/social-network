@@ -46,21 +46,34 @@ const ContentContainer = styled("div")`
 `;
 
 const userInit = {
-  _id: "",
-  name: "",
-  surname: "",
-  age: "",
-  avatar: "",
-  background: "",
-  email: "",
-  password: "",
-  role: "",
+  primary: {
+    name: "",
+    surname: "",
+    dateOfBirth: "",
+    email: "",
+    website: "",
+    description: "",
+  },
+  images: {
+    avatar: "",
+    background: "",
+  },
+  socialContacts: {
+    friends: [],
+    followers: [],
+    following: [],
+  },
+  secret: {
+    password: "",
+    role: "",
+  },
 };
 
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(userInit);
+  const [usersFromSearch, setUsersFromSearch] = useState([]);
 
   useEffect(() => {
     const tokenLS = JSON.parse(localStorage.getItem("token"));
@@ -81,7 +94,6 @@ function App() {
     if (tokenLS && tokenLS.value !== "0") {
       const fetchUserData = async () => {
         try {
-          console.log(tokenLS);
           const res = await getIsValidToken(tokenLS);
           if (res) {
             const { data } = res;
@@ -96,7 +108,6 @@ function App() {
             }
             // if success
             const { foundUser } = data;
-            console.log(foundUser);
             setCurrentUser(foundUser);
           } else {
             // Обработка ошибки
@@ -117,7 +128,15 @@ function App() {
   }, []);
 
   return (
-    <Context.Provider value={{ currentUser, setCurrentUser, userInit }}>
+    <Context.Provider
+      value={{
+        currentUser,
+        setCurrentUser,
+        userInit,
+        usersFromSearch,
+        setUsersFromSearch,
+      }}
+    >
       <ThemeProvider theme={theme}>
         {location.pathname !== "/login" &&
           location.pathname !== "/registration" && <Header></Header>}
