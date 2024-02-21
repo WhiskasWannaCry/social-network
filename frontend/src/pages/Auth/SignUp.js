@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import { postSignUp } from "../../http/Fetches";
 import { Context } from "../../shared/Context";
+import { Button } from "@mui/material";
 
 const Container = styled("div")`
   display: flex;
@@ -18,7 +19,7 @@ const LoginContainer = styled("div")`
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
-  border: 1px solid ${({theme}) => theme.palette.primary.grey[3]};
+  border: 1px solid ${({ theme }) => theme.palette.primary.grey[3]};
   border-radius: 8px;
   padding: 8px 16px 8px 16px;
   width: 50%;
@@ -30,7 +31,7 @@ const LoginTitle = styled("div")`
   display: flex;
   justify-content: center;
   align-items: center;
-  color: ${({theme}) => theme.palette.primary.grey[1]};
+  color: ${({ theme }) => theme.palette.primary.grey[1]};
   width: 100%;
   height: 10%;
   font-family: Roboto;
@@ -47,8 +48,8 @@ const InputsContainer = styled("div")`
 `;
 
 const Input = styled("input")`
-  background-color: ${({theme}) => theme.palette.primary.grey[5]};
-  border: 1px solid ${({theme}) => theme.palette.primary.grey[3]};
+  background-color: ${({ theme }) => theme.palette.primary.grey[5]};
+  border: 1px solid ${({ theme }) => theme.palette.primary.grey[3]};
   border-radius: 8px;
   padding: 8px;
   width: 100%;
@@ -58,13 +59,14 @@ const Input = styled("input")`
 `;
 
 const Btn = styled("div")`
-cursor: ${({disabled}) => !disabled && "pointer"};
+  cursor: ${({ disabled }) => !disabled && "pointer"};
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: ${(props) =>
-    (props.isSignUpBtn && props.theme.palette.primary.green[1]) || props.theme.palette.primary.grey[5]};
-  ${({ disabled,theme }) =>
+    (props.isSignUpBtn && props.theme.palette.primary.green[1]) ||
+    props.theme.palette.primary.grey[5]};
+  ${({ disabled, theme }) =>
     disabled
       ? `
       background-color: ${theme.palette.primary.grey[5]};}
@@ -97,8 +99,8 @@ const SignUp = () => {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [repeatPassword, setRepeatPassword] = useState(null);
-  const currentUserContext = useContext(Context)
-  const {setCurrentUser} = currentUserContext;
+  const currentUserContext = useContext(Context);
+  const { setCurrentUser } = currentUserContext;
   const navigate = useNavigate();
   const disabled =
     !name ||
@@ -117,32 +119,32 @@ const SignUp = () => {
     function checkNamesFields(username) {
       // Only words - ru, en, ua
       const regex = /^[a-zA-Zа-яА-ЯёЁіІїЇґҐ]{2,15}$/;
-      return regex.test(username)
+      return regex.test(username);
     }
     const signUp = async () => {
-      if(!checkNamesFields(name)) {
-        alert('The name is incorrect!')
-        return
+      if (!checkNamesFields(name)) {
+        alert("The name is incorrect!");
+        return;
       }
-      if(!checkNamesFields(surname)) {
-        alert('The surname is incorrect!')
-        return
+      if (!checkNamesFields(surname)) {
+        alert("The surname is incorrect!");
+        return;
       }
       const res = await postSignUp(name, surname, email, password);
-      const {data} = res;
-      const {success} = data;
-      if(!success) {
-        const {message} = data;
-        alert(message)
-        return
+      const { data } = res;
+      const { success } = data;
+      if (!success) {
+        const { message } = data;
+        alert(message);
+        return;
       }
-      const {user,token} = data;
-      const {_id} = user;
-      console.log(_id)
+      const { user, token } = data;
+      const { _id } = user;
+      console.log(_id);
       localStorage.setItem("token", JSON.stringify({ value: token }));
-      setCurrentUser(user)
-      navigate(`/profile/${_id}`)
-      }
+      setCurrentUser(user);
+      navigate(`/profile/${_id}`);
+    };
     return signUp();
   };
   return (
@@ -176,13 +178,21 @@ const SignUp = () => {
             onChange={(e) => setRepeatPassword(e.target.value)}
           ></Input>
         </InputsContainer>
-        <Btn
+        {/* <Btn
           isSignUpBtn={true}
           disabled={disabled}
           onClick={() => !disabled && handleClickSignUp()}
         >
           Sign Up
-        </Btn>
+        </Btn> */}
+        <Button
+          variant="contained"
+          disabled={disabled ? "disabled" : null}
+          sx={{}}
+          onClick={handleClickSignUp}
+        >
+          Sign Up
+        </Button>
         <HaveNotAccountTitle>Have an account?</HaveNotAccountTitle>
         <Btn onClick={() => navigate("/login")}>Log In</Btn>
       </LoginContainer>

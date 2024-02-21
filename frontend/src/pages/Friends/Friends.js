@@ -16,7 +16,7 @@ const Friends = () => {
   const { currentUser, setCurrentUser, userInit } = currentUserContext;
   return (
     <Container>
-      {currentUser.friends && currentUser.friends.length ? null : ( // нужно будет написать когда у юзера есть друзья
+      {currentUser.socialContacts.friends && currentUser.socialContacts.friends.length ? null : ( // нужно будет написать когда у юзера есть друзья
         <>
           <FriendsMainSide></FriendsMainSide>
           <FriendsFiltersSide></FriendsFiltersSide>

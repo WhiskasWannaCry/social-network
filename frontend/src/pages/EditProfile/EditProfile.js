@@ -94,7 +94,7 @@ const EditProfile = () => {
               height={"32px"}
               type="text"
               placeholder="Some info about you"
-              value={currentUser && currentUser.name || ""}
+              value={currentUser && currentUser.primary.name || ""}
             ></InputInfo>
           </InfoForChange>
         </InfoContainer>
@@ -105,7 +105,7 @@ const EditProfile = () => {
               height={"32px"}
               type="text"
               placeholder="Some info about you"
-              value={currentUser && currentUser.surname || ""}
+              value={currentUser && currentUser.primary.surname || ""}
             ></InputInfo>
           </InfoForChange>
         </InfoContainer>

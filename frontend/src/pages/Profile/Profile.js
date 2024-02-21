@@ -3,10 +3,11 @@ import MainSide from "./ProfileMainSide";
 import SecondarySide from "./ProfileSecondarySide";
 import backgroundImage from "../../images/posts_img/post_img2.jpg";
 import userImg from "../../images/posts_img/post_img4.jpg";
-import { useNavigate } from "react-router-dom";
-import { useContext, useEffect } from "react";
-import { Context } from '../../shared/Context'
+import { useNavigate, useParams } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { Context } from "../../shared/Context";
 import { Avatar } from "@mui/material";
+import { getUserInfo } from "../../http/Fetches";
 
 const Container = styled("div")`
   width: 100%;
@@ -28,27 +29,27 @@ const UserHeaderContainer = styled("div")`
 `;
 
 const ChangeBackground = styled("div")`
-cursor: pointer;
-position: absolute;
-display: flex;
-justify-content: center;
-align-items: center;
-padding: 8px 16px 8px 16px;
-top: 12px;
-right: 12px;
-z-index: 2;
-background: rgba(0, 0, 0, 0.5);
-border-radius: 8px;
-color: #FFF;
-text-align: center;
-font-family: Roboto;
-font-size: 14px;
-font-style: normal;
-font-weight: 500;
-&:hover {
-  background: rgba(0, 0, 0, 0.7);
-}
-`
+  cursor: pointer;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px 8px 16px;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  color: #fff;
+  text-align: center;
+  font-family: Roboto;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  &:hover {
+    background: rgba(0, 0, 0, 0.7);
+  }
+`;
 
 const UserBackground = styled("div")`
   position: absolute;
@@ -143,35 +144,65 @@ const UserBody = styled("div")`
 `;
 
 const Profile = () => {
-  const currentUserContext = useContext(Context)
-  const {currentUser,setCurrentUser} = currentUserContext; // нужно будет написать логику отображения профилей других юзеров
-  console.log(currentUser)
-  const avatarFullPath = `http://localhost:8000/${currentUser.avatar}`
-  const backgroundFullPath = `http://localhost:8000/${currentUser.background}`
-  const navigate = useNavigate()
+  const currentUserContext = useContext(Context);
+  const navigate = useNavigate();
+  const { _id: profileId } = useParams();
+  const { currentUser, usersFromSearch } = currentUserContext; // нужно будет написать логику отображения профилей других юзеров
+
   useEffect(() => {
-    document.title = 'My profile';
+    const fetchUserInfo = async (profileId) => {
+      const data = await getUserInfo(profileId)
+      console.log(data)
+    }
+    fetchUserInfo(profileId)
+  },[])
+
+  useEffect(() => {
+    document.title = "My profile";
   }, []);
+  let avatarFullPath =
+    `http://localhost:8000/${currentUser.images.avatar}` || userImg;
+  let backgroundFullPath =
+    `http://localhost:8000/${currentUser.images.background}` || backgroundImage;
+
   return (
     <Container>
       <UserHeaderContainer>
         <UserBackground bgImg={backgroundFullPath}></UserBackground>
-        <ChangeBackground>Change background</ChangeBackground>
+        {profileId == currentUser._id && (
+          <ChangeBackground>Change background</ChangeBackground>
+        )}
         <InfoOuterContainer>
-          <Avatar alt="user-avatar" src={currentUser.avatar && avatarFullPath || null} sx={{
-            position: "absolute",
-            top:0,
-            left: "42px",
-            width: "112px",
-            height: "112px",
-            border:  (theme) => "1px solid" + theme.palette.primary.grey[5]
-          }}></Avatar>
+          <Avatar
+            alt="user-avatar"
+            src={(currentUser.images.avatar && avatarFullPath) || null}
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: "42px",
+              width: "112px",
+              height: "112px",
+              border: (theme) => "1px solid" + theme.palette.primary.grey[5],
+            }}
+          ></Avatar>
           <UserInfoContainer>
             <UserInfo>
-              <UserName>Karim Zerman</UserName>
-              <AddInfoBtn>Provide information about yourself</AddInfoBtn>
+              <UserName>
+                {currentUser.primary.name + " " + currentUser.primary.surname}
+              </UserName>
+              {profileId == currentUser._id && (
+                <AddInfoBtn>Provide information about yourself</AddInfoBtn>
+              )}
             </UserInfo>
-            <EditProfileBtn onClick={() => currentUser._id && navigate(`/edit/${currentUser._id}`)}>Edit profile</EditProfileBtn>
+            {profileId === currentUser._id && (
+              <EditProfileBtn
+                onClick={() =>
+                  currentUser._id && navigate(`/edit/${currentUser._id}`)
+                }
+              >
+                Edit profile
+              </EditProfileBtn>
+            )}
           </UserInfoContainer>
         </InfoOuterContainer>
       </UserHeaderContainer>
