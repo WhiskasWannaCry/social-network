@@ -31,14 +31,29 @@ class authController {
         });
       }
       const hashPassword = bcrypt.hashSync(password, 7);
+
       let user = new User({
-        name,
-        surname,
-        email,
-        password: hashPassword,
-        role,
-        avatar: "user-avatar.png",
-        background: "user-background.jpg",
+        primary: {
+          name,
+          surname,
+          dateOfBirth: "",
+          email,
+          website: "",
+          description: "",
+        },
+        images: {
+          avatar: "user-avatar.png",
+          background: "user-background.jpg",
+        },
+        socialContacts: {
+          friends: [],
+          followers: [],
+          following: [],
+        },
+        secret: {
+          password: hashPassword,
+          role,
+        },
       });
       await user.save();
       const token = generateAccessToken(user._id);
@@ -48,29 +63,25 @@ class authController {
         token,
         user: {
           _id: user._id,
-          name,
-          surname,
-          email,
-          role,
-          avatar: user.avatar,
-          background: user.avatar,
+          primary: user.primary,
+          images: user.images,
+          socialContacts: user.socialContacts,
         },
       });
     } catch (e) {
-      res
-        .status(400)
-        .json({
-          success: false,
-          message: "Registration error",
-          error: e.toString(),
-        });
+      res.status(400).json({
+        success: false,
+        message: "Registration error",
+        error: e.toString(),
+      });
     }
   }
 
   async login(req, res) {
     try {
       const { email, password } = req.body;
-      let user = await User.findOne({ email });
+      console.log(email)
+      let user = await User.findOne({ 'primary.email':email });
       if (!user) {
         return res.json({
           success: false,
@@ -78,17 +89,22 @@ class authController {
         });
       }
       const token = (user && generateAccessToken(user._id)) || null;
-      const validPassword = bcrypt.compareSync(password, user.password);
+      const validPassword = bcrypt.compareSync(password, user.secret.password);
       if (!validPassword) {
         return res.json({ success: false, message: "Password is not valid" });
       }
-      const { _id, name, surname, role, avatar, background } = user;
       return res.json({
         success: true,
         token,
-        user: { _id, name, surname, email, role, avatar, background },
+        user: {
+          _id: user._id,
+          primary: user.primary,
+          images: user.images,
+          socialContacts: user.socialContacts,
+        },
       });
     } catch (e) {
+      console.log(e)
       res.json({
         success: false,
         message: "Something happened on server",
