@@ -3,6 +3,7 @@ import userImg from "../images/posts_img/post_img4.jpg";
 import { Avatar } from "@mui/material";
 import { useContext } from "react";
 import { Context } from "./Context";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled("div")`
   display: flex;
@@ -32,7 +33,13 @@ const UserImg = styled("img")`
 const UserInfo = styled("div")`
   display: flex;
   flex-direction: column;
-  width: 50%;
+  // if it's current user => remove doBtn and width info block +30%
+  ${({ userId, currentUserId }) =>
+    userId != currentUserId
+      ? `
+    width: 50%;`
+      : `width: 80%;`}
+
   height: 100%;
   padding: 0 8px 0 8px;
 `;
@@ -77,32 +84,33 @@ const DoBtn = styled("div")`
   }
 `;
 
-// Возраст рендерить только если он указан у юзера!
-const UserCardSearch = () => {
+const UserCardSearch = ({ user }) => {
   const currentUserContext = useContext(Context);
   const { currentUser, setCurrentUser } = currentUserContext; // нужно будет написать логику отображения профилей других юзеров
-  const avatarFullPath =
-    currentUser && `http://localhost:8000/${currentUser.avatar}`;
+  const navigate = useNavigate();
+  const avatarFullPath = user && `http://localhost:8000/${user.images.avatar}`;
   return (
     <Container>
       <Avatar
         alt="user-avatar"
-        src={(currentUser.avatar && avatarFullPath) || null}
+        src={(user.images.avatar && avatarFullPath) || null}
         sx={{
           width: "64px",
           height: "64px",
           border: (theme) => "1px solid" + theme.palette.primary.grey[5],
         }}
       ></Avatar>
-      <UserInfo>
-        <UserName>
-          {currentUser.name &&
-            currentUser.surname &&
-            currentUser.name + " " + currentUser.surname}
+      <UserInfo userId={user._id} currentUserId={currentUser._id}>
+        <UserName onClick={() => navigate(`../profile/${user._id}`)}>
+          {user.primary.name &&
+            user.primary.surname &&
+            user.primary.name + " " + user.primary.surname}
         </UserName>
-        <UserAge>24 years</UserAge>
+        {user.primary.dateOfBirth ? (
+          <UserAge>{user.primary.dateOfBirth}</UserAge>
+        ) : null}
       </UserInfo>
-      <DoBtn>Add as Friend</DoBtn>
+      {user._id != currentUser._id && <DoBtn>Add as Friend</DoBtn>}
     </Container>
   );
 };
