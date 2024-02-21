@@ -87,15 +87,15 @@ height: 100%;
 
 const FriendsMainSide = () => {
   const currentUserContext = useContext(Context);
-  const { currentUser, setCurrentUser, userInit } = currentUserContext;
-  const [users,setUsers] = useState([])
+  const { usersFromSearch, setUsersFromSearch } = currentUserContext;
+  
 
   const fetchAllUsers = async () => {
     const {data} = await getUsersInfo()
     const {success} = data;
     if(success) {
       const {users} = data;
-      setUsers(users)
+      setUsersFromSearch(users)
     }
   }
   fetchAllUsers()
@@ -103,7 +103,7 @@ const FriendsMainSide = () => {
     <Container>
       <Header>
         <Title>People</Title>
-        <PeopleCounter>{users.length}</PeopleCounter>
+        <PeopleCounter>{usersFromSearch.length}</PeopleCounter>
       </Header>
       <SearchBarContainer>
         <SearchBar placeholder="Enter your request"></SearchBar>
@@ -112,23 +112,13 @@ const FriendsMainSide = () => {
         </SearchBtn>
       </SearchBarContainer>
       <UsersForSearch>
-        {users.length ? (
-          <UserCardSearch></UserCardSearch>
+        {usersFromSearch.length ? (
+          usersFromSearch.map(user => {
+            return (
+              <UserCardSearch user={user}></UserCardSearch>
+            )
+          })
         ) : null}
-        {/* <UserCardSearch></UserCardSearch>
-        <UserCardSearch></UserCardSearch>
-        <UserCardSearch></UserCardSearch>
-        <UserCardSearch></UserCardSearch>
-        <UserCardSearch></UserCardSearch>
-        <UserCardSearch></UserCardSearch>
-        <UserCardSearch></UserCardSearch>
-        <UserCardSearch></UserCardSearch>
-        <UserCardSearch></UserCardSearch>
-        <UserCardSearch></UserCardSearch>
-        <UserCardSearch></UserCardSearch>
-        <UserCardSearch></UserCardSearch>
-        <UserCardSearch></UserCardSearch>
-        <UserCardSearch></UserCardSearch> */}
       </UsersForSearch>
     </Container>
   );
