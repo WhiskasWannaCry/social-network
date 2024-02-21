@@ -89,7 +89,7 @@ const Header = () => {
   const currentUserContext = React.useContext(Context);
   const { currentUser, setCurrentUser, userInit } = currentUserContext;
 
-  const avatarFullPath = `http://localhost:8000/${currentUser.avatar}`;
+  const avatarFullPath = `http://localhost:8000/${currentUser.images.avatar}`;
 
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -129,7 +129,7 @@ const Header = () => {
                   aria-haspopup="true"
                   aria-expanded={open ? "true" : undefined}
                   alt="user-avatar"
-                  src={(currentUser.avatar && avatarFullPath) || null}
+                  src={(currentUser.images.avatar && avatarFullPath) || null}
                   sx={{
                     width: "32px",
                     height: "32px",
