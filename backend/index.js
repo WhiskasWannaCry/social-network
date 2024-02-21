@@ -13,7 +13,6 @@ app.use(express.static("public/default"));
 app.use(express.json());
 app.use("/auth", authRouter);
 
-
 const PORT = process.env.PORT;
 const MONGO_URL = process.env.MONGO_URL;
 
@@ -49,18 +48,20 @@ start();
 
 app.get("/api/validation-token", async (req, res) => {
   const tokenForValidation = req.query;
-  console.log(tokenForValidation)
+  console.log(tokenForValidation);
   let decoded;
   try {
     decoded = jwt.verify(tokenForValidation.value, process.env.SECRET);
     // If token is verified, response to client success true end user's _id
     if (decoded) {
       const { id: userID } = decoded;
-      const foundUser = await User.findOne({ _id: userID });
-      const { _id, email, name, surname, role,avatar,background } = foundUser;
+      const filter = "-secret";
+      const foundUser = await User.findOne({ _id: userID }, filter);
+      // const { _id, email, name, surname, role,avatar,background } = foundUser;
       res.json({
         success: true,
-        foundUser: { _id, email, name, surname,role,avatar,background },
+        // foundUser: { _id, email, name, surname,role,avatar,background },
+        foundUser,
       });
     }
   } catch (err) {
@@ -75,15 +76,22 @@ app.get("/api/validation-token", async (req, res) => {
       console.error(err);
       res.sendStatus(500); // Internal server error for other errors
     }
-
   }
 });
 
 app.get("/api/search/get-all-users", async (req, res) => {
   const users = await User.find({}).limit(100);
-  if(users) {
-    res.json({success: true, users})
+  if (users) {
+    res.json({ success: true, users });
   } else {
-    res.json({success: false, message: 'Something errors on /api/search/get-all-users'})
+    res.json({
+      success: false,
+      message: "Something errors on /api/search/get-all-users",
+    });
   }
+});
+
+app.get("/api/search/get-user-info", async (req, res) => {
+  const {profileId} = req.body
+  console.log(profileId)
 });
