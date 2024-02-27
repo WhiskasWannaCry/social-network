@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import { postSignUp } from "../../http/Fetches";
 import { Context } from "../../shared/Context";
-import { Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 
 const Container = styled("div")`
   display: flex;
@@ -14,26 +14,24 @@ const Container = styled("div")`
   height: 100%;
 `;
 
-const LoginContainer = styled("div")`
+const SignUpContainer = styled("div")`
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
   align-items: center;
   border: 1px solid ${({ theme }) => theme.palette.primary.grey[3]};
   border-radius: 8px;
   padding: 8px 16px 8px 16px;
   width: 50%;
-  height: 500px;
-  gap: 12px;
+  gap: 24px;
 `;
 
-const LoginTitle = styled("div")`
+const SignUpTitle = styled("div")`
   display: flex;
   justify-content: center;
   align-items: center;
   color: ${({ theme }) => theme.palette.primary.grey[1]};
   width: 100%;
-  height: 10%;
+  height: 32px;
   font-family: Roboto;
   font-style: normal;
   font-weight: 500;
@@ -44,7 +42,6 @@ const InputsContainer = styled("div")`
   flex-direction: column;
   gap: 12px;
   width: 100%;
-  min-height: 30%;
 `;
 
 const Input = styled("input")`
@@ -93,15 +90,48 @@ const HaveNotAccountTitle = styled("span")`
   font-weight: 500;
 `;
 
+const ServerErrorMessage = styled("span")`
+  color: red;
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  min-height: 14px;
+`;
+
+const StyledButton = styled(Button)`
+  width: 100%;
+  &:disabled {
+    background-color: ${(props) => props.theme.palette.primary.grey[5]};
+    color: ${(props) => props.theme.palette.primary.grey[3]};
+  }
+`;
+
+const ChangeToLogin = styled("span")`
+  cursor: pointer;
+  color: ${({ theme }) => theme.palette.primary.blue[3]};
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
 const SignUp = () => {
   const [name, setName] = useState(null);
   const [surname, setSurname] = useState(null);
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [repeatPassword, setRepeatPassword] = useState(null);
+  const [serverError, setServerError] = useState("");
+
   const currentUserContext = useContext(Context);
   const { setCurrentUser } = currentUserContext;
+
   const navigate = useNavigate();
+
   const disabled =
     !name ||
     !surname ||
@@ -110,12 +140,6 @@ const SignUp = () => {
     !repeatPassword ||
     !(password === repeatPassword);
   const handleClickSignUp = () => {
-    const userData = {
-      name,
-      surname,
-      email,
-      password,
-    };
     function checkNamesFields(username) {
       // Only words - ru, en, ua
       const regex = /^[a-zA-Zа-яА-ЯёЁіІїЇґҐ]{2,15}$/;
@@ -149,19 +173,27 @@ const SignUp = () => {
   };
   return (
     <Container>
-      <LoginContainer>
-        <LoginTitle>Sign Up</LoginTitle>
+      <SignUpContainer>
+        <SignUpTitle>Sign Up</SignUpTitle>
         <InputsContainer>
-          <Input
-            type="text"
-            placeholder="Name"
-            onChange={(e) => setName(e.target.value)}
-          ></Input>
-          <Input
-            type="text"
-            placeholder="Surname"
-            onChange={(e) => setSurname(e.target.value)}
-          ></Input>
+          <Box
+            sx={{
+              display: "flex",
+              gap: "12px",
+            }}
+          >
+            <Input
+              type="text"
+              placeholder="Name"
+              onChange={(e) => setName(e.target.value)}
+            ></Input>
+            <Input
+              type="text"
+              placeholder="Surname"
+              onChange={(e) => setSurname(e.target.value)}
+            ></Input>
+          </Box>
+
           <Input
             type="email"
             placeholder="Email"
@@ -178,24 +210,20 @@ const SignUp = () => {
             onChange={(e) => setRepeatPassword(e.target.value)}
           ></Input>
         </InputsContainer>
-        {/* <Btn
-          isSignUpBtn={true}
-          disabled={disabled}
-          onClick={() => !disabled && handleClickSignUp()}
-        >
-          Sign Up
-        </Btn> */}
-        <Button
+        <StyledButton
           variant="contained"
-          disabled={disabled ? "disabled" : null}
-          sx={{}}
+          disabled={disabled}
           onClick={handleClickSignUp}
         >
           Sign Up
-        </Button>
-        <HaveNotAccountTitle>Have an account?</HaveNotAccountTitle>
-        <Btn onClick={() => navigate("/login")}>Log In</Btn>
-      </LoginContainer>
+        </StyledButton>
+        <HaveNotAccountTitle>
+          Have an account?{" "}
+          <ChangeToLogin onClick={() => navigate("/login")}>
+            Log In
+          </ChangeToLogin>
+        </HaveNotAccountTitle>
+      </SignUpContainer>
     </Container>
   );
 };
