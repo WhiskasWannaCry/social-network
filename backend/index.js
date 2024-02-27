@@ -48,7 +48,6 @@ start();
 
 app.get("/api/validation-token", async (req, res) => {
   const tokenForValidation = req.query;
-  console.log(tokenForValidation);
   let decoded;
   try {
     decoded = jwt.verify(tokenForValidation.value, process.env.SECRET);
@@ -92,6 +91,81 @@ app.get("/api/search/get-all-users", async (req, res) => {
 });
 
 app.get("/api/search/get-user-info", async (req, res) => {
-  const {profileId} = req.body
-  console.log(profileId)
+  const { profileId } = req.query;
+  const exclusions = { secret: 0 };
+  if (!profileId) {
+    return res.json({ success: false, message: "Profile id is undefined" });
+  }
+  const user = await User.findOne({ _id: profileId }, exclusions);
+  if (!user) {
+    return res.json({ success: false, message: "User was not found" });
+  }
+  return res.json({ success: true, user });
+});
+
+app.post("/api/follow-user", async (req, res) => {
+  const { userFollowerId, userFollowedId } = req.body;
+
+  if (!userFollowerId || !userFollowedId) {
+    return res.json({ success: false, message: "Ids are undefined" });
+  }
+
+  const userFollower = await User.findOne({ _id: userFollowerId });
+  const userFollowed = await User.findOne({ _id: userFollowedId });
+
+  if (!userFollower || !userFollowed) {
+    return res.json({ success: false, message: "User(s) was(were) not found" });
+  }
+
+  userFollower.socialContacts.following.push(userFollowedId);
+  await userFollower.save();
+
+  userFollowed.socialContacts.followers.push(userFollowerId);
+  await userFollowed.save();
+
+  return res.json({
+    success: true,
+    message: "Successful added follower and following",
+  });
+});
+
+app.post("/api/unfollow-user", async (req, res) => {
+  const { userFollowerId, userFollowedId } = req.body;
+
+  if (!userFollowerId || !userFollowedId) {
+    return res.json({ success: false, message: "Ids are undefined" });
+  }
+
+  // нахожу юзеров
+  const userFollower = await User.findOne({ _id: userFollowerId });
+  const userFollowed = await User.findOne({ _id: userFollowedId });
+
+  if (!userFollower || !userFollowed) {
+    return res.json({ success: false, message: "User(s) was(were) not found" });
+  }
+  // нахожу индекс того КТО подписан
+  const userFollowerIdx = userFollowed.socialContacts.followers.findIndex(
+    (followerId) => followerId.toString() === userFollowerId
+  );
+
+  // нахожу индекс того НА КОГО подписан
+  const userFollowedIdx = userFollower.socialContacts.following.findIndex(
+    (followerId) => followerId.toString() === userFollowedId
+  );
+  
+  // если тот КТО подписан есть в массиве у того НА КОГО подписан - удалить
+  if(userFollowerIdx !== -1) {
+    userFollowed.socialContacts.followers.splice(userFollowerIdx,1)
+  }
+  await userFollowed.save()
+  // если тот НА КОГО подписан есть в массиве у того КТО подписан - удалить
+  if(userFollowedIdx !== -1) {
+    userFollower.socialContacts.following.splice(userFollowedIdx,1)
+  }
+  await userFollower.save()
+
+  return res.json({
+    success: true,
+    message: "Successful removed follower and following",
+  });
 });

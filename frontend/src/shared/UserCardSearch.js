@@ -1,9 +1,10 @@
 import styled from "@emotion/styled";
 import userImg from "../images/posts_img/post_img4.jpg";
-import { Avatar } from "@mui/material";
-import { useContext } from "react";
+import { Avatar, Button } from "@mui/material";
+import { useContext, useEffect, useState } from "react";
 import { Context } from "./Context";
 import { useNavigate } from "react-router-dom";
+import { postFollow, postUnfollow } from "../http/Fetches";
 
 const Container = styled("div")`
   display: flex;
@@ -64,7 +65,7 @@ const UserAge = styled("div")`
   font-weight: 400;
 `;
 
-const DoBtn = styled("div")`
+const DoBtn = styled(Button)`
   cursor: pointer;
   display: flex;
   justify-content: center;
@@ -75,20 +76,47 @@ const DoBtn = styled("div")`
   width: 30%;
   padding: 4px 8px 4px 8px;
   border-radius: 4px;
-  font-family: Roboto;
-  font-size: 12.492px;
+  font-family: Roboto !important;
+  font-size: 10px;
   font-style: normal;
   font-weight: 400;
+  text-transform: none;
   &:hover {
     background-color: ${(props) => props.theme.palette.primary.hover[1]};
   }
 `;
 
 const UserCardSearch = ({ user }) => {
+  const [isFollow, setIsFollow] = useState(false);
+
   const currentUserContext = useContext(Context);
-  const { currentUser, setCurrentUser } = currentUserContext; // нужно будет написать логику отображения профилей других юзеров
+  const { currentUser, setCurrentUser } = currentUserContext;
   const navigate = useNavigate();
   const avatarFullPath = user && `http://localhost:8000/${user.images.avatar}`;
+
+  useEffect(() => {
+    if (user) {
+      const foundFollowers = user.socialContacts.followers.find(
+        (followerId) => followerId === currentUser._id
+      );
+      if (foundFollowers) {
+        setIsFollow(true);
+      }
+    }
+  }, [currentUser]);
+
+  const handleFollow = async () => {
+    const data = await postFollow(currentUser._id, user._id);
+    console.log(data);
+    setIsFollow(true);
+  };
+
+  const handleUnfollow = async () => {
+    const data = await postUnfollow(currentUser._id, user._id);
+    console.log(data);
+    setIsFollow(false);
+  }
+
   return (
     <Container>
       <Avatar
@@ -110,7 +138,13 @@ const UserCardSearch = ({ user }) => {
           <UserAge>{user.primary.dateOfBirth}</UserAge>
         ) : null}
       </UserInfo>
-      {user._id != currentUser._id && <DoBtn>Add as Friend</DoBtn>}
+      {currentUser && user._id != currentUser._id ? (
+        isFollow ? (
+          <DoBtn onClick={handleUnfollow}>Unfollow</DoBtn>
+        ) : (
+          <DoBtn onClick={handleFollow}>Follow</DoBtn>
+        )
+      ) : null}
     </Container>
   );
 };
