@@ -144,38 +144,57 @@ const UserBody = styled("div")`
 `;
 
 const Profile = () => {
-  const currentUserContext = useContext(Context);
   const navigate = useNavigate();
   const { _id: profileId } = useParams();
-  const { currentUser, usersFromSearch } = currentUserContext; // нужно будет написать логику отображения профилей других юзеров
+
+  const currentUserContext = useContext(Context);
+  const { currentUser, usersFromSearch } = currentUserContext;
+
+  const [profileOwner, setProfileOwner] = useState(null);
 
   useEffect(() => {
     const fetchUserInfo = async (profileId) => {
-      const data = await getUserInfo(profileId)
-      console.log(data)
-    }
-    fetchUserInfo(profileId)
-  },[])
+      const { data } = await getUserInfo(profileId);
+      const { success } = data;
+      if (!success && data) {
+        const { message } = data;
+        console.log(message);
+        alert(message);
+        return;
+      }
+      const { user } = data;
+      setProfileOwner(user);
+    };
+    fetchUserInfo(profileId);
+  }, [profileId]);
 
   useEffect(() => {
-    document.title = "My profile";
-  }, []);
+    if (profileOwner) {
+      if (profileOwner._id === currentUser._id) {
+        document.title = "My profile";
+      } else {
+        document.title =
+          profileOwner.primary.name + " " + profileOwner.primary.surname;
+      }
+    }
+  }, [profileId, profileOwner]);
   let avatarFullPath =
-    `http://localhost:8000/${currentUser.images.avatar}` || userImg;
+    `http://localhost:8000/${profileOwner?.images.avatar}` || userImg;
   let backgroundFullPath =
-    `http://localhost:8000/${currentUser.images.background}` || backgroundImage;
+    `http://localhost:8000/${profileOwner?.images.background}` ||
+    backgroundImage;
 
   return (
     <Container>
       <UserHeaderContainer>
         <UserBackground bgImg={backgroundFullPath}></UserBackground>
-        {profileId == currentUser._id && (
+        {profileOwner?._id == currentUser._id && (
           <ChangeBackground>Change background</ChangeBackground>
         )}
         <InfoOuterContainer>
           <Avatar
             alt="user-avatar"
-            src={(currentUser.images.avatar && avatarFullPath) || null}
+            src={avatarFullPath || null}
             sx={{
               position: "absolute",
               top: 0,
@@ -188,13 +207,22 @@ const Profile = () => {
           <UserInfoContainer>
             <UserInfo>
               <UserName>
-                {currentUser.primary.name + " " + currentUser.primary.surname}
+                {profileOwner &&
+                  profileOwner?.primary.name +
+                    " " +
+                    profileOwner?.primary.surname}
               </UserName>
-              {profileId == currentUser._id && (
-                <AddInfoBtn>Provide information about yourself</AddInfoBtn>
+              {profileOwner?._id == currentUser._id && (
+                <AddInfoBtn
+                  onClick={() =>
+                    currentUser._id && navigate(`/edit/${currentUser._id}`)
+                  }
+                >
+                  Provide information about yourself
+                </AddInfoBtn>
               )}
             </UserInfo>
-            {profileId === currentUser._id && (
+            {profileOwner?._id === currentUser._id && (
               <EditProfileBtn
                 onClick={() =>
                   currentUser._id && navigate(`/edit/${currentUser._id}`)
@@ -207,8 +235,8 @@ const Profile = () => {
         </InfoOuterContainer>
       </UserHeaderContainer>
       <UserBody>
-        <MainSide></MainSide>
-        <SecondarySide></SecondarySide>
+        <MainSide profileOwner={profileOwner}></MainSide>
+        <SecondarySide profileOwner={profileOwner}></SecondarySide>
       </UserBody>
     </Container>
   );

@@ -65,7 +65,8 @@ const SearchBar = styled("input")`
   }
 `;
 
-const SearchBtn = styled("btn")`
+const SearchBtn = styled("span")`
+  cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -115,7 +116,7 @@ const FriendsMainSide = () => {
         {usersFromSearch.length ? (
           usersFromSearch.map(user => {
             return (
-              <UserCardSearch user={user}></UserCardSearch>
+              <UserCardSearch key={user._id} user={user}></UserCardSearch>
             )
           })
         ) : null}

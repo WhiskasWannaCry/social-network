@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
 import beginImg from "../../images/icons/begin.svg";
 import beginCloseImg from "../../images/icons/begin_close.svg";
 import nonePostsImg from "../../images/icons/none_posts.svg";
@@ -7,6 +7,7 @@ import educationIcon from "../../images/icons/education.png";
 import musicIcon from "../../images/icons/music.png";
 import AddNewPost from "../../shared/AddNewPost";
 import styled from "@emotion/styled";
+import { Context } from "../../shared/Context";
 
 const Container = styled("div")`
   display: flex;
@@ -18,7 +19,7 @@ const BeginContainer = styled("div")`
   width: 100%;
   height: 198px;
   border-radius: 12px;
-  border: 1px solid ${({theme}) => theme.palette.primary.grey[4]};
+  border: 1px solid ${({ theme }) => theme.palette.primary.grey[4]};
   overflow: hidden;
   margin-bottom: 16px;
   transition: background-color 0.3s;
@@ -48,7 +49,7 @@ const BeginImg = styled("img")`
 `;
 
 const BeginTitle = styled("span")`
-  color: ${({theme}) => theme.palette.primary.grey[1]};
+  color: ${({ theme }) => theme.palette.primary.grey[1]};
   font-family: Roboto;
   font-size: 16.734px;
   font-style: normal;
@@ -78,10 +79,10 @@ const BeginBlocksContainer = styled("div")`
   transition: background-color 0.3s;
   transition: color 0.3s;
   &::-webkit-scrollbar {
-    background-color: ${({theme}) => theme.palette.primary.grey[3]};
+    background-color: ${({ theme }) => theme.palette.primary.grey[3]};
   }
   &::-webkit-scrollbar-thumb {
-    background: ${({theme}) => theme.palette.primary.grey[3]};
+    background: ${({ theme }) => theme.palette.primary.grey[3]};
   }
 `;
 
@@ -91,12 +92,12 @@ const BeginBlock = styled("div")`
   flex-direction: column;
   min-width: 224px;
   height: 118px;
-  background: ${({theme}) => theme.palette.primary.grey[5]};
+  background: ${({ theme }) => theme.palette.primary.grey[5]};
   padding: 16px;
   border-radius: 10px;
-  border: 1px solid ${({theme}) => theme.palette.primary.grey[4]};
+  border: 1px solid ${({ theme }) => theme.palette.primary.grey[4]};
   &:hover {
-    background-color: ${({theme}) => theme.palette.primary.grey[3]};
+    background-color: ${({ theme }) => theme.palette.primary.grey[3]};
   }
 `;
 
@@ -106,7 +107,7 @@ const BeginBlockIcon = styled("img")`
 `;
 
 const BeginBlockTitle = styled("span")`
-  color: ${({theme}) => theme.palette.primary.grey[1]};
+  color: ${({ theme }) => theme.palette.primary.grey[1]};
   font-family: Roboto;
   font-size: 12.898px;
   font-style: normal;
@@ -133,8 +134,8 @@ const PostsNav = styled("div")`
   height: 64px;
   width: 100%;
   border-radius: 12px 12px 0 0;
-  border: 1px solid ${({theme}) => theme.palette.primary.grey[3]};
-  background: ${({theme}) => theme.palette.primary.grey[5]};
+  border: 1px solid ${({ theme }) => theme.palette.primary.grey[3]};
+  background: ${({ theme }) => theme.palette.primary.grey[5]};
 `;
 
 const PostsNavBtn = styled("div")`
@@ -153,11 +154,11 @@ const PostsNavBtn = styled("div")`
 const PostsContainer = styled("div")`
   min-height: 159px;
   width: 100%;
-  border-bottom: 1px solid ${({theme}) => theme.palette.primary.grey[3]};
-  border-left: 1px solid ${({theme}) => theme.palette.primary.grey[3]};
-  border-right: 1px solid ${({theme}) => theme.palette.primary.grey[3]};
+  border-bottom: 1px solid ${({ theme }) => theme.palette.primary.grey[3]};
+  border-left: 1px solid ${({ theme }) => theme.palette.primary.grey[3]};
+  border-right: 1px solid ${({ theme }) => theme.palette.primary.grey[3]};
   border-radius: 0 0 12px 12px;
-  background: ${({theme}) => theme.palette.primary.grey[5]};
+  background: ${({ theme }) => theme.palette.primary.grey[5]};
 `;
 
 const NonePostsContainer = styled("div")`
@@ -180,9 +181,11 @@ const NonePostsTitle = styled("div")`
   font-weight: 400;
 `;
 
-const MainSide = () => {
+const MainSide = ({ profileOwner }) => {
   const scrollContainerRef = useRef(null);
   const [scrollLeft, setScrollLeft] = useState(0);
+  const currentUserContext = useContext(Context);
+  const { currentUser } = currentUserContext;
 
   const handleWheel = (e) => {
     // Установите желаемую скорость прокрутки
@@ -201,44 +204,61 @@ const MainSide = () => {
   };
   return (
     <Container>
-      <BeginContainer>
-        <BeginTopContainer>
-          <BeginTitleContainer>
-            <BeginImg src={beginImg} alt="beginImg"></BeginImg>
-            <BeginTitle>Where to begin?</BeginTitle>
-          </BeginTitleContainer>
-          <BeginCloseBtn>
-            <BeginCloseImg src={beginCloseImg} alt="beginClose"></BeginCloseImg>
-          </BeginCloseBtn>
-        </BeginTopContainer>
-        <BeginBlocksContainer ref={scrollContainerRef} onWheel={handleWheel}>
-          <BeginBlock>
-            <BeginBlockIcon src={friendsIcon} alt="blockIcon"></BeginBlockIcon>
-            <BeginBlockTitle>Subscribe to friends</BeginBlockTitle>
-            <BeginBlockDesctiption>
-              follow the newspeople you are interested in
-            </BeginBlockDesctiption>
-          </BeginBlock>
-          <BeginBlock>
-            <BeginBlockIcon
-              src={educationIcon}
-              alt="blockIcon"
-            ></BeginBlockIcon>
-            <BeginBlockTitle>Write your education</BeginBlockTitle>
-            <BeginBlockDesctiption>
-              This way you will be found faster by those with what did you study
-            </BeginBlockDesctiption>
-          </BeginBlock>
-          <BeginBlock>
-            <BeginBlockIcon src={musicIcon} alt="blockIcon"></BeginBlockIcon>
-            <BeginBlockTitle>Add music</BeginBlockTitle>
-            <BeginBlockDesctiption>
-              Listen to tracks and albums favorite artists
-            </BeginBlockDesctiption>
-          </BeginBlock>
-        </BeginBlocksContainer>
-      </BeginContainer>
-      <AddNewPost></AddNewPost>
+      {profileOwner && profileOwner?._id === currentUser._id && (
+        <>
+          <BeginContainer>
+            <BeginTopContainer>
+              <BeginTitleContainer>
+                <BeginImg src={beginImg} alt="beginImg"></BeginImg>
+                <BeginTitle>Where to begin?</BeginTitle>
+              </BeginTitleContainer>
+              <BeginCloseBtn>
+                <BeginCloseImg
+                  src={beginCloseImg}
+                  alt="beginClose"
+                ></BeginCloseImg>
+              </BeginCloseBtn>
+            </BeginTopContainer>
+            <BeginBlocksContainer
+              ref={scrollContainerRef}
+              onWheel={handleWheel}
+            >
+              <BeginBlock>
+                <BeginBlockIcon
+                  src={friendsIcon}
+                  alt="blockIcon"
+                ></BeginBlockIcon>
+                <BeginBlockTitle>Subscribe to friends</BeginBlockTitle>
+                <BeginBlockDesctiption>
+                  follow the newspeople you are interested in
+                </BeginBlockDesctiption>
+              </BeginBlock>
+              <BeginBlock>
+                <BeginBlockIcon
+                  src={educationIcon}
+                  alt="blockIcon"
+                ></BeginBlockIcon>
+                <BeginBlockTitle>Write your education</BeginBlockTitle>
+                <BeginBlockDesctiption>
+                  This way you will be found faster by those with what did you
+                  study
+                </BeginBlockDesctiption>
+              </BeginBlock>
+              <BeginBlock>
+                <BeginBlockIcon
+                  src={musicIcon}
+                  alt="blockIcon"
+                ></BeginBlockIcon>
+                <BeginBlockTitle>Add music</BeginBlockTitle>
+                <BeginBlockDesctiption>
+                  Listen to tracks and albums favorite artists
+                </BeginBlockDesctiption>
+              </BeginBlock>
+            </BeginBlocksContainer>
+          </BeginContainer>
+          <AddNewPost></AddNewPost>
+        </>
+      )}
       <PostsNav>
         <PostsNavBtn>All posts</PostsNavBtn>
         <PostsNavBtn>My posts</PostsNavBtn>
