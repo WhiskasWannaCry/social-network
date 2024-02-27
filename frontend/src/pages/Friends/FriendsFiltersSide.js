@@ -153,9 +153,9 @@ const FriendsFiltersSide = () => {
         <SortByAgeSelect name="age_select">
           {agesArr.map((age) =>
             age ? (
-              <SortByAgeOption value={age}>From {age}</SortByAgeOption>
+              <SortByAgeOption key={age} value={age}>From {age}</SortByAgeOption>
             ) : (
-              <SortByAgeOption value={age} defaultValue>
+              <SortByAgeOption key={age} value={age} defaultValue>
                 From
               </SortByAgeOption>
             )
@@ -165,9 +165,9 @@ const FriendsFiltersSide = () => {
         <SortByAgeSelect>
           {agesArr.map((age) =>
             age > 0 ? (
-              <SortByAgeOption value={age}>To {age}</SortByAgeOption>
+              <SortByAgeOption key={age} value={age}>To {age}</SortByAgeOption>
             ) : (
-              <SortByAgeOption value={age} defaultValue>
+              <SortByAgeOption key={age} value={age} defaultValue>
                 To
               </SortByAgeOption>
             )
