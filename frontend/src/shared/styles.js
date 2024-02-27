@@ -49,6 +49,9 @@ export const theme = createTheme({
       white: {
         1: "#F1F1F1",
       },
+      blue: {
+        3: "rgb(113, 170, 235)",
+      }
     },
   },
 });
