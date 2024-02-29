@@ -104,3 +104,15 @@ export const postUnfollow = async (userFollowerId, userFollowedId) => {
     return catchFunc(error)
   }
 };
+
+export const postAddAsFriend = async (userFollowerId, userFollowedId) => {
+  try {
+    const data = await axios.post("http://localhost:8000/api/add-as-friend-user", {
+      userFollowerId,
+      userFollowedId,
+    });
+    return data;
+  } catch (error) {
+    return catchFunc(error)
+  }
+};
