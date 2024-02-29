@@ -4,7 +4,7 @@ import { Avatar, Button } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import { Context } from "./Context";
 import { useNavigate } from "react-router-dom";
-import { postFollow, postUnfollow } from "../http/Fetches";
+import { postAddAsFriend, postFollow, postUnfollow } from "../http/Fetches";
 
 const Container = styled("div")`
   display: flex;
@@ -87,7 +87,8 @@ const DoBtn = styled(Button)`
 `;
 
 const UserCardSearch = ({ user }) => {
-  const [isFollow, setIsFollow] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollower, setIsFollower] = useState(false);
 
   const currentUserContext = useContext(Context);
   const { currentUser, setCurrentUser } = currentUserContext;
@@ -96,11 +97,17 @@ const UserCardSearch = ({ user }) => {
 
   useEffect(() => {
     if (user) {
-      const foundFollowers = user.socialContacts.followers.find(
-        (followerId) => followerId === currentUser._id
+      const userFollowing = user.socialContacts.followers.find(
+        (userFollowingId) => userFollowingId === currentUser._id
       );
-      if (foundFollowers) {
-        setIsFollow(true);
+      const userFollower = user.socialContacts.following.find(
+        (userFollowerId) => userFollowerId === currentUser._id
+      );
+      if (userFollowing) {
+        setIsFollowing(true);
+      }
+      if (userFollower) {
+        setIsFollower(true);
       }
     }
   }, [currentUser]);
@@ -108,14 +115,21 @@ const UserCardSearch = ({ user }) => {
   const handleFollow = async () => {
     const data = await postFollow(currentUser._id, user._id);
     console.log(data);
-    setIsFollow(true);
+    setIsFollowing(true);
   };
 
   const handleUnfollow = async () => {
     const data = await postUnfollow(currentUser._id, user._id);
     console.log(data);
-    setIsFollow(false);
-  }
+    setIsFollowing(false);
+  };
+
+  const handleAddAsFriend = async () => {
+    const data = await postAddAsFriend(currentUser._id, user._id);
+    console.log(data);
+    setIsFollowing(false);
+    setIsFollower(false);
+  };
 
   return (
     <Container>
@@ -138,13 +152,17 @@ const UserCardSearch = ({ user }) => {
           <UserAge>{user.primary.dateOfBirth}</UserAge>
         ) : null}
       </UserInfo>
-      {currentUser && user._id != currentUser._id ? (
-        isFollow ? (
-          <DoBtn onClick={handleUnfollow}>Unfollow</DoBtn>
-        ) : (
+      {currentUser &&
+        user._id != currentUser._id &&
+        (!isFollowing && !isFollower ? ( // если никто не подписан то кнопка "Следить"
           <DoBtn onClick={handleFollow}>Follow</DoBtn>
-        )
-      ) : null}
+        ) : isFollowing && !isFollower ? ( // если юзер подписан безответно то кнопка "Отписаться"
+          <DoBtn onClick={handleUnfollow}>Unfollow</DoBtn>
+        ) : isFollowing && isFollower ? (
+          <DoBtn onClick={handleUnfollow}>Remove friend</DoBtn>
+        ) : (
+          <DoBtn onClick={handleUnfollow}>Add as friend</DoBtn>
+        ))}
     </Container>
   );
 };
