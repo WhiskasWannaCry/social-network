@@ -34,7 +34,7 @@ const Body = styled("div")`
   display: flex;
   justify-content: center;
   margin-top: ${({ pathname }) =>
-    pathname != "/auth/login" && pathname != "/auth/registration" && "64px"};
+    pathname != "/login" && pathname != "/registration" && "64px"};
   gap: 4px;
   margin-bottom: 12px;
   min-height: 100%;
