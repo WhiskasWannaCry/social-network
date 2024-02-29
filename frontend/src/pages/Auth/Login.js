@@ -10,7 +10,7 @@ const Container = styled("div")`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 100%;
+  height: 100vh;
 `;
 
 const LoginContainer = styled("div")`
@@ -20,8 +20,11 @@ const LoginContainer = styled("div")`
   border: 1px solid ${({ theme }) => theme.palette.primary.grey[3]};
   border-radius: 8px;
   padding: 8px 16px 8px 16px;
-  width: 50%;
+  width: 40%;
   gap: 24px;
+  -webkit-box-shadow: 0px 0px 6px 2px rgba(0,0,0,0.5);
+-moz-box-shadow: 0px 0px 6px 2px rgba(0,0,0,0.5);
+box-shadow: 0px 0px 6px 2px rgba(0,0,0,0.5);
 `;
 
 const LoginTitle = styled("div")`
