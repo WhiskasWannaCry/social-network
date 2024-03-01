@@ -15,7 +15,7 @@ const defaultResponse = ({ res, success, message, data }) => {
     return res.json({ success, message });
   }
   if (success && data) {
-    return res.json({ success, data });
+    return res.json(success, data);
   }
   if (success && message) {
     return res.json({ success, message });
