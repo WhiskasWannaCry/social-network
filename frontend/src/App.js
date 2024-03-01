@@ -109,6 +109,9 @@ function App() {
             // if success
             const { foundUser } = data;
             setCurrentUser(foundUser);
+            if(location.pathname === '/login' || location.pathname === '/register') {
+              navigate(`/profile/${foundUser._id}`)
+            }
           } else {
             // Обработка ошибки
             console.log("Token error");
