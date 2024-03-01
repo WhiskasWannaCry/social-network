@@ -4,7 +4,7 @@ import { Avatar, Button } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import { Context } from "./Context";
 import { useNavigate } from "react-router-dom";
-import { postAddAsFriend, postFollow, postUnfollow } from "../http/Fetches";
+import { postAddAsFriend, postFollow, postRemoveFriend, postUnfollow } from "../http/Fetches";
 
 const Container = styled("div")`
   display: flex;
@@ -81,6 +81,9 @@ const DoBtn = styled(Button)`
   font-style: normal;
   font-weight: 400;
   text-transform: none;
+  -webkit-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
+  -moz-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
+  box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
   &:hover {
     background-color: ${(props) => props.theme.palette.primary.hover[1]};
   }
@@ -89,6 +92,7 @@ const DoBtn = styled(Button)`
 const UserCardSearch = ({ user }) => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [isFollower, setIsFollower] = useState(false);
+  const [isFriend, setIsFriend] = useState(false);
 
   const currentUserContext = useContext(Context);
   const { currentUser, setCurrentUser } = currentUserContext;
@@ -103,32 +107,68 @@ const UserCardSearch = ({ user }) => {
       const userFollower = user.socialContacts.following.find(
         (userFollowerId) => userFollowerId === currentUser._id
       );
+      const userFriend = user.socialContacts.friends.find(
+        (userFriendId) => userFriendId === currentUser._id
+      );
       if (userFollowing) {
         setIsFollowing(true);
       }
       if (userFollower) {
         setIsFollower(true);
       }
+      if (userFriend) {
+        setIsFollowing(false);
+        setIsFollower(false);
+        setIsFriend(true);
+      }
     }
   }, [currentUser]);
 
   const handleFollow = async () => {
     const data = await postFollow(currentUser._id, user._id);
-    console.log(data);
+    const {success} = data;
+    if(!success) {
+      const {message} = data;
+      console.log(message)
+      return
+    }
     setIsFollowing(true);
   };
 
   const handleUnfollow = async () => {
-    const data = await postUnfollow(currentUser._id, user._id);
-    console.log(data);
+    const {data} = await postUnfollow(currentUser._id, user._id);
+    const {success} = data;
+    if(!success) {
+      const {message} = data;
+      console.log(message)
+      return
+    }
     setIsFollowing(false);
   };
 
   const handleAddAsFriend = async () => {
-    const data = await postAddAsFriend(currentUser._id, user._id);
-    console.log(data);
+    const {data} = await postAddAsFriend(currentUser._id, user._id);
+    const {success} = data;
+    if(!success) {
+      const {message} = data;
+      console.log(message)
+      return
+    }
     setIsFollowing(false);
     setIsFollower(false);
+    setIsFriend(true);
+  };
+
+  const handleRemoveFriend = async () => {
+    const {data} = await postRemoveFriend(currentUser._id, user._id);
+    const {success} = data;
+    if(!success) {
+      const {message} = data;
+      console.log(message)
+      return
+    }
+    setIsFollower(true);
+    setIsFriend(false);
   };
 
   return (
@@ -154,15 +194,15 @@ const UserCardSearch = ({ user }) => {
       </UserInfo>
       {currentUser &&
         user._id != currentUser._id &&
-        (!isFollowing && !isFollower ? ( // если никто не подписан то кнопка "Следить"
+        (!isFollowing && !isFollower && !isFriend ? ( // если никто не подписан то кнопка "Следить"
           <DoBtn onClick={handleFollow}>Follow</DoBtn>
-        ) : isFollowing && !isFollower ? ( // если юзер подписан безответно то кнопка "Отписаться"
+        ) : isFollowing && !isFollower && !isFriend ? ( // если юзер подписан безответно то кнопка "Отписаться"
           <DoBtn onClick={handleUnfollow}>Unfollow</DoBtn>
-        ) : isFollowing && isFollower ? (
-          <DoBtn onClick={handleUnfollow}>Remove friend</DoBtn>
-        ) : (
-          <DoBtn onClick={handleUnfollow}>Add as friend</DoBtn>
-        ))}
+        ) : !isFollowing && isFollower && !isFriend ? (
+          <DoBtn onClick={handleAddAsFriend}>Add as friend</DoBtn>
+        ) : isFriend && !isFollowing && !isFollower ? (
+          <DoBtn onClick={handleRemoveFriend}>Remove friend</DoBtn>
+        ) : null)}
     </Container>
   );
 };

@@ -28,7 +28,7 @@ export const getIsValidToken = async (token) => {
     });
     return data;
   } catch (error) {
-    return catchFunc(error)
+    return catchFunc(error);
   }
 };
 
@@ -41,7 +41,7 @@ export const postSignUp = async (name, surname, email, password) => {
     );
     return data;
   } catch (error) {
-    return catchFunc(error)
+    return catchFunc(error);
   }
 };
 
@@ -50,7 +50,7 @@ export const postLogin = async (userData) => {
     const data = await axios.post("http://localhost:8000/auth/login", userData);
     return data;
   } catch (error) {
-    return catchFunc(error)
+    return catchFunc(error);
   }
 };
 
@@ -61,7 +61,7 @@ export const getUsersInfo = async () => {
     );
     return data;
   } catch (error) {
-    return catchFunc(error)
+    return catchFunc(error);
   }
 };
 
@@ -77,7 +77,7 @@ export const getUserInfo = async (profileId) => {
     );
     return data;
   } catch (error) {
-    return catchFunc(error)
+    return catchFunc(error);
   }
 };
 
@@ -89,7 +89,7 @@ export const postFollow = async (userFollowerId, userFollowedId) => {
     });
     return data;
   } catch (error) {
-    return catchFunc(error)
+    return catchFunc(error);
   }
 };
 
@@ -101,18 +101,36 @@ export const postUnfollow = async (userFollowerId, userFollowedId) => {
     });
     return data;
   } catch (error) {
-    return catchFunc(error)
+    return catchFunc(error);
   }
 };
 
-export const postAddAsFriend = async (userFollowerId, userFollowedId) => {
+export const postAddAsFriend = async (acceptedUserId, sentUserId) => {
   try {
-    const data = await axios.post("http://localhost:8000/api/add-as-friend-user", {
-      userFollowerId,
-      userFollowedId,
-    });
+    const data = await axios.post(
+      "http://localhost:8000/api/add-as-friend-user",
+      {
+        acceptedUserId,
+        sentUserId,
+      }
+    );
     return data;
   } catch (error) {
-    return catchFunc(error)
+    return catchFunc(error);
+  }
+};
+
+export const postRemoveFriend = async (iniciatorId, userToRemoveId) => {
+  try {
+    const data = await axios.post(
+      "http://localhost:8000/api/remove-friend-user",
+      {
+        iniciatorId,
+        userToRemoveId,
+      }
+    );
+    return data;
+  } catch (error) {
+    return catchFunc(error);
   }
 };

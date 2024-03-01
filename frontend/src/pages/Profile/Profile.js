@@ -26,6 +26,9 @@ const UserHeaderContainer = styled("div")`
   overflow: hidden;
   transition: background-color 0.3s;
   transition: color 0.3s;
+  -webkit-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
+  -moz-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
+  box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
 `;
 
 const ChangeBackground = styled("div")`
@@ -131,6 +134,9 @@ const EditProfileBtn = styled("div")`
   font-weight: 500;
   transition: background-color 0.3s;
   transition: color 0.3s;
+  -webkit-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
+  -moz-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
+  box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
   &:hover {
     background: ${(props) => props.theme.palette.primary.grey[3]};
   }
@@ -155,6 +161,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchUserInfo = async (profileId) => {
       const { data } = await getUserInfo(profileId);
+
       const { success } = data;
       if (!success && data) {
         const { message } = data;
@@ -163,6 +170,7 @@ const Profile = () => {
         return;
       }
       const { user } = data;
+
       setProfileOwner(user);
     };
     fetchUserInfo(profileId);
@@ -177,7 +185,7 @@ const Profile = () => {
           profileOwner.primary.name + " " + profileOwner.primary.surname;
       }
     }
-  }, [profileId, profileOwner]);
+  }, [profileOwner]);
   let avatarFullPath =
     `http://localhost:8000/${profileOwner?.images.avatar}` || userImg;
   let backgroundFullPath =
@@ -215,7 +223,7 @@ const Profile = () => {
               {profileOwner?._id == currentUser._id && (
                 <AddInfoBtn
                   onClick={() =>
-                    currentUser._id && navigate(`/edit/${currentUser._id}`)
+                    profileOwner._id && navigate(`/edit/${currentUser._id}`)
                   }
                 >
                   Provide information about yourself
@@ -225,7 +233,7 @@ const Profile = () => {
             {profileOwner?._id === currentUser._id && (
               <EditProfileBtn
                 onClick={() =>
-                  currentUser._id && navigate(`/edit/${currentUser._id}`)
+                  profileOwner._id && navigate(`/edit/${currentUser._id}`)
                 }
               >
                 Edit profile

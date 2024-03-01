@@ -25,6 +25,9 @@ const BeginContainer = styled("div")`
   transition: background-color 0.3s;
   transition: color 0.3s;
   transition: border 0.3s;
+  -webkit-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
+  -moz-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
+  box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
 `;
 
 const BeginTopContainer = styled("div")`
@@ -96,6 +99,9 @@ const BeginBlock = styled("div")`
   padding: 16px;
   border-radius: 10px;
   border: 1px solid ${({ theme }) => theme.palette.primary.grey[4]};
+  -webkit-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
+  -moz-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
+  box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
   &:hover {
     background-color: ${({ theme }) => theme.palette.primary.grey[3]};
   }
@@ -136,6 +142,9 @@ const PostsNav = styled("div")`
   border-radius: 12px 12px 0 0;
   border: 1px solid ${({ theme }) => theme.palette.primary.grey[3]};
   background: ${({ theme }) => theme.palette.primary.grey[5]};
+  -webkit-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
+  -moz-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
+  box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
 `;
 
 const PostsNavBtn = styled("div")`
@@ -159,6 +168,9 @@ const PostsContainer = styled("div")`
   border-right: 1px solid ${({ theme }) => theme.palette.primary.grey[3]};
   border-radius: 0 0 12px 12px;
   background: ${({ theme }) => theme.palette.primary.grey[5]};
+  -webkit-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
+  -moz-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
+  box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
 `;
 
 const NonePostsContainer = styled("div")`
@@ -223,16 +235,19 @@ const MainSide = ({ profileOwner }) => {
               ref={scrollContainerRef}
               onWheel={handleWheel}
             >
-              <BeginBlock>
-                <BeginBlockIcon
-                  src={friendsIcon}
-                  alt="blockIcon"
-                ></BeginBlockIcon>
-                <BeginBlockTitle>Subscribe to friends</BeginBlockTitle>
-                <BeginBlockDesctiption>
-                  follow the newspeople you are interested in
-                </BeginBlockDesctiption>
-              </BeginBlock>
+              {profileOwner &&
+                profileOwner.socialContacts.friends.length === 0 && (
+                  <BeginBlock>
+                    <BeginBlockIcon
+                      src={friendsIcon}
+                      alt="blockIcon"
+                    ></BeginBlockIcon>
+                    <BeginBlockTitle>Subscribe to friends</BeginBlockTitle>
+                    <BeginBlockDesctiption>
+                      follow the newspeople you are interested in
+                    </BeginBlockDesctiption>
+                  </BeginBlock>
+                )}
               <BeginBlock>
                 <BeginBlockIcon
                   src={educationIcon}

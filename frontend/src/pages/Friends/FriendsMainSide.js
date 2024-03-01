@@ -16,6 +16,9 @@ const Container = styled("div")`
   border-radius: 8px;
   border: 1px solid ${(props) => props.theme.palette.primary.grey[3]};
   padding: 16px;
+  -webkit-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
+  -moz-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
+  box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
 `;
 
 const Header = styled("div")`
@@ -82,24 +85,23 @@ const SearchImage = styled("img")`
 `;
 
 const UsersForSearch = styled("div")`
-width: 100%;
-height: 100%;
-`
+  width: 100%;
+  height: 100%;
+`;
 
 const FriendsMainSide = () => {
   const currentUserContext = useContext(Context);
   const { usersFromSearch, setUsersFromSearch } = currentUserContext;
-  
 
   const fetchAllUsers = async () => {
-    const {data} = await getUsersInfo()
-    const {success} = data;
-    if(success) {
-      const {users} = data;
-      setUsersFromSearch(users)
+    const { data } = await getUsersInfo();
+    const { success } = data;
+    if (success) {
+      const { users } = data;
+      setUsersFromSearch(users);
     }
-  }
-  fetchAllUsers()
+  };
+  fetchAllUsers();
   return (
     <Container>
       <Header>
@@ -113,13 +115,14 @@ const FriendsMainSide = () => {
         </SearchBtn>
       </SearchBarContainer>
       <UsersForSearch>
-        {usersFromSearch.length ? (
-          usersFromSearch.map(user => {
-            return (
-              <UserCardSearch key={user._id} user={user}></UserCardSearch>
-            )
-          })
-        ) : null}
+        {usersFromSearch.length
+          ? usersFromSearch.map((user) => {
+              // Нужно будет сделать чтобы юзер показывался первый, его друзья ниже, а потом все остальные
+              return (
+                <UserCardSearch key={user._id} user={user}></UserCardSearch>
+              );
+            })
+          : null}
       </UsersForSearch>
     </Container>
   );

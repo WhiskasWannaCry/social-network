@@ -14,6 +14,9 @@ const Container = styled("div")`
   border-radius: 8px;
   border: 1px solid ${(props) => props.theme.palette.primary.grey[3]};
   padding: 8px;
+  -webkit-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
+  -moz-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
+  box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
 `;
 
 const SortTitle = styled("div")`
