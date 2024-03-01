@@ -22,9 +22,9 @@ const LoginContainer = styled("div")`
   padding: 8px 16px 8px 16px;
   width: 40%;
   gap: 24px;
-  -webkit-box-shadow: 0px 0px 6px 2px rgba(0,0,0,0.5);
--moz-box-shadow: 0px 0px 6px 2px rgba(0,0,0,0.5);
-box-shadow: 0px 0px 6px 2px rgba(0,0,0,0.5);
+  -webkit-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
+  -moz-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
+  box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
 `;
 
 const LoginTitle = styled("div")`

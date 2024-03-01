@@ -23,6 +23,9 @@ const OuterContainer = styled("div")`
   border-bottom: 1px solid #292929;
   z-index: 10;
   width: 100%;
+  -webkit-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
+  -moz-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
+  box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
 `;
 
 const Container = styled("div")`

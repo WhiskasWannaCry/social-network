@@ -51,7 +51,10 @@ export const theme = createTheme({
       },
       blue: {
         3: "rgb(113, 170, 235)",
-      }
+      },
+      blackShadow: {
+        small: "0px 0px 6px 2px rgba(0,0,0,0.5)",
+      },
     },
   },
 });

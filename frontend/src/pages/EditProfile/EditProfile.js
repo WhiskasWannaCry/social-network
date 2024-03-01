@@ -1,7 +1,13 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "@emotion/styled";
 import { Context } from "../../shared/Context";
+
+import dayjs from "dayjs";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 const Container = styled("div")`
   display: flex;
@@ -45,7 +51,7 @@ const InfoTitle = styled("div")`
 `;
 
 const InfoForChange = styled("div")`
-  width: 70%;
+  width: 60%;
 `;
 
 const InputInfo = styled("input")`
@@ -55,7 +61,7 @@ const InputInfo = styled("input")`
   height: ${({ height }) => height};
   background-color: ${(props) => props.theme.palette.primary.grey[5]};
   border: 1px solid ${(props) => props.theme.palette.primary.grey[3]};
-  border-radius: 12px;
+  border-radius: 8px;
   color: ${(props) => props.theme.palette.primary.grey[1]};
 `;
 
@@ -73,16 +79,24 @@ const SaveChangesBtn = styled("div")`
   max-width: 200px;
   border-radius: 8px;
   &:hover {
-  background-color: ${(props) => props.theme.palette.primary.grey[4]};
-}
-`
+    background-color: ${(props) => props.theme.palette.primary.grey[4]};
+  }
+`;
 
 const EditProfile = () => {
+  const [date, setDate] = useState("2022-04-17");
+
   useEffect(() => {
     document.title = "Editing my profile";
   }, []);
   const currentUserContext = useContext(Context);
   const { currentUser, setCurrentUser, userInit } = currentUserContext;
+
+  const onChangeDate = e => {
+    // const newDate = new Date(e.target.value);
+    setDate(e.target.value);
+    console.log(date); //value picked from date picker
+  };
 
   return (
     <Container>
@@ -94,7 +108,7 @@ const EditProfile = () => {
               height={"32px"}
               type="text"
               placeholder="Some info about you"
-              value={currentUser && currentUser.primary.name || ""}
+              value={(currentUser && currentUser.primary.name) || ""}
             ></InputInfo>
           </InfoForChange>
         </InfoContainer>
@@ -105,7 +119,7 @@ const EditProfile = () => {
               height={"32px"}
               type="text"
               placeholder="Some info about you"
-              value={currentUser && currentUser.primary.surname || ""}
+              value={(currentUser && currentUser.primary.surname) || ""}
             ></InputInfo>
           </InfoForChange>
         </InfoContainer>
@@ -132,12 +146,13 @@ const EditProfile = () => {
         </InfoContainer>
         <HR></HR>
         <InfoContainer>
-          <InfoTitle>Phone number:</InfoTitle>
+          <InfoTitle>Date of Birth:</InfoTitle>
           <InfoForChange>
             <InputInfo
+              type="date"
               height={"32px"}
-              type="tel"
-              placeholder="Some info about you"
+              value={date}
+              onChange={(e) => onChangeDate(e)}
             ></InputInfo>
           </InfoForChange>
         </InfoContainer>
