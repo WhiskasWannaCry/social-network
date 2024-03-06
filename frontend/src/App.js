@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import "react-image-crop/dist/ReactCrop.css";
 import {
   Routes,
   Route,
@@ -100,7 +101,7 @@ function App() {
             const { success } = data;
             if (!success) {
               const { message } = data;
-              alert(message);
+              console.log(data)
               setCurrentUser(userInit);
               localStorage.setItem("token", JSON.stringify({ value: "0" }));
               navigate("/login");
