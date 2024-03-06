@@ -16,21 +16,6 @@ const Container = styled("div")`
   padding: 16px 0 16px 0;
 `;
 
-const UserImgContainer = styled("div")`
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  overflow: hidden;
-`;
-
-const UserImg = styled("img")`
-  width: 100%;
-`;
-
 const UserInfo = styled("div")`
   display: flex;
   flex-direction: column;
