@@ -44,9 +44,6 @@ const NoneFriendsContainer = styled("div")`
   align-items: center;
   width: 100%;
   height: 100%;
-  -webkit-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
-  -moz-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
-  box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
 `;
 
 const NoneFriendsTitle = styled("span")`
@@ -125,7 +122,7 @@ const SecondarySide = ({ profileOwner }) => {
             {profileOwner.socialContacts.friends.map(
               (friendId, idx) =>
                 idx < 9 && (
-                  <UserCardForProfile userId={friendId}></UserCardForProfile>
+                  <UserCardForProfile key={friendId + "UserCardForProfile"} userId={friendId}></UserCardForProfile>
                 )
             )}
           </Box>
@@ -154,7 +151,7 @@ const SecondarySide = ({ profileOwner }) => {
             }}
           >
             {profileOwner.socialContacts.followers.map((followerId) => (
-              <UserCardForProfile userId={followerId}></UserCardForProfile>
+              <UserCardForProfile key={followerId + "UserCardForProfile"} userId={followerId}></UserCardForProfile>
             ))}
           </Box>
         </FriendsRequestsContainer>
