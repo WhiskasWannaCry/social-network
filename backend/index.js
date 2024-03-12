@@ -1,6 +1,12 @@
 const express = require("express");
 const mongoose = require("mongoose");
+
 const authRouter = require("./routes/auth");
+const uploadRouter = require("./routes/upload");
+
+const path = require("path");
+const fs = require("fs");
+
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const { User } = require("./models");
@@ -14,10 +20,15 @@ require("dotenv").config();
 
 const app = express();
 app.use(cors());
+
+// Создаю статику для картинок аватарок и постов
+app.use("/avatars", express.static(path.join(__dirname, "public", "avatars")));
+app.use("/posts", express.static(path.join(__dirname, "public", "posts")));
 app.use(express.static("public/default"));
 
 app.use(express.json());
 app.use("/auth", authRouter);
+app.use("/api", uploadRouter);
 
 const PORT = process.env.PORT;
 const MONGO_URL = process.env.MONGO_URL;
@@ -99,15 +110,26 @@ app.get("/api/search/get-all-users", async (req, res) => {
 app.get("/api/search/get-user-info", async (req, res) => {
   const { profileId } = req.query;
   const exclusions = { secret: 0 };
+  
   if (!profileId) {
     return res.json({ success: false, message: "Profile id is undefined" });
   }
-  const user = await User.findOne({ _id: profileId }, exclusions);
-  if (!user) {
-    res.json({ res, success: false, message: "User was not found" });
+
+  if (!mongoose.Types.ObjectId.isValid(profileId)) {
+    return res.json({ success: false, message: "Invalid profile id" });
   }
 
-  return res.json({ success: true, user });
+  try {
+    const user = await User.findOne({ _id: profileId }, exclusions);
+    if (!user) {
+      res.json({ res, success: false, message: "User was not found" });
+    }
+
+    return res.json({ success: true, user });
+  } catch (e) {
+    console.error(e);
+    res.json({ res, success: false, message: e });
+  }
 });
 // требуется оптимизация кода
 app.post("/api/follow-user", async (req, res) => {
@@ -136,17 +158,66 @@ app.post("/api/unfollow-user", async (req, res) => {
 app.post("/api/add-as-friend-user", async (req, res) => {
   const { acceptedUserId, sentUserId } = req.body;
 
-  addAsFriendsUsers(res,acceptedUserId,sentUserId)
+  addAsFriendsUsers(res, acceptedUserId, sentUserId);
 });
 
 // требуется оптимизация кода
 app.post("/api/remove-friend-user", async (req, res) => {
   const { iniciatorId, userToRemoveId } = req.body;
 
-  removeFriend(res,iniciatorId,userToRemoveId)
+  removeFriend(res, iniciatorId, userToRemoveId);
 
   return res.json({
     success: true,
     message: "Successful friend and added to followers",
   });
+});
+
+// требуется оптимизация кода
+app.post("/api/change-user-info", async (req, res) => {
+  const { changedFields, userId } = req.body;
+  if (!userId) {
+    return res.json({ success: false, message: "User id is falsy" });
+  }
+
+  const { name, surname, website, city, description, dateOfBirth, avatar } =
+    changedFields;
+
+  if (
+    !name &&
+    !surname &&
+    !website &&
+    !city &&
+    !description &&
+    !dateOfBirth &&
+    !avatar
+  ) {
+    return res.json({ success: false, message: "Nothing to change" });
+  }
+
+  const exclusions = { secret: 0 };
+  const user = await User.findOne({ _id: userId }, exclusions);
+
+  if (!user) {
+    return res.json({ success: false, message: "User wasn't found" });
+  }
+  if (name) {
+    user.primary.name = name;
+  }
+  if (surname) {
+    user.primary.surname = surname;
+  }
+  if (website) {
+    user.primary.website = website;
+  }
+  if (description) {
+    user.primary.description = description;
+  }
+  if (dateOfBirth) {
+    user.primary.dateOfBirth = dateOfBirth;
+  }
+
+  await user.save();
+
+  return res.json({ success: true, user });
 });
