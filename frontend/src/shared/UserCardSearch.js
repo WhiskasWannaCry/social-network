@@ -4,7 +4,12 @@ import { Avatar, Button } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import { Context } from "./Context";
 import { useNavigate } from "react-router-dom";
-import { postAddAsFriend, postFollow, postRemoveFriend, postUnfollow } from "../http/Fetches";
+import {
+  postAddAsFriend,
+  postFollow,
+  postRemoveFriend,
+  postUnfollow,
+} from "../http/Fetches";
 
 const Container = styled("div")`
   display: flex;
@@ -19,6 +24,7 @@ const Container = styled("div")`
 const UserInfo = styled("div")`
   display: flex;
   flex-direction: column;
+  gap: 8px;
   // if it's current user => remove doBtn and width info block +30%
   ${({ userId, currentUserId }) =>
     userId != currentUserId
@@ -74,7 +80,7 @@ const DoBtn = styled(Button)`
   }
 `;
 
-const UserCardSearch = ({ user }) => {
+const UserCardSearch = ({ user, calculateAge }) => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [isFollower, setIsFollower] = useState(false);
   const [isFriend, setIsFriend] = useState(false);
@@ -111,33 +117,33 @@ const UserCardSearch = ({ user }) => {
 
   const handleFollow = async () => {
     const data = await postFollow(currentUser._id, user._id);
-    const {success} = data;
-    if(!success) {
-      const {message} = data;
-      console.log(message)
-      return
+    const { success } = data;
+    if (!success) {
+      const { message } = data;
+      console.log(message);
+      return;
     }
     setIsFollowing(true);
   };
 
   const handleUnfollow = async () => {
-    const {data} = await postUnfollow(currentUser._id, user._id);
-    const {success} = data;
-    if(!success) {
-      const {message} = data;
-      console.log(message)
-      return
+    const { data } = await postUnfollow(currentUser._id, user._id);
+    const { success } = data;
+    if (!success) {
+      const { message } = data;
+      console.log(message);
+      return;
     }
     setIsFollowing(false);
   };
 
   const handleAddAsFriend = async () => {
-    const {data} = await postAddAsFriend(currentUser._id, user._id);
-    const {success} = data;
-    if(!success) {
-      const {message} = data;
-      console.log(message)
-      return
+    const { data } = await postAddAsFriend(currentUser._id, user._id);
+    const { success } = data;
+    if (!success) {
+      const { message } = data;
+      console.log(message);
+      return;
     }
     setIsFollowing(false);
     setIsFollower(false);
@@ -145,12 +151,12 @@ const UserCardSearch = ({ user }) => {
   };
 
   const handleRemoveFriend = async () => {
-    const {data} = await postRemoveFriend(currentUser._id, user._id);
-    const {success} = data;
-    if(!success) {
-      const {message} = data;
-      console.log(message)
-      return
+    const { data } = await postRemoveFriend(currentUser._id, user._id);
+    const { success } = data;
+    if (!success) {
+      const { message } = data;
+      console.log(message);
+      return;
     }
     setIsFollower(true);
     setIsFriend(false);
@@ -174,7 +180,7 @@ const UserCardSearch = ({ user }) => {
             user.primary.name + " " + user.primary.surname}
         </UserName>
         {user.primary.dateOfBirth ? (
-          <UserAge>{user.primary.dateOfBirth}</UserAge>
+          <UserAge>{calculateAge(user.primary.dateOfBirth)} years</UserAge>
         ) : null}
       </UserInfo>
       {currentUser &&

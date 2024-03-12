@@ -1,5 +1,15 @@
 import { useState } from "react";
 import styled from "@emotion/styled";
+import {
+  Radio,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  RadioGroup,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
 
 const Container = styled("div")`
   position: sticky;
@@ -65,13 +75,8 @@ const InputSexContainer = styled("div")`
   width: 100%;
 `;
 
-const InputSex = styled("input")`
-
-`;
-
-const FriendsFiltersSide = () => {
+const FriendsFiltersSide = ({ peopleSearchParams, setPeopleSearchParams }) => {
   const agesArr = [
-    null,
     14,
     15,
     16,
@@ -141,22 +146,88 @@ const FriendsFiltersSide = () => {
     80,
   ];
 
-  const [selectedFromAge, setSelectedFromAge] = useState(null);
-  const [selectedToAge, setSelectedToAge] = useState(null);
-  const [selectedSex, setSelectedSex] = useState("any");
-
   const handleRadioChange = (event) => {
-    setSelectedSex(event.target.value);
+    setPeopleSearchParams((prev) => ({
+      ...prev,
+      selectedSex: event.target.value,
+    }));
+    console.log(peopleSearchParams);
+  };
+
+  const handleChangeFromAge = (event) => {
+    setPeopleSearchParams((prev) => ({
+      ...prev,
+      selectedFromAge: Number(event.target.value),
+    }));
+    console.log(peopleSearchParams);
+  };
+
+  const handleChangeToAge = (event) => {
+    setPeopleSearchParams((prev) => ({
+      ...prev,
+      selectedToAge: Number(event.target.value),
+    }));
+    console.log(peopleSearchParams);
   };
 
   return (
     <Container>
       <SortTitle>Age</SortTitle>
       <SortByAgeContainer>
-        <SortByAgeSelect name="age_select">
+        <FormControl sx={{ m: 1, display: "flex", flexGrow: 1 }} size="small">
+          <InputLabel id="demo-select-small-label">From</InputLabel>
+          <Select
+            labelId="demo-select-small-label"
+            id="demo-select-small"
+            value={peopleSearchParams.selectedFromAge}
+            label="Age"
+            onChange={handleChangeFromAge}
+          >
+            <MenuItem value="">From</MenuItem>
+            {agesArr.map((age) =>
+              age ? (
+                <MenuItem key={age} value={age}>
+                  From {age}
+                </MenuItem>
+              ) : (
+                <MenuItem key={"NoFromAge"} value={age}>
+                  From
+                </MenuItem>
+              )
+            )}
+          </Select>
+        </FormControl>
+
+        <FormControl sx={{ m: 1, display: "flex", flexGrow: 1 }} size="small">
+          <InputLabel id="demo-select-small-label">To</InputLabel>
+          <Select
+            labelId="demo-select-small-label"
+            id="demo-select-small"
+            value={peopleSearchParams.selectedToAge}
+            label="Age"
+            onChange={handleChangeToAge}
+          >
+            <MenuItem value="">To</MenuItem>
+            {agesArr.map((age) =>
+              age ? (
+                <MenuItem key={age} value={age}>
+                  To {age}
+                </MenuItem>
+              ) : (
+                <MenuItem key={"NoToAge"} value={age}>
+                  To
+                </MenuItem>
+              )
+            )}
+          </Select>
+        </FormControl>
+
+        {/* <SortByAgeSelect name="age_select">
           {agesArr.map((age) =>
             age ? (
-              <SortByAgeOption key={age} value={age}>From {age}</SortByAgeOption>
+              <SortByAgeOption key={age} value={age}>
+                From {age}
+              </SortByAgeOption>
             ) : (
               <SortByAgeOption key={age} value={age} defaultValue>
                 From
@@ -168,24 +239,53 @@ const FriendsFiltersSide = () => {
         <SortByAgeSelect>
           {agesArr.map((age) =>
             age > 0 ? (
-              <SortByAgeOption key={age} value={age}>To {age}</SortByAgeOption>
+              <SortByAgeOption key={age} value={age}>
+                To {age}
+              </SortByAgeOption>
             ) : (
               <SortByAgeOption key={age} value={age} defaultValue>
                 To
               </SortByAgeOption>
             )
           )}
-        </SortByAgeSelect>
+        </SortByAgeSelect> */}
       </SortByAgeContainer>
       <HR></HR>
       <SortTitle>Sex</SortTitle>
       <InputSexContainer>
-        <InputSex
+        <FormControl>
+          {/* <FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel> */}
+          <RadioGroup
+            aria-labelledby="demo-radio-buttons-group-label"
+            name="radio-buttons-group"
+            defaultValue="other"
+          >
+            <FormControlLabel
+              value="female"
+              control={<Radio />}
+              label="Female"
+              onChange={(e) => handleRadioChange(e)}
+            />
+            <FormControlLabel
+              value="male"
+              control={<Radio />}
+              label="Male"
+              onChange={(e) => handleRadioChange(e)}
+            />
+            <FormControlLabel
+              value="other"
+              control={<Radio />}
+              label="Other"
+              onChange={(e) => handleRadioChange(e)}
+            />
+          </RadioGroup>
+        </FormControl>
+        {/* <InputSex
           type="radio"
           name="sex"
           value="female"
           id="sex1"
-          checked={selectedSex === "female"}
+          checked={peopleSearchParams.selectedSex === "female"}
           onChange={(e) => handleRadioChange(e)}
         ></InputSex>
         <label htmlFor="sex1">Female</label>
@@ -196,7 +296,7 @@ const FriendsFiltersSide = () => {
           name="sex"
           value="male"
           id="sex2"
-          checked={selectedSex === "male"}
+          checked={peopleSearchParams.selectedSex === "male"}
           onChange={(e) => handleRadioChange(e)}
         ></InputSex>
         <label htmlFor="sex2">Male</label>
@@ -207,10 +307,10 @@ const FriendsFiltersSide = () => {
           name="sex"
           value="any"
           id="sex3"
-          checked={selectedSex === "any"}
+          checked={peopleSearchParams.selectedSex === "any"}
           onChange={(e) => handleRadioChange(e)}
         ></InputSex>
-        <label htmlFor="sex3">Any</label>
+        <label htmlFor="sex3">Any</label> */}
       </InputSexContainer>
     </Container>
   );

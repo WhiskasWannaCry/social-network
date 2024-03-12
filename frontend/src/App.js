@@ -21,6 +21,7 @@ import Friends from "./pages/Friends/Friends.js";
 import { getIsValidToken } from "./http/Fetches.js";
 import { theme } from "./shared/styles.js";
 import { ThemeProvider } from "@mui/material";
+import { PageLoader } from "./shared/Loaders.js";
 
 const Container = styled("div")`
   display: flex;
@@ -47,6 +48,7 @@ const ContentContainer = styled("div")`
 `;
 
 const userInit = {
+  _id: "",
   primary: {
     name: "",
     surname: "",
@@ -75,6 +77,7 @@ function App() {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(userInit);
   const [usersFromSearch, setUsersFromSearch] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const tokenLS = JSON.parse(localStorage.getItem("token"));
@@ -83,12 +86,14 @@ function App() {
       localStorage.setItem("token", JSON.stringify({ value: "0" }));
       setCurrentUser(userInit);
       navigate("/login");
+      setLoading(false);
       return;
     }
 
     if (tokenLS.value === "0") {
       setCurrentUser(userInit);
       navigate("/login");
+      setLoading(false);
       return;
     }
 
@@ -101,29 +106,36 @@ function App() {
             const { success } = data;
             if (!success) {
               const { message } = data;
-              console.log(data)
+              console.log(data);
               setCurrentUser(userInit);
               localStorage.setItem("token", JSON.stringify({ value: "0" }));
+              setLoading(false);
               navigate("/login");
               return;
             }
             // if success
             const { foundUser } = data;
             setCurrentUser(foundUser);
-            if(location.pathname === '/login' || location.pathname === '/register') {
-              navigate(`/profile/${foundUser._id}`)
+            setLoading(false);
+            if (
+              location.pathname === "/login" ||
+              location.pathname === "/register"
+            ) {
+              navigate(`/profile/${foundUser._id}`);
             }
           } else {
             // Обработка ошибки
             console.log("Token error");
             localStorage.setItem("token", JSON.stringify({ value: "0" }));
             navigate("/login");
+            setLoading(false);
             return;
           }
         } catch (error) {
           console.error("Error fetching user data:", error);
           setCurrentUser(userInit);
           navigate("/login");
+          setLoading(false);
           return;
         }
       };
@@ -131,63 +143,70 @@ function App() {
     }
   }, []);
 
-  return (
-    <Context.Provider
-      value={{
-        currentUser,
-        setCurrentUser,
-        userInit,
-        usersFromSearch,
-        setUsersFromSearch,
-      }}
-    >
-      <ThemeProvider theme={theme}>
-        {location.pathname !== "/login" &&
-          location.pathname !== "/registration" && <Header></Header>}
-        <Container>
-          <Body pathname={location.pathname}>
-            {location.pathname !== "/login" &&
-              location.pathname !== "/registration" && (
-                <MainNavigation></MainNavigation>
-              )}
-            <ContentContainer>
-              <Routes>
-                <Route
-                  path="/profile/:_id"
-                  element={<Profile></Profile>}
-                ></Route>
-                <Route path="/feed" element={<Feed></Feed>}></Route>
-                <Route
-                  path="/edit/:_id"
-                  element={<EditProfile></EditProfile>}
-                ></Route>
-                <Route path="/login" element={<Login></Login>}></Route>
-                <Route path="/friends" element={<Friends></Friends>}></Route>
-                <Route path="/registration" element={<SignUp></SignUp>}></Route>
-                <Route
-                  path="*"
-                  element={
-                    currentUser._id ? (
-                      <Navigate to={`profile/${currentUser._id}`} replace />
-                    ) : (
-                      <Navigate
-                        to={
-                          currentUser._id
-                            ? `profile/${currentUser._id}`
-                            : "/login"
-                        }
-                        replace
-                      />
-                    )
-                  }
-                />
-              </Routes>
-            </ContentContainer>
-          </Body>
-        </Container>
-      </ThemeProvider>
-    </Context.Provider>
-  );
+  if (loading) {
+    return <PageLoader></PageLoader>
+  } else {
+    return (
+      <Context.Provider
+        value={{
+          currentUser,
+          setCurrentUser,
+          userInit,
+          usersFromSearch,
+          setUsersFromSearch,
+        }}
+      >
+        <ThemeProvider theme={theme}>
+          {location.pathname !== "/login" &&
+            location.pathname !== "/registration" && <Header></Header>}
+          <Container>
+            <Body pathname={location.pathname}>
+              {location.pathname !== "/login" &&
+                location.pathname !== "/registration" && (
+                  <MainNavigation></MainNavigation>
+                )}
+              <ContentContainer>
+                <Routes>
+                  <Route
+                    path="/profile/:_id"
+                    element={<Profile></Profile>}
+                  ></Route>
+                  <Route path="/feed" element={<Feed></Feed>}></Route>
+                  <Route
+                    path="/edit/:_id"
+                    element={<EditProfile></EditProfile>}
+                  ></Route>
+                  <Route path="/login" element={<Login></Login>}></Route>
+                  <Route path="/friends" element={<Friends></Friends>}></Route>
+                  <Route
+                    path="/registration"
+                    element={<SignUp></SignUp>}
+                  ></Route>
+                  <Route
+                    path="*"
+                    element={
+                      currentUser && currentUser._id && !loading ? (
+                        <Navigate to={`profile/${currentUser._id}`} replace />
+                      ) : (
+                        <Navigate
+                          to={
+                            currentUser._id
+                              ? `profile/${currentUser._id}`
+                              : "/login"
+                          }
+                          replace
+                        />
+                      )
+                    }
+                  />
+                </Routes>
+              </ContentContainer>
+            </Body>
+          </Container>
+        </ThemeProvider>
+      </Context.Provider>
+    );
+  }
 }
 
 export default App;

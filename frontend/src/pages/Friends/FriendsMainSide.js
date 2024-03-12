@@ -1,9 +1,11 @@
 import styled from "@emotion/styled";
 import searchIcon from "../../images/icons/search.svg";
 import UserCardSearch from "../../shared/UserCardSearch";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Context } from "../../shared/Context";
 import { getUsersInfo } from "../../http/Fetches";
+import { Typography } from "@mui/material";
+import { PageLoader } from "../../shared/Loaders";
 
 const Container = styled("div")`
   display: flex;
@@ -89,24 +91,82 @@ const UsersForSearch = styled("div")`
   height: 100%;
 `;
 
-const FriendsMainSide = () => {
-  const currentUserContext = useContext(Context);
-  const { usersFromSearch, setUsersFromSearch } = currentUserContext;
+const FriendsMainSide = (peopleSearchParams) => {
+  const [userFriends, setUserFriends] = useState([]);
+  const [otherUsers, setOtherUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  const currentUserContext = useContext(Context);
+  const { currentUser, usersFromSearch, setUsersFromSearch } =
+    currentUserContext;
   const fetchAllUsers = async () => {
     const { data } = await getUsersInfo();
     const { success } = data;
     if (success) {
       const { users } = data;
       setUsersFromSearch(users);
+      setLoading(false);
     }
   };
   fetchAllUsers();
+
+  useEffect(() => {
+    const filteredFriends = [];
+    const filteredOtherUsers = [];
+    if (currentUser.socialContacts.friends.length) {
+      usersFromSearch.forEach((userFromSearch) => {
+        currentUser.socialContacts.friends.forEach((friendId) => {
+          if (friendId === userFromSearch._id) {
+            return filteredFriends.push(userFromSearch);
+          } else {
+            return filteredOtherUsers.push(userFromSearch);
+          }
+        });
+      });
+      setUserFriends(filteredFriends);
+      setOtherUsers(filteredOtherUsers);
+      setLoading(false);
+    } else {
+      usersFromSearch.forEach((userFromSearch) => {
+        if (userFromSearch._id !== currentUser._id) {
+          return filteredOtherUsers.push(userFromSearch);
+        }
+      });
+      setOtherUsers(filteredOtherUsers);
+      setLoading(false);
+    }
+  }, [usersFromSearch]);
+
+  const calculateAge = (dateOfBirth) => {
+    const today = new Date();
+    const birthDate = new Date(dateOfBirth);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+
+    return age;
+  };
+
   return (
     <Container>
       <Header>
-        <Title>People</Title>
-        <PeopleCounter>{usersFromSearch.length}</PeopleCounter>
+        {userFriends.length ? (
+          <>
+            <Title>Friends</Title>
+            <PeopleCounter>{userFriends.length}</PeopleCounter>
+          </>
+        ) : (
+          <>
+            <Title>Peoples</Title>
+            <PeopleCounter>{otherUsers.length}</PeopleCounter>
+          </>
+        )}
       </Header>
       <SearchBarContainer>
         <SearchBar placeholder="Enter your request"></SearchBar>
@@ -115,14 +175,54 @@ const FriendsMainSide = () => {
         </SearchBtn>
       </SearchBarContainer>
       <UsersForSearch>
-        {usersFromSearch.length
-          ? usersFromSearch.map((user) => {
-              // Нужно будет сделать чтобы юзер показывался первый, его друзья ниже, а потом все остальные
+        {loading ? (
+          <PageLoader></PageLoader>
+        ) : userFriends.length ? (
+          <>
+            {userFriends.map((friend) => {
               return (
-                <UserCardSearch key={user._id} user={user}></UserCardSearch>
+                <UserCardSearch
+                  key={friend._id}
+                  user={friend}
+                  calculateAge={calculateAge}
+                ></UserCardSearch>
               );
-            })
-          : null}
+            })}
+            <Typography
+              variant="body1"
+              sx={{
+                width: "100%",
+                marginTop: "48px",
+              }}
+            >
+              Subscribe to other users:
+            </Typography>
+            {otherUsers.length &&
+              otherUsers.map((otherUser) => {
+                return (
+                  <UserCardSearch
+                    key={otherUser._id}
+                    user={otherUser}
+                    calculateAge={calculateAge}
+                  ></UserCardSearch>
+                );
+              })}
+          </>
+        ) : (
+          <>
+            {otherUsers.length
+              ? otherUsers.map((otherUser) => {
+                  return (
+                    <UserCardSearch
+                      key={otherUser._id}
+                      user={otherUser}
+                      calculateAge={calculateAge}
+                    ></UserCardSearch>
+                  );
+                })
+              : null}
+          </>
+        )}
       </UsersForSearch>
     </Container>
   );

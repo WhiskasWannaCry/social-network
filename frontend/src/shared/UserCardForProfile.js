@@ -31,7 +31,6 @@ const UserCardForProfile = ({ userId }) => {
       }
       const { user } = data;
       setFriend(user);
-      console.log(userId);
     };
     getUser();
   }, [userId]);
