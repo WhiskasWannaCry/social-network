@@ -145,6 +145,12 @@ const SignUp = () => {
       const regex = /^[a-zA-Zа-яА-ЯёЁіІїЇґҐ]{2,15}$/;
       return regex.test(username);
     }
+    function checkEmail(email) {
+      // Only words - ru, en, ua
+      const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      return regex.test(email);
+    }
+    
     const signUp = async () => {
       if (!checkNamesFields(name)) {
         alert("The name is incorrect!");
@@ -152,6 +158,10 @@ const SignUp = () => {
       }
       if (!checkNamesFields(surname)) {
         alert("The surname is incorrect!");
+        return;
+      }
+      if(!checkEmail(email)) {
+        alert("Email is incorrect!");
         return;
       }
       const res = await postSignUp(name, surname, email, password);
