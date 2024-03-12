@@ -134,3 +134,36 @@ export const postRemoveFriend = async (iniciatorId, userToRemoveId) => {
     return catchFunc(error);
   }
 };
+
+export const postChangeUserInfo = async (changedFields, userId) => {
+  try {
+    const data = await axios.post(
+      "http://localhost:8000/api/change-user-info",
+      { changedFields, userId }
+    );
+    return data;
+  } catch (error) {
+    return catchFunc(error);
+  }
+};
+
+export const postChangeUserAvatar = async (newAvatar, userId) => {
+  try {
+    // Преобразовываем строку base64 обратно в файл
+    const blob = await fetch(newAvatar).then((res) => res.blob());
+    const file = new File([blob], "avatar.jpg", { type: "image/jpeg" });
+
+    const formData = new FormData();
+    formData.append("avatar", file);
+    
+    const url = `http://localhost:8000/api/upload?userId=${userId}`
+    const data = await axios.post(url, formData, {
+      headers: {
+        "content-type": "multipart/form-data",
+      },
+    });
+    return data;
+  } catch (error) {
+    return catchFunc(error);
+  }
+};
