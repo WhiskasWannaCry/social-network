@@ -154,18 +154,23 @@ const Profile = () => {
   const { _id: profileId } = useParams();
 
   const currentUserContext = useContext(Context);
-  const { currentUser, usersFromSearch } = currentUserContext;
+  const { currentUser } = currentUserContext;
 
   const [profileOwner, setProfileOwner] = useState(null);
 
   useEffect(() => {
     const fetchUserInfo = async (profileId) => {
       const { data } = await getUserInfo(profileId);
+      console.log(profileId)
+      console.log(data)
 
       const { success } = data;
       if (!success && data) {
         const { message } = data;
-        console.log(message);
+        console.log(data);
+        if(message === "Invalid profile id") {
+          navigate(`/profile/${currentUser._id}`)
+        }
         alert(message);
         return;
       }
