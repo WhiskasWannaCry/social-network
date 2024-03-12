@@ -3,14 +3,9 @@ import userImg from "../../images/posts_img/post_img4.jpg";
 import styled from "@emotion/styled";
 import { Context } from "../../shared/Context";
 import { Avatar, Box, Button, Typography } from "@mui/material";
-import Modal from "@mui/material/Modal";
-import ReactCrop, {
-  centerCrop,
-  convertToPercentCrop,
-  convertToPixelCrop,
-  makeAspectCrop,
-} from "react-image-crop";
-import setCanvasPriview from "../../shared/setCanvasPreview";
+import ImageCropper from "../../shared/ImageCropper";
+import { postChangeUserAvatar, postChangeUserInfo } from "../../http/Fetches";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled("div")`
   display: flex;
@@ -86,228 +81,111 @@ const SaveChangesBtn = styled("div")`
   }
 `;
 
-const StyledInputFile = styled("input")``;
-
-const ASPECT_RATIO = 1;
-const MIN_DEMENSION = 150;
-
 const EditProfile = () => {
-  const [date, setDate] = useState("2022-04-17");
-  const [imgSrc, setImgSrc] = useState("");
-  const [crop, setCrop] = useState("");
-  const [imgError, setImgError] = useState("");
-  const [openModal, setOpenModal] = useState(false);
-
-  const [newAvatar, setNewAvatar] = useState(null)
-
-  const imgRef = useRef(null);
-  const previewCanvasRef = useRef(null);
-
-  const handleOpenModal = () => setOpenModal(true);
-  const handleCloseModal = () => setOpenModal(false);
-
-  useEffect(() => {
-    document.title = "Editing my profile";
-  }, []);
   const currentUserContext = useContext(Context);
   const { currentUser, setCurrentUser, userInit } = currentUserContext;
 
-  const onChangeDate = (e) => {
-    // const newDate = new Date(e.target.value);
-    setDate(e.target.value);
-    console.log(date); //value picked from date picker
-  };
-
-  const onSelectFile = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.addEventListener("load", () => {
-      const imageElement = new Image();
-      const imageURL = reader.result?.toString() || "";
-      imageElement.src = imageURL;
-      imageElement.addEventListener("load", (e) => {
-        if (imgError) setImgError("");
-        const { naturalWidth, naturalHeight } = e.currentTarget;
-        if (naturalWidth < MIN_DEMENSION || naturalHeight < MIN_DEMENSION) {
-          setImgError("The image must be least 150x150 pxs");
-          return setImgSrc("");
-        }
-      });
-      console.log(imageURL);
-      setImgSrc(imageURL);
-    });
-    reader.readAsDataURL(file);
-  };
-
-  const imageOnLoad = (e) => {
-    const { width, height } = e.currentTarget;
-    const cropWidthInPercent = (MIN_DEMENSION / width) * 100;
-
-    const crop = makeAspectCrop(
-      {
-        unit: "%",
-        width: cropWidthInPercent,
-      },
-      ASPECT_RATIO,
-      width,
-      height
-    );
-    const centeredCrop = centerCrop(crop, width, height);
-    setCrop(centeredCrop);
-  };
-
-  const updateAvatar = (dataURL) => {
-    console.log(dataURL)
-    setNewAvatar(dataURL)
-  };
-
   let avatarFullPath =
-    `http://localhost:8000/${currentUser?.images.avatar}` || userImg;
+  `http://localhost:8000/${currentUser?.images.avatar}` || userImg;
+
+  const [newDateOfBirth, setNewDateOfBirth] = useState(null);
+  const [newAvatar, setNewAvatar] = useState(null);
+  const [newName, setNewName] = useState(null);
+  const [newSurname, setNewSurname] = useState(null);
+  const [newDescription, setNewDescription] = useState(null);
+  const [newCity, setNewCity] = useState(null);
+  const [newWebSite, setNewWebSite] = useState(null);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    document.title = "Editing my profile";
+    setNewAvatar(avatarFullPath)
+    setNewName(currentUser?.primary.name)
+    setNewSurname(currentUser?.primary.surname)
+    setNewDescription(currentUser?.primary.description)
+    setNewDateOfBirth(currentUser?.primary.dateOfBirth)
+    setNewCity(currentUser?.primary.city)
+    setNewWebSite(currentUser?.primary.website)
+  }, []);
+
+  const handleChangeInfoField = (e, setLocalState) => {
+    // const newDate = new Date(e.target.value);
+    setLocalState(e.target.value);
+  };
+
+  const changeUserInfo = async () => {
+    if (
+      newDateOfBirth ||
+      newName ||
+      newSurname ||
+      newDescription ||
+      newCity ||
+      newWebSite ||
+      newAvatar
+    ) {
+      const changedFields = {};
+      if (newDateOfBirth !== currentUser?.primary.dateOfBirth) {
+        changedFields.dateOfBirth = newDateOfBirth;
+      }
+      if (newName !== currentUser?.primary.name) {
+        changedFields.name = newName;
+      }
+      if (newSurname !== currentUser?.primary.surname) {
+        changedFields.surname = newSurname;
+      }
+      if (newDescription !== currentUser?.primary.description) {
+        changedFields.description = newDescription;
+      }
+      if (newCity !== currentUser?.primary.city) {
+        changedFields.city = newCity;
+      }
+      if (newWebSite !== currentUser?.primary.website) {
+        changedFields.website = newWebSite;
+      }
+      if (
+        newDateOfBirth ||
+        newName ||
+        newSurname ||
+        newDescription ||
+        newCity ||
+        newWebSite
+      ) {
+        const { data } = await postChangeUserInfo(
+          changedFields,
+          currentUser._id
+        );
+
+        const { success } = data;
+        if (!success) {
+          const { message } = data;
+          alert(message);
+          console.log(data);
+          return;
+        }
+        const { user } = data;
+        setCurrentUser(user);
+        navigate(`../profile/${currentUser._id}`);
+      }
+    }
+  };
 
   return (
     <Container>
       <EditMainInfo>
         <Avatar
           alt="user-avatar"
-          src={newAvatar || avatarFullPath || null}
+          src={newAvatar}
           sx={{
             width: "112px",
             height: "112px",
             border: (theme) => "1px solid" + theme.palette.primary.grey[5],
           }}
         ></Avatar>
-        <Button onClick={handleOpenModal}>Upload a new image</Button>
-        <Modal
-          keepMounted
-          open={openModal}
-          onClose={() => {
-            handleCloseModal();
-            setImgSrc("");
-            setImgError("");
-          }}
-          aria-labelledby="keep-mounted-modal-title"
-          aria-describedby="keep-mounted-modal-description"
-        >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: "16px",
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              height: "90vh",
-              width: 700,
-              backgroundColor: (theme) => theme.palette.primary.grey[6],
-              border: (theme) => `1px solid ${theme.palette.primary.grey[3]}`,
-              boxShadow: 24,
-              p: 4,
-            }}
-          >
-            <Typography
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                width: "100%",
-              }}
-            >
-              Upload a new photo
-            </Typography>
-            <StyledInputFile
-              type="file"
-              accept="image/*"
-              onChange={onSelectFile}
-              sx={{
-                width: "100%",
-              }}
-            ></StyledInputFile>
-            {imgError && (
-              <Typography
-                sx={{
-                  color: (theme) => theme.palette.primary.red[1],
-                }}
-              >
-                {imgError}
-              </Typography>
-            )}
-            {imgSrc && (
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "12px",
-                }}
-              >
-                <Box // контейнер для картинки с обрезкой и канваса
-                  sx={{
-                    display: "flex",
-                    gap: "12px",
-                  }}
-                >
-                  <ReactCrop
-                    crop={crop}
-                    circularCrop
-                    keepSelection
-                    aspect={ASPECT_RATIO}
-                    minWidth={MIN_DEMENSION}
-                    onChange={(pixelCrop, percentCrop) => setCrop(percentCrop)}
-                  >
-                    <img
-                      ref={imgRef}
-                      src={imgSrc}
-                      alt="Upload"
-                      style={{ maxHeight: "50vh" }}
-                      onLoad={imageOnLoad}
-                    ></img>
-                  </ReactCrop>
-                  {crop && (
-                    <canvas
-                      ref={previewCanvasRef}
-                      style={{
-                        display: "none",
-                        width: 150,
-                        height: 150,
-                        objectFit: "contain",
-                        backgroundColor: (theme) =>
-                          theme.palette.primary.grey[5],
-                        border: (theme) =>
-                          `1px solid ${theme.palette.primary.grey[3]}`,
-                      }}
-                    ></canvas>
-                  )}
-                </Box>
-                <Button
-                  variant="outlined"
-                  sx={{
-                    border: (theme) =>
-                      `1px solid ${theme.palette.primary.grey[3]}`,
-                  }}
-                  onClick={() => {
-                    setCanvasPriview(
-                      imgRef.current,
-                      previewCanvasRef.current,
-                      convertToPixelCrop(
-                        crop,
-                        imgRef.current.width,
-                        imgRef.current.height
-                      )
-                    );
-                    const dataURL = previewCanvasRef.current.toDataURL();
-                    updateAvatar(dataURL);
-                    handleCloseModal()
-                    setImgSrc("");
-                  }}
-                >
-                  Crop and save
-                </Button>
-              </Box>
-            )}
-          </Box>
-        </Modal>
+        <ImageCropper
+          newAvatar={newAvatar}
+          setNewAvatar={setNewAvatar}
+        ></ImageCropper>
         <Box
           sx={{
             display: "flex",
@@ -320,7 +198,8 @@ const EditProfile = () => {
                 height={"32px"}
                 type="text"
                 placeholder="Some info about you"
-                value={(currentUser && currentUser.primary.name) || ""}
+                value={newName}
+                onChange={(e) => handleChangeInfoField(e, setNewName)}
               ></InputInfo>
             </InfoForChange>
           </InfoContainer>
@@ -331,7 +210,8 @@ const EditProfile = () => {
                 height={"32px"}
                 type="text"
                 placeholder="Some info about you"
-                value={(currentUser && currentUser.primary.surname) || ""}
+                value={newSurname}
+                onChange={(e) => handleChangeInfoField(e, setNewSurname)}
               ></InputInfo>
             </InfoForChange>
           </InfoContainer>
@@ -349,6 +229,8 @@ const EditProfile = () => {
                 height={"64px"}
                 type="text"
                 placeholder="Some info about you"
+                value={newDescription}
+                onChange={(e) => handleChangeInfoField(e, setNewDescription)}
               ></InputInfo>
             </InfoForChange>
           </InfoContainer>
@@ -359,6 +241,8 @@ const EditProfile = () => {
                 height={"32px"}
                 type="text"
                 placeholder="Some info about you"
+                value={newCity}
+                onChange={(e) => handleChangeInfoField(e, setNewCity)}
               ></InputInfo>
             </InfoForChange>
           </InfoContainer>
@@ -376,8 +260,8 @@ const EditProfile = () => {
               <InputInfo
                 type="date"
                 height={"32px"}
-                value={date}
-                onChange={(e) => onChangeDate(e)}
+                value={newDateOfBirth}
+                onChange={(e) => handleChangeInfoField(e, setNewDateOfBirth)}
               ></InputInfo>
             </InfoForChange>
           </InfoContainer>
@@ -388,12 +272,14 @@ const EditProfile = () => {
                 height={"32px"}
                 type="text"
                 placeholder="Some info about you"
+                value={newWebSite}
+                onChange={(e) => handleChangeInfoField(e, setNewWebSite)}
               ></InputInfo>
             </InfoForChange>
           </InfoContainer>
         </Box>
 
-        <SaveChangesBtn>Save</SaveChangesBtn>
+        <SaveChangesBtn onClick={changeUserInfo}>Save</SaveChangesBtn>
       </EditMainInfo>
     </Container>
   );
