@@ -8,6 +8,8 @@ import musicIcon from "../../images/icons/music.png";
 import AddNewPost from "../../shared/AddNewPost";
 import styled from "@emotion/styled";
 import { Context } from "../../shared/Context";
+import { postNewPost } from "../../http/Fetches";
+import Post from "../../shared/Post.js"
 
 const Container = styled("div")`
   display: flex;
@@ -193,12 +195,12 @@ const NonePostsTitle = styled("div")`
   font-weight: 400;
 `;
 
-const MainSide = ({ profileOwner }) => {
+const MainSide = ({ loading,profileOwner }) => {
   const scrollContainerRef = useRef(null);
   const [scrollLeft, setScrollLeft] = useState(0);
   const currentUserContext = useContext(Context);
-  const { currentUser } = currentUserContext;
-
+  const { currentUser,posts,setPosts } = currentUserContext;
+  
   const handleWheel = (e) => {
     // Установите желаемую скорость прокрутки
     const scrollSpeed = 0.4;
@@ -214,29 +216,45 @@ const MainSide = ({ profileOwner }) => {
     // Обновите состояние
     setScrollLeft(newScrollLeft);
   };
+
   return (
     <Container>
       {profileOwner && profileOwner?._id === currentUser._id && (
         <>
-          <BeginContainer>
-            <BeginTopContainer>
-              <BeginTitleContainer>
-                <BeginImg src={beginImg} alt="beginImg"></BeginImg>
-                <BeginTitle>Where to begin?</BeginTitle>
-              </BeginTitleContainer>
-              <BeginCloseBtn>
-                <BeginCloseImg
-                  src={beginCloseImg}
-                  alt="beginClose"
-                ></BeginCloseImg>
-              </BeginCloseBtn>
-            </BeginTopContainer>
-            <BeginBlocksContainer
-              ref={scrollContainerRef}
-              onWheel={handleWheel}
-            >
-              {profileOwner &&
-                profileOwner.socialContacts.friends.length === 0 && (
+          {(!profileOwner.socialContacts.friends.length ||
+            !profileOwner.primary.website ||
+            !profileOwner.primary.description ||
+            !profileOwner.primary.dateOfBirth) && (
+            <BeginContainer>
+              <BeginTopContainer>
+                <BeginTitleContainer>
+                  <BeginImg src={beginImg} alt="beginImg"></BeginImg>
+                  <BeginTitle>Where to begin?</BeginTitle>
+                </BeginTitleContainer>
+                <BeginCloseBtn>
+                  <BeginCloseImg
+                    src={beginCloseImg}
+                    alt="beginClose"
+                  ></BeginCloseImg>
+                </BeginCloseBtn>
+              </BeginTopContainer>
+              <BeginBlocksContainer
+                ref={scrollContainerRef}
+                onWheel={handleWheel}
+              >
+                {profileOwner.images.avatar === "user-avatar.png" && (
+                  <BeginBlock>
+                    <BeginBlockIcon
+                      // src={musicIcon}
+                      alt="blockIcon"
+                    ></BeginBlockIcon>
+                    <BeginBlockTitle>Add your avatar</BeginBlockTitle>
+                    <BeginBlockDesctiption>
+                      Friends will be able to recognize you from your photo
+                    </BeginBlockDesctiption>
+                  </BeginBlock>
+                )}
+                {profileOwner.socialContacts.friends.length === 0 && (
                   <BeginBlock>
                     <BeginBlockIcon
                       src={friendsIcon}
@@ -248,29 +266,47 @@ const MainSide = ({ profileOwner }) => {
                     </BeginBlockDesctiption>
                   </BeginBlock>
                 )}
-              <BeginBlock>
-                <BeginBlockIcon
-                  src={educationIcon}
-                  alt="blockIcon"
-                ></BeginBlockIcon>
-                <BeginBlockTitle>Write your education</BeginBlockTitle>
-                <BeginBlockDesctiption>
-                  This way you will be found faster by those with what did you
-                  study
-                </BeginBlockDesctiption>
-              </BeginBlock>
-              <BeginBlock>
-                <BeginBlockIcon
-                  src={musicIcon}
-                  alt="blockIcon"
-                ></BeginBlockIcon>
-                <BeginBlockTitle>Add music</BeginBlockTitle>
-                <BeginBlockDesctiption>
-                  Listen to tracks and albums favorite artists
-                </BeginBlockDesctiption>
-              </BeginBlock>
-            </BeginBlocksContainer>
-          </BeginContainer>
+                {!profileOwner.primary.dateOfBirth && (
+                  <BeginBlock>
+                    <BeginBlockIcon
+                      // src={musicIcon}
+                      alt="blockIcon"
+                    ></BeginBlockIcon>
+                    <BeginBlockTitle>Add the Date of Birth</BeginBlockTitle>
+                    <BeginBlockDesctiption>
+                      Your friends will be able to congratulate you
+                    </BeginBlockDesctiption>
+                  </BeginBlock>
+                )}
+                {!profileOwner.primary.description && (
+                  <BeginBlock>
+                    <BeginBlockIcon
+                      // src={musicIcon}
+                      alt="blockIcon"
+                    ></BeginBlockIcon>
+                    <BeginBlockTitle>
+                      Add some short info about you
+                    </BeginBlockTitle>
+                    <BeginBlockDesctiption>
+                      Users will be able to learn something new about you
+                    </BeginBlockDesctiption>
+                  </BeginBlock>
+                )}
+                {!profileOwner.primary.website && (
+                  <BeginBlock>
+                    <BeginBlockIcon
+                      // src={educationIcon}
+                      alt="blockIcon"
+                    ></BeginBlockIcon>
+                    <BeginBlockTitle>Write your Website</BeginBlockTitle>
+                    <BeginBlockDesctiption>
+                      Users will be able to see more about you
+                    </BeginBlockDesctiption>
+                  </BeginBlock>
+                )}
+              </BeginBlocksContainer>
+            </BeginContainer>
+          )}
           <AddNewPost></AddNewPost>
         </>
       )}
@@ -279,10 +315,17 @@ const MainSide = ({ profileOwner }) => {
         <PostsNavBtn>My posts</PostsNavBtn>
       </PostsNav>
       <PostsContainer>
-        <NonePostsContainer>
-          <NonePostsImg src={nonePostsImg} alt="nonePosts"></NonePostsImg>
-          <NonePostsTitle>There are no posts on the wall yet</NonePostsTitle>
-        </NonePostsContainer>
+        {posts.length ? (
+          posts.map(post => (
+            <Post></Post>
+          ))
+        ) : (
+<NonePostsContainer>
+<NonePostsImg src={nonePostsImg} alt="nonePosts"></NonePostsImg>
+<NonePostsTitle>There are no posts on the wall yet</NonePostsTitle>
+</NonePostsContainer>
+        )}
+        
       </PostsContainer>
     </Container>
   );

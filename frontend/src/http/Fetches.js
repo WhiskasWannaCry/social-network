@@ -68,7 +68,7 @@ export const getUsersInfo = async () => {
 export const getUserInfo = async (profileId) => {
   try {
     const data = await axios.get(
-      "http://localhost:8000/api/search/get-user-info",
+      "http://localhost:8000/api/get-user-profile-info",
       {
         params: {
           profileId: profileId,
@@ -155,13 +155,40 @@ export const postChangeUserAvatar = async (newAvatar, userId) => {
 
     const formData = new FormData();
     formData.append("avatar", file);
-    
-    const url = `http://localhost:8000/api/upload?userId=${userId}`
+
+    const url = `http://localhost:8000/api/upload?userId=${userId}`;
     const data = await axios.post(url, formData, {
       headers: {
         "content-type": "multipart/form-data",
       },
     });
+    return data;
+  } catch (error) {
+    return catchFunc(error);
+  }
+};
+
+// location will be only "feed" or "profile"
+export const getPosts = async (profileId, location) => {
+  try {
+    const data = await axios.get("http://localhost:8000/api/get-posts", {
+      params: {
+        profileId,
+        location,
+      },
+    });
+    return data;
+  } catch (error) {
+    return catchFunc(error);
+  }
+};
+
+export const postNewPost = async (profileId, location, postData) => {
+  try {
+    const data = await axios.post(
+      "http://localhost:8000/api/posts/new-post",
+      { profileId, location,postData }
+    );
     return data;
   } catch (error) {
     return catchFunc(error);
