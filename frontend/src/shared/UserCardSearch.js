@@ -10,6 +10,7 @@ import {
   postRemoveFriend,
   postUnfollow,
 } from "../http/Fetches";
+import { calculateAge } from "./functions";
 
 const Container = styled("div")`
   display: flex;
@@ -80,7 +81,7 @@ const DoBtn = styled(Button)`
   }
 `;
 
-const UserCardSearch = ({ user, calculateAge }) => {
+const UserCardSearch = ({ user }) => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [isFollower, setIsFollower] = useState(false);
   const [isFriend, setIsFriend] = useState(false);
