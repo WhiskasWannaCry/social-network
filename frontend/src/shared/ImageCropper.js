@@ -80,6 +80,8 @@ const ImageCropper = ({ newAvatar, setNewAvatar }) => {
     }
     const { user } = data;
     setCurrentUser(user);
+    const avatarFullPath = `http://localhost:8000/${user?.images?.avatar}`
+    setNewAvatar(avatarFullPath)
     console.log(user)
   };
 
