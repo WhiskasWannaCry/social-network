@@ -1,33 +1,32 @@
 const {Router} = require("express");
 const fileUploadMiddleware = require("../Middleware/fileUploadMiddleware");
 const { User } = require("../models");
-const path = require("path");
 
 const router = Router();
 
 router.post('/upload', fileUploadMiddleware.single('avatar') ,async (req,res) => {
   try {
     const userId = req.query.userId;
-    const filePath = req.file.path;
-
-    console.log(filePath)
+    // const filePath = req.file.path;
+    const file = req.file
 
     if(!userId) {
       res.json({success:false, message: "Error at the time saving img: userId falsy"})
     }
 
-    if(!filePath) {
-      return res.json({success:false, message: "Error at the time saving img: filePath falsy"})
+    // if(!filePath) {
+    //   return res.json({success:false, message: "Error at the time saving img: filePath falsy"})
+    // }
+    if(!file) {
+      return res.json({success:false, message: "Error at the time saving img: file falsy"})
     }
     
-    const user = await User.findOne({_id:userId})
+    const user = await User.findOne({_id:userId},{secret:0})
     if(!user) {
       return res.json({success:false, message: "Error at the time saving img: user wan't found"})
     }
 
-    const relativePath = filePath.replace(path.join(__dirname, "..", "public"), "").replace(/\\/g, "/").replace(/^\//, "");;
-
-    console.log(relativePath)
+    const relativePath = `avatars/${userId}/${file.filename}`
     
     user.images.avatar = relativePath
 
