@@ -137,22 +137,6 @@ const FriendsMainSide = (peopleSearchParams) => {
     }
   }, [usersFromSearch]);
 
-  const calculateAge = (dateOfBirth) => {
-    const today = new Date();
-    const birthDate = new Date(dateOfBirth);
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthDate.getDate())
-    ) {
-      age--;
-    }
-
-    return age;
-  };
-
   return (
     <Container>
       <Header>
@@ -184,7 +168,6 @@ const FriendsMainSide = (peopleSearchParams) => {
                 <UserCardSearch
                   key={friend._id}
                   user={friend}
-                  calculateAge={calculateAge}
                 ></UserCardSearch>
               );
             })}
@@ -203,7 +186,6 @@ const FriendsMainSide = (peopleSearchParams) => {
                   <UserCardSearch
                     key={otherUser._id}
                     user={otherUser}
-                    calculateAge={calculateAge}
                   ></UserCardSearch>
                 );
               })}
@@ -216,7 +198,6 @@ const FriendsMainSide = (peopleSearchParams) => {
                     <UserCardSearch
                       key={otherUser._id}
                       user={otherUser}
-                      calculateAge={calculateAge}
                     ></UserCardSearch>
                   );
                 })
