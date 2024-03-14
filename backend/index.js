@@ -3,12 +3,14 @@ const mongoose = require("mongoose");
 
 const authRouter = require("./routes/auth");
 const uploadRouter = require("./routes/upload");
+const userValidRouter = require("./routes/userValidation");
+const searchUsersRouter = require("./routes/searchUsers")
+const profileInfoRouter = require("./routes/profileInfo")
+const postsRouter = require("./routes/posts")
 
 const path = require("path");
-const fs = require("fs");
 
 const cors = require("cors");
-const jwt = require("jsonwebtoken");
 const { User } = require("./models");
 const {
   removeFollowFromLists,
@@ -27,8 +29,17 @@ app.use("/posts", express.static(path.join(__dirname, "public", "posts")));
 app.use(express.static("public/default"));
 
 app.use(express.json());
+
+// Auth routes
 app.use("/auth", authRouter);
+
+// API routes
 app.use("/api", uploadRouter);
+app.use("/api", uploadRouter);
+app.use("/api", userValidRouter);
+app.use("/api", searchUsersRouter);
+app.use("/api", profileInfoRouter);
+app.use("/api/posts/", postsRouter);
 
 const PORT = process.env.PORT;
 const MONGO_URL = process.env.MONGO_URL;
@@ -63,74 +74,6 @@ async function start() {
 
 start();
 
-app.get("/api/validation-token", async (req, res) => {
-  const tokenForValidation = req.query;
-  let decoded;
-  try {
-    decoded = jwt.verify(tokenForValidation.value, process.env.SECRET);
-    // If token is verified, response to client success true end user's _id
-    if (decoded) {
-      const { id: userID } = decoded;
-      const filter = "-secret";
-      const foundUser = await User.findOne({ _id: userID }, filter);
-      // const { _id, email, name, surname, role,avatar,background } = foundUser;
-      res.json({
-        success: true,
-        // foundUser: { _id, email, name, surname,role,avatar,background },
-        foundUser,
-      });
-    }
-  } catch (err) {
-    if (err instanceof jwt.JsonWebTokenError) {
-      console.log(err);
-      res.sendStatus(401);
-    } else if (err instanceof jwt.TokenExpiredError) {
-      // If token is expired
-      console.log(err);
-      res.json({ success: false, message: "Token expired" });
-    } else {
-      console.error(err);
-      res.sendStatus(500); // Internal server error for other errors
-    }
-  }
-});
-
-app.get("/api/search/get-all-users", async (req, res) => {
-  const users = await User.find({}).limit(100);
-  if (users) {
-    res.json({ success: true, users });
-  } else {
-    res.json({
-      success: false,
-      message: "Something errors on /api/search/get-all-users",
-    });
-  }
-});
-
-app.get("/api/search/get-user-info", async (req, res) => {
-  const { profileId } = req.query;
-  const exclusions = { secret: 0 };
-  
-  if (!profileId) {
-    return res.json({ success: false, message: "Profile id is undefined" });
-  }
-
-  if (!mongoose.Types.ObjectId.isValid(profileId)) {
-    return res.json({ success: false, message: "Invalid profile id" });
-  }
-
-  try {
-    const user = await User.findOne({ _id: profileId }, exclusions);
-    if (!user) {
-      res.json({ res, success: false, message: "User was not found" });
-    }
-
-    return res.json({ success: true, user });
-  } catch (e) {
-    console.error(e);
-    res.json({ res, success: false, message: e });
-  }
-});
 // требуется оптимизация кода
 app.post("/api/follow-user", async (req, res) => {
   const { userFollowerId, userFollowedId } = req.body;
