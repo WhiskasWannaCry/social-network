@@ -78,6 +78,7 @@ function App() {
   const [currentUser, setCurrentUser] = useState(userInit);
   const [usersFromSearch, setUsersFromSearch] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [posts, setPosts] = useState([]);
 
   useEffect(() => {
     const tokenLS = JSON.parse(localStorage.getItem("token"));
@@ -144,7 +145,7 @@ function App() {
   }, []);
 
   if (loading) {
-    return <PageLoader></PageLoader>
+    return <PageLoader></PageLoader>;
   } else {
     return (
       <Context.Provider
@@ -154,6 +155,8 @@ function App() {
           userInit,
           usersFromSearch,
           setUsersFromSearch,
+          posts,
+          setPosts,
         }}
       >
         <ThemeProvider theme={theme}>

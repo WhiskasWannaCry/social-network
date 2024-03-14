@@ -6,8 +6,10 @@ import userImg from "../../images/posts_img/post_img4.jpg";
 import { useNavigate, useParams } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../../shared/Context";
-import { Avatar } from "@mui/material";
+import { Avatar, Typography } from "@mui/material";
 import { getUserInfo } from "../../http/Fetches";
+import { calculateAge } from "../../shared/functions";
+import { PageLoader } from "../../shared/Loaders";
 
 const Container = styled("div")`
   width: 100%;
@@ -158,18 +160,20 @@ const Profile = () => {
 
   const [profileOwner, setProfileOwner] = useState(null);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const fetchUserInfo = async (profileId) => {
       const { data } = await getUserInfo(profileId);
-      console.log(profileId)
-      console.log(data)
+      console.log(profileId);
+      console.log(data);
 
       const { success } = data;
       if (!success && data) {
         const { message } = data;
         console.log(data);
-        if(message === "Invalid profile id") {
-          navigate(`/profile/${currentUser._id}`)
+        if (message === "Invalid profile id") {
+          navigate(`/profile/${currentUser._id}`);
         }
         alert(message);
         return;
@@ -177,6 +181,7 @@ const Profile = () => {
       const { user } = data;
 
       setProfileOwner(user);
+      setLoading(false)
     };
     fetchUserInfo(profileId);
   }, [profileId]);
@@ -200,56 +205,78 @@ const Profile = () => {
   return (
     <Container>
       <UserHeaderContainer>
-        <UserBackground bgImg={backgroundFullPath}></UserBackground>
-        {profileOwner?._id == currentUser._id && (
-          <ChangeBackground>Change background</ChangeBackground>
-        )}
-        <InfoOuterContainer>
-          <Avatar
-            alt="user-avatar"
-            src={avatarFullPath || null}
-            sx={{
-              position: "absolute",
-              top: 0,
-              left: "42px",
-              width: "112px",
-              height: "112px",
-              border: (theme) => "1px solid" + theme.palette.primary.grey[5],
-            }}
-          ></Avatar>
-          <UserInfoContainer>
-            <UserInfo>
-              <UserName>
-                {profileOwner &&
-                  profileOwner?.primary.name +
-                    " " +
-                    profileOwner?.primary.surname}
-              </UserName>
-              {profileOwner?._id == currentUser._id && (
-                <AddInfoBtn
-                  onClick={() =>
-                    profileOwner._id && navigate(`/edit/${currentUser._id}`)
-                  }
-                >
-                  Provide information about yourself
-                </AddInfoBtn>
-              )}
-            </UserInfo>
-            {profileOwner?._id === currentUser._id && (
-              <EditProfileBtn
-                onClick={() =>
-                  profileOwner._id && navigate(`/edit/${currentUser._id}`)
-                }
-              >
-                Edit profile
-              </EditProfileBtn>
+        {loading ? (
+          <PageLoader></PageLoader>
+        ) : (
+          <>
+            <UserBackground bgImg={backgroundFullPath}></UserBackground>
+            {profileOwner?._id == currentUser._id && (
+              <ChangeBackground>Change background</ChangeBackground>
             )}
-          </UserInfoContainer>
-        </InfoOuterContainer>
+            <InfoOuterContainer>
+              <Avatar
+                alt="user-avatar"
+                src={avatarFullPath || null}
+                sx={{
+                  position: "absolute",
+                  top: 0,
+                  left: "42px",
+                  width: "112px",
+                  height: "112px",
+                  border: (theme) =>
+                    "1px solid" + theme.palette.primary.grey[5],
+                }}
+              ></Avatar>
+              <UserInfoContainer>
+                <UserInfo>
+                  <UserName>
+                    {profileOwner &&
+                      profileOwner?.primary.name +
+                        " " +
+                        profileOwner?.primary.surname}
+                  </UserName>
+                  {profileOwner?._id == currentUser._id &&
+                    !profileOwner.primary.dateOfbirth &&
+                    !profileOwner.primary.website &&
+                    !profileOwner.primary.description && (
+                      <AddInfoBtn
+                        onClick={() =>
+                          profileOwner._id &&
+                          navigate(`/edit/${currentUser._id}`)
+                        }
+                      >
+                        Provide information about yourself
+                      </AddInfoBtn>
+                    )}
+                  {
+                    profileOwner.primary.dateOfbirth &&
+                      console.log(profileOwner.primary.dateOfbirth)
+                    // <Typography>
+                    //   {calculateAge(profileOwner.primary.dateOfbirth)} years
+                    // </Typography>
+                  }
+                  {profileOwner && <Typography></Typography>}
+                </UserInfo>
+                {profileOwner?._id === currentUser._id && (
+                  <EditProfileBtn
+                    onClick={() =>
+                      profileOwner._id && navigate(`/edit/${currentUser._id}`)
+                    }
+                  >
+                    Edit profile
+                  </EditProfileBtn>
+                )}
+              </UserInfoContainer>
+            </InfoOuterContainer>
+          </>
+        )}
       </UserHeaderContainer>
       <UserBody>
-        <MainSide profileOwner={profileOwner}></MainSide>
-        <SecondarySide profileOwner={profileOwner}></SecondarySide>
+        <MainSide loading={loading} profileOwner={profileOwner}></MainSide>
+        <SecondarySide
+          loading={loading}
+          profileOwner={profileOwner}
+        ></SecondarySide>
       </UserBody>
     </Container>
   );

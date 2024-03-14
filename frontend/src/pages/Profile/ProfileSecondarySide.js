@@ -5,6 +5,7 @@ import { Context } from "../../shared/Context";
 import UserCardForProfile from "../../shared/UserCardForProfile";
 import { Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { PageLoader } from "../../shared/Loaders";
 
 const Container = styled("div")`
   display: flex;
@@ -99,7 +100,7 @@ const FriendsRequestsContainer = styled("div")`
   box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
 `;
 
-const SecondarySide = ({ profileOwner }) => {
+const SecondarySide = ({ loading, profileOwner }) => {
   const navigate = useNavigate();
   const currentUserContext = useContext(Context);
   const { currentUser, usersFromSearch } = currentUserContext;
@@ -109,34 +110,45 @@ const SecondarySide = ({ profileOwner }) => {
   return (
     <Container>
       <FriendsContainer>
-        <ContainerTitle>Friends</ContainerTitle>
-        {profileOwner && profileOwner.socialContacts.friends.length ? (
-          <Box
-            sx={{
-              display: "flex",
-              flexWrap: "wrap",
-              width: "100%",
-              marginTop: "8px",
-            }}
-          >
-            {profileOwner.socialContacts.friends.map(
-              (friendId, idx) =>
-                idx < 9 && (
-                  <UserCardForProfile key={friendId + "UserCardForProfile"} userId={friendId}></UserCardForProfile>
-                )
-            )}
-          </Box>
+        {loading ? (
+          <PageLoader></PageLoader>
         ) : (
-          <NoneFriendsContainer>
-            <NoneFriendsTitle>You don't have any friends yet</NoneFriendsTitle>
-            <AddFriendsContainer onClick={() => navigate("/friends")}>
-              <AddFriendsImg
-                src={addFriendsImg}
-                alt="addFriendsImg"
-              ></AddFriendsImg>
-              <AddFriendsText>Add friends</AddFriendsText>
-            </AddFriendsContainer>
-          </NoneFriendsContainer>
+          <>
+            <ContainerTitle>Friends</ContainerTitle>
+            {profileOwner && profileOwner.socialContacts.friends.length ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  width: "100%",
+                  marginTop: "8px",
+                }}
+              >
+                {profileOwner.socialContacts.friends.map(
+                  (friendId, idx) =>
+                    idx < 9 && (
+                      <UserCardForProfile
+                        key={friendId + "UserCardForProfile"}
+                        userId={friendId}
+                      ></UserCardForProfile>
+                    )
+                )}
+              </Box>
+            ) : (
+              <NoneFriendsContainer>
+                <NoneFriendsTitle>
+                  You don't have any friends yet
+                </NoneFriendsTitle>
+                <AddFriendsContainer onClick={() => navigate("/friends")}>
+                  <AddFriendsImg
+                    src={addFriendsImg}
+                    alt="addFriendsImg"
+                  ></AddFriendsImg>
+                  <AddFriendsText>Add friends</AddFriendsText>
+                </AddFriendsContainer>
+              </NoneFriendsContainer>
+            )}
+          </>
         )}
       </FriendsContainer>
       {profileOwner && profileOwner.socialContacts.followers.length > 0 && (
@@ -151,7 +163,10 @@ const SecondarySide = ({ profileOwner }) => {
             }}
           >
             {profileOwner.socialContacts.followers.map((followerId) => (
-              <UserCardForProfile key={followerId + "UserCardForProfile"} userId={followerId}></UserCardForProfile>
+              <UserCardForProfile
+                key={followerId + "UserCardForProfile"}
+                userId={followerId}
+              ></UserCardForProfile>
             ))}
           </Box>
         </FriendsRequestsContainer>
