@@ -8,7 +8,7 @@ const userSchema = new Schema({
     surname: { type: String, required: true },
     dateOfBirth: { type: String },
     email: { type: String, required: true },
-    website: { type: String},
+    website: { type: String },
     description: { type: String },
   },
   images: {
@@ -27,22 +27,30 @@ const userSchema = new Schema({
 });
 
 const chatSchema = new Schema({
-  senderID: [{ type: Schema.Types.ObjectId, ref: "User" }],
-  recipientID: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  senderID: { type: Schema.Types.ObjectId, ref: "User" },
+  recipientID: { type: Schema.Types.ObjectId, ref: "User" },
   messages: [
     {
       text: { type: String, required: true },
       id: { type: String, required: true },
       date: { type: String, required: true },
-      senderID: [{ type: Schema.Types.ObjectId, ref: "User", required: true }],
-      recipientID: [
-        { type: Schema.Types.ObjectId, ref: "User", required: true },
-      ],
+      senderID: { type: Schema.Types.ObjectId, ref: "User", required: true },
+      recipientID: { type: Schema.Types.ObjectId, ref: "User", required: true },
     },
   ],
 });
 
+const postSchema = new Schema({
+  authorID: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  date: { type: String, required: true },
+  text: String,
+  image: String,
+  likes: [{ type: Schema.Types.ObjectId, ref: "User", required: true }],
+  comments: [{ type: Schema.Types.ObjectId, ref: "User", required: true }],
+});
+
 const User = mongoose.model("User", userSchema, "users");
 const Chat = mongoose.model("Chat", chatSchema, "chats");
+const Post = mongoose.model("Post", postSchema, "posts");
 
-module.exports = { User, Chat };
+module.exports = { User, Chat, Post };
