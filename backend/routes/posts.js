@@ -5,27 +5,29 @@ const mongoose = require("mongoose");
 const router = Router();
 
 router.get("/get-posts", async (req, res) => {
-  const { profileId, location } = req.query;
-
-  if (!profileId) {
-    return res.json({ success: false, message: "Profile id is undefined" });
-  }
-
-  if (!mongoose.Types.ObjectId.isValid(profileId)) {
-    return res.json({ success: false, message: "Invalid profile id" });
-  }
-
-  if (!location) {
-    return res.json({ success: false, message: "Invalid location" });
-  }
+  const { filter } = req.query;
 
   try {
-    const posts = await Post.find({ authorID: profileId });
-    if (!posts) {
-      res.json({ res, success: false, message: "User was not found" });
+    let allPosts;
+
+    allPosts = await Post.find(filter)
+      .populate({
+        path: "author",
+        select: "-secret",
+      })
+      .exec();
+
+    if (!allPosts) {
+      return res.json({
+        success: false,
+        message: "Something wrong on server(get all user posts)",
+      });
     }
 
-    return res.json({ success: true, user });
+    return res.json({
+      success: true,
+      allPosts,
+    });
   } catch (e) {
     console.error(e);
     res.json({ res, success: false, message: e });
@@ -46,9 +48,27 @@ router.post("/new-post", async (req, res) => {
 
     await newPost.save();
 
-    const allUserPosts = await Post.find({authorID: profileId});
+    let allPosts;
 
-    if(!allUserPosts) {
+    if (location === "profile") {
+      allPosts = await Post.find({ author: profileId })
+        .populate({
+          path: "author",
+          select: "-secret",
+        })
+        .exec();
+    }
+
+    if (location === "feed") {
+      allPosts = await Post.find({})
+        .populate({
+          path: "author",
+          select: "-secret",
+        })
+        .exec();
+    }
+
+    if (!allPosts) {
       return res.json({
         success: false,
         message: "Something wrong on server(get all user posts)",
@@ -57,13 +77,48 @@ router.post("/new-post", async (req, res) => {
 
     return res.json({
       success: true,
-      allUserPosts,
+      allPosts,
     });
   } catch (e) {
     console.error(e);
     return res.json({
       success: false,
-      message: e,
+      message: "Caught error on server (new-post)",
+    });
+  }
+});
+
+router.post("/post-like", async (req, res) => {
+  const { profileId, postId} = req.body;
+  try {
+    const post = await Post.findOne({_id:postId})
+    if(!post) {
+      return res.json({
+        success: false,
+        message: "Caught error on server (post-like), post not found",
+      });
+    }
+    const postIsLiked = post.likes.findIndex(likerId => likerId.toString() === profileId) !== -1;
+
+    if(!postIsLiked) {
+      post.likes.push(profileId)
+    }
+    if(postIsLiked) {
+      const likerIdx = post.likes.findIndex(likerId => likerId === profileId)
+      post.likes.splice(likerIdx,1)
+    }
+    
+    await post.save()
+
+    return res.json({
+      success: true,
+      likes:post.likes,
+    });
+  } catch (e) {
+    console.error(e);
+    return res.json({
+      success: false,
+      message: "Caught on server (new-post)",
     });
   }
 });

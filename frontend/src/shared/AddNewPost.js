@@ -29,20 +29,20 @@ const AddNewPost = () => {
   });
 
   const handleSendNewPost = async () => {
-    setNewPostSending(true)
+    setNewPostSending(true);
 
     const textRegex = /\S/;
 
     const isTextValid = textRegex.test(postData.text);
 
-    if(!isTextValid) {
-      setNewPostSending(false)
-      return alert("Invalit text field")
+    if (!isTextValid) {
+      setNewPostSending(false);
+      return alert("Invalit text field");
     }
 
     if (!postData.text && !postData.image) {
-      setNewPostSending(false)
-      return alert("Invalid fields")
+      setNewPostSending(false);
+      return alert("Invalid fields");
     }
 
     const date = new Date();
@@ -50,29 +50,32 @@ const AddNewPost = () => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
 
-    const formattedDate = `${year}-${month}-${day}`;
+    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     const newPost = {
       ...postData,
-      authorID: currentUser._id,
+      author: currentUser._id,
       date: formattedDate,
     };
     const { data } = await postNewPost(currentUser._id, "profile", newPost);
-    if(!data) {
-      setNewPostSending(false)
-      return alert("Something wrond (add new post)")
+    if (!data) {
+      setNewPostSending(false);
+      return alert("Something wrond (add new post)");
     }
-    const {success} = data;
-    if(!success) {
-      const {message} = data;
-      console.log("Error add new post:" , message)
-      setNewPostSending(false)
-      return alert(message)
+    const { success } = data;
+    if (!success) {
+      const { message } = data;
+      console.log("Error add new post:", message);
+      setNewPostSending(false);
+      return alert(message);
     }
-    const {allUserPosts} = data;
-    setPosts(allUserPosts);
-    setNewPostSending(false)
-    console.log(allUserPosts)
+    const { allPosts } = data;
+    setPosts(allPosts);
+    setNewPostSending(false);
+    console.log(allPosts);
   };
 
   return (
@@ -130,32 +133,15 @@ const AddNewPost = () => {
             WebkitBoxShadow: "0px 0px 6px 2px rgba(0,0,0,0.5)",
             MozBoxShadow: "0px 0px 6px 2px rgba(0, 0, 0, 0.5)",
             boxShadow: "0px 0px 6px 2px rgba(0,0,0,0.5)",
+            fontSize: "13px",
+            textTransform: "none",
             "&:hover": {
               backgroundColor: (theme) => theme.palette.primary.grey[4],
-              fontSize: "14px",
             },
           }}
         >
           Send
         </LoadingButton>
-        {/* <Button
-          variant="contained"
-          onClick={handleSendNewPost}
-          sx={{
-            border: (theme) => "1px solid " + theme.palette.primary.grey[3],
-            backgroundColor: (theme) => theme.palette.primary.grey[5],
-            color: (theme) => theme.palette.primary.grey[1],
-            WebkitBoxShadow: "0px 0px 6px 2px rgba(0,0,0,0.5)",
-            MozBoxShadow: "0px 0px 6px 2px rgba(0, 0, 0, 0.5)",
-            boxShadow: "0px 0px 6px 2px rgba(0,0,0,0.5)",
-            "&:hover": {
-              backgroundColor: (theme) => theme.palette.primary.grey[4],
-              fontSize: "14px",
-            },
-          }}
-        >
-          Send
-        </Button> */}
       </Box>
     </Container>
   );

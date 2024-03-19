@@ -1,15 +1,14 @@
-import React, { useState, useRef, useContext } from "react";
+import React, { useState, useRef, useContext, useEffect } from "react";
 import beginImg from "../../images/icons/begin.svg";
 import beginCloseImg from "../../images/icons/begin_close.svg";
 import nonePostsImg from "../../images/icons/none_posts.svg";
 import friendsIcon from "../../images/icons/Navigation_icons/Friends.svg";
-import educationIcon from "../../images/icons/education.png";
-import musicIcon from "../../images/icons/music.png";
 import AddNewPost from "../../shared/AddNewPost";
 import styled from "@emotion/styled";
 import { Context } from "../../shared/Context";
-import { postNewPost } from "../../http/Fetches";
-import Post from "../../shared/Post.js"
+import { getPosts } from "../../http/Fetches";
+import Post from "../../shared/Post.js";
+import { PageLoader } from "../../shared/Loaders.js";
 
 const Container = styled("div")`
   display: flex;
@@ -163,6 +162,10 @@ const PostsNavBtn = styled("div")`
 `;
 
 const PostsContainer = styled("div")`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 16px;
   min-height: 159px;
   width: 100%;
   border-bottom: 1px solid ${({ theme }) => theme.palette.primary.grey[3]};
@@ -195,12 +198,14 @@ const NonePostsTitle = styled("div")`
   font-weight: 400;
 `;
 
-const MainSide = ({ loading,profileOwner }) => {
+const MainSide = ({ loading, profileOwner }) => {
   const scrollContainerRef = useRef(null);
   const [scrollLeft, setScrollLeft] = useState(0);
   const currentUserContext = useContext(Context);
-  const { currentUser,posts,setPosts } = currentUserContext;
-  
+  const { currentUser, posts, setPosts } = currentUserContext;
+
+  const [loadingPosts, setLoadtingPosts] = useState(true);
+
   const handleWheel = (e) => {
     // Установите желаемую скорость прокрутки
     const scrollSpeed = 0.4;
@@ -216,6 +221,27 @@ const MainSide = ({ loading,profileOwner }) => {
     // Обновите состояние
     setScrollLeft(newScrollLeft);
   };
+
+  const handleGetPosts = async () => {
+    setLoadtingPosts(true)
+    const { data } = await getPosts(profileOwner._id);
+    const { success } = data;
+    if (!success) {
+      const { message } = data;
+      setLoadtingPosts(false)
+      console.log(message);
+      return alert(message);
+    }
+    const { allPosts } = data;
+    setPosts(allPosts);
+    setLoadtingPosts(false)
+  };
+
+  useEffect(() => {
+    if(profileOwner) {
+      handleGetPosts();
+    }
+  }, [profileOwner]);
 
   return (
     <Container>
@@ -315,17 +341,24 @@ const MainSide = ({ loading,profileOwner }) => {
         <PostsNavBtn>My posts</PostsNavBtn>
       </PostsNav>
       <PostsContainer>
-        {posts.length ? (
-          posts.map(post => (
-            <Post></Post>
-          ))
+        {loadingPosts ? (
+          <PageLoader></PageLoader>
         ) : (
-<NonePostsContainer>
-<NonePostsImg src={nonePostsImg} alt="nonePosts"></NonePostsImg>
-<NonePostsTitle>There are no posts on the wall yet</NonePostsTitle>
-</NonePostsContainer>
+          <>
+            {posts && posts.length ? (
+              posts
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .map((post) => <Post key={"PostComponent-" + post._id} post={post}></Post>)
+            ) : (
+              <NonePostsContainer>
+                <NonePostsImg src={nonePostsImg} alt="nonePosts"></NonePostsImg>
+                <NonePostsTitle>
+                  There are no posts on the wall yet
+                </NonePostsTitle>
+              </NonePostsContainer>
+            )}
+          </>
         )}
-        
       </PostsContainer>
     </Container>
   );

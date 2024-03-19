@@ -168,13 +168,15 @@ export const postChangeUserAvatar = async (newAvatar, userId) => {
   }
 };
 
-// location will be only "feed" or "profile"
-export const getPosts = async (profileId, location) => {
+export const getPosts = async (profileId) => {
+  const filter = {
+    author: profileId,
+  };
+
   try {
-    const data = await axios.get("http://localhost:8000/api/get-posts", {
+    const data = await axios.get("http://localhost:8000/api/posts/get-posts", {
       params: {
-        profileId,
-        location,
+        filter,
       },
     });
     return data;
@@ -185,10 +187,23 @@ export const getPosts = async (profileId, location) => {
 
 export const postNewPost = async (profileId, location, postData) => {
   try {
-    const data = await axios.post(
-      "http://localhost:8000/api/posts/new-post",
-      { profileId, location,postData }
-    );
+    const data = await axios.post("http://localhost:8000/api/posts/new-post", {
+      profileId,
+      location,
+      postData,
+    });
+    return data;
+  } catch (error) {
+    return catchFunc(error);
+  }
+};
+
+export const postLike = async (profileId, postId) => {
+  try {
+    const data = await axios.post("http://localhost:8000/api/posts/post-like", {
+      profileId,
+      postId,
+    });
     return data;
   } catch (error) {
     return catchFunc(error);
