@@ -3,9 +3,10 @@ import searchIcon from "../../images/icons/search.svg";
 import UserCardSearch from "../../shared/UserCardSearch";
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../../shared/Context";
-import { getUsersInfo } from "../../http/Fetches";
+import { getUserInfo, getUsersInfo } from "../../http/Fetches";
 import { Typography } from "@mui/material";
 import { PageLoader } from "../../shared/Loaders";
+import { SettingsBackupRestoreRounded } from "@mui/icons-material";
 
 const Container = styled("div")`
   display: flex;
@@ -97,7 +98,7 @@ const FriendsMainSide = (peopleSearchParams) => {
   const [loading, setLoading] = useState(true);
 
   const currentUserContext = useContext(Context);
-  const { currentUser, usersFromSearch, setUsersFromSearch } =
+  const { currentUser, setCurrentUser, usersFromSearch, setUsersFromSearch } =
     currentUserContext;
   const fetchAllUsers = async () => {
     const { data } = await getUsersInfo();
@@ -108,9 +109,27 @@ const FriendsMainSide = (peopleSearchParams) => {
       setLoading(false);
     }
   };
-  fetchAllUsers();
+
+  const fetchCurrentUser = async () => {
+    const {data} = await getUserInfo(currentUser._id)
+    const { success } = data;
+    if (success) {
+      const { user } = data;
+      setCurrentUser(user)
+      console.log(user)
+    } else {
+      const {message} =  data;
+      console.log(message)
+      alert(message)
+    }
+  }
 
   useEffect(() => {
+    fetchAllUsers();
+  }, []);
+
+  useEffect(() => {
+    fetchCurrentUser()
     const filteredFriends = [];
     const filteredOtherUsers = [];
     if (currentUser.socialContacts.friends.length) {
@@ -165,10 +184,7 @@ const FriendsMainSide = (peopleSearchParams) => {
           <>
             {userFriends.map((friend) => {
               return (
-                <UserCardSearch
-                  key={friend._id}
-                  user={friend}
-                ></UserCardSearch>
+                <UserCardSearch key={friend._id} user={friend}></UserCardSearch>
               );
             })}
             <Typography

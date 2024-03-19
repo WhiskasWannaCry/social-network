@@ -174,12 +174,12 @@ const FriendsFiltersSide = ({ peopleSearchParams, setPeopleSearchParams }) => {
     <Container>
       <SortTitle>Age</SortTitle>
       <SortByAgeContainer>
-        <FormControl sx={{ m: 1, display: "flex", flexGrow: 1 }} size="small">
+        {/* <FormControl sx={{ m: 1, display: "flex", flexGrow: 1 }} size="small">
           <InputLabel id="demo-select-small-label">From</InputLabel>
           <Select
             labelId="demo-select-small-label"
             id="demo-select-small"
-            value={peopleSearchParams.selectedFromAge}
+            value={0}
             label="Age"
             onChange={handleChangeFromAge}
           >
@@ -203,7 +203,7 @@ const FriendsFiltersSide = ({ peopleSearchParams, setPeopleSearchParams }) => {
           <Select
             labelId="demo-select-small-label"
             id="demo-select-small"
-            value={peopleSearchParams.selectedToAge}
+            value={0}
             label="Age"
             onChange={handleChangeToAge}
           >
@@ -220,7 +220,7 @@ const FriendsFiltersSide = ({ peopleSearchParams, setPeopleSearchParams }) => {
               )
             )}
           </Select>
-        </FormControl>
+        </FormControl> */}
 
         {/* <SortByAgeSelect name="age_select">
           {agesArr.map((age) =>

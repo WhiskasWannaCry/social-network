@@ -16,8 +16,8 @@ const Friends = () => {
   const { currentUser, setCurrentUser, userInit } = currentUserContext;
   const [peopleSearchParams, setPeopleSearchParams] = useState({
     searchInputValue: "",
-    selectedFromAge: "",
-    selectedToAge: "",
+    selectedFromAge: 0,
+    selectedToAge: 0,
     selectedSex: "other",
   });
 

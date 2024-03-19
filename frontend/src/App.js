@@ -108,6 +108,7 @@ function App() {
             if (!success) {
               const { message } = data;
               console.log(data);
+              alert(data);
               setCurrentUser(userInit);
               localStorage.setItem("token", JSON.stringify({ value: "0" }));
               setLoading(false);

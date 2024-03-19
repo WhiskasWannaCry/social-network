@@ -6,7 +6,7 @@ import userImg from "../../images/posts_img/post_img4.jpg";
 import { useNavigate, useParams } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../../shared/Context";
-import { Avatar, Typography } from "@mui/material";
+import { Avatar, Link, Typography } from "@mui/material";
 import { getUserInfo } from "../../http/Fetches";
 import { calculateAge } from "../../shared/functions";
 import { PageLoader } from "../../shared/Loaders";
@@ -74,7 +74,7 @@ const InfoOuterContainer = styled("div")`
   flex-direction: column;
   justify-content: flex-end;
   width: 100%;
-  min-height: 144px;
+  min-height: 160px;
   z-index: 2;
 `;
 
@@ -165,8 +165,6 @@ const Profile = () => {
   useEffect(() => {
     const fetchUserInfo = async (profileId) => {
       const { data } = await getUserInfo(profileId);
-      console.log(profileId);
-      console.log(data);
 
       const { success } = data;
       if (!success && data) {
@@ -181,7 +179,7 @@ const Profile = () => {
       const { user } = data;
 
       setProfileOwner(user);
-      setLoading(false)
+      setLoading(false);
     };
     fetchUserInfo(profileId);
   }, [profileId]);
@@ -248,14 +246,39 @@ const Profile = () => {
                         Provide information about yourself
                       </AddInfoBtn>
                     )}
-                  {
-                    profileOwner.primary.dateOfbirth &&
-                      console.log(profileOwner.primary.dateOfbirth)
-                    // <Typography>
-                    //   {calculateAge(profileOwner.primary.dateOfbirth)} years
-                    // </Typography>
-                  }
-                  {profileOwner && <Typography></Typography>}
+                  {profileOwner.primary.dateOfBirth && (
+                    <Typography
+                      sx={{
+                        fontSize: "12px",
+                        color: (theme) => theme.palette.primary.grey[3],
+                      }}
+                    >
+                      {calculateAge(profileOwner.primary.dateOfBirth)} years
+                    </Typography>
+                  )}
+                  {profileOwner.primary.website && (
+                    <Link
+                      href={profileOwner.primary.website}
+                      sx={{
+                        cursor: "pointer",
+                        fontSize: "12px",
+                        color: (theme) => theme.palette.primary.grey[2],
+                      }}
+                    >
+                      {profileOwner.primary.website}
+                    </Link>
+                  )}
+                  {profileOwner.primary.description && (
+                    <Typography
+                      href={profileOwner.primary.website}
+                      sx={{
+                        fontSize: "14px",
+                        color: (theme) => theme.palette.primary.grey[2],
+                      }}
+                    >
+                      {profileOwner.primary.description}
+                    </Typography>
+                  )}
                 </UserInfo>
                 {profileOwner?._id === currentUser._id && (
                   <EditProfileBtn

@@ -5,6 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import { Context } from "./Context";
 import { useNavigate } from "react-router-dom";
 import {
+  getUsersInfo,
   postAddAsFriend,
   postFollow,
   postRemoveFriend,
@@ -87,7 +88,7 @@ const UserCardSearch = ({ user }) => {
   const [isFriend, setIsFriend] = useState(false);
 
   const currentUserContext = useContext(Context);
-  const { currentUser, setCurrentUser } = currentUserContext;
+  const { currentUser, setCurrentUser,setUsersFromSearch } = currentUserContext;
   const navigate = useNavigate();
   const avatarFullPath = user && `http://localhost:8000/${user.images.avatar}`;
 
@@ -116,6 +117,16 @@ const UserCardSearch = ({ user }) => {
     }
   }, [currentUser]);
 
+  const fetchAllUsers = async () => {
+    const { data } = await getUsersInfo();
+    const { success } = data;
+    if (success) {
+      const { users } = data;
+      setUsersFromSearch(users);
+      // setLoading(false);
+    }
+  };
+
   const handleFollow = async () => {
     const data = await postFollow(currentUser._id, user._id);
     const { success } = data;
@@ -124,6 +135,7 @@ const UserCardSearch = ({ user }) => {
       console.log(message);
       return;
     }
+    fetchAllUsers()
     setIsFollowing(true);
   };
 
@@ -135,6 +147,7 @@ const UserCardSearch = ({ user }) => {
       console.log(message);
       return;
     }
+    fetchAllUsers()
     setIsFollowing(false);
   };
 
@@ -146,6 +159,7 @@ const UserCardSearch = ({ user }) => {
       console.log(message);
       return;
     }
+    fetchAllUsers()
     setIsFollowing(false);
     setIsFollower(false);
     setIsFriend(true);
