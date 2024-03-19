@@ -27,21 +27,21 @@ const userSchema = new Schema({
 });
 
 const chatSchema = new Schema({
-  senderID: { type: Schema.Types.ObjectId, ref: "User" },
-  recipientID: { type: Schema.Types.ObjectId, ref: "User" },
+  sender: { type: Schema.Types.ObjectId, ref: "User" },
+  recipient: { type: Schema.Types.ObjectId, ref: "User" },
   messages: [
     {
       text: { type: String, required: true },
       id: { type: String, required: true },
       date: { type: String, required: true },
-      senderID: { type: Schema.Types.ObjectId, ref: "User", required: true },
-      recipientID: { type: Schema.Types.ObjectId, ref: "User", required: true },
+      sender: { type: Schema.Types.ObjectId, ref: "User", required: true },
+      recipient: { type: Schema.Types.ObjectId, ref: "User", required: true },
     },
   ],
 });
 
 const postSchema = new Schema({
-  authorID: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  author: { type: Schema.Types.ObjectId, ref: "User", required: true },
   date: { type: String, required: true },
   text: String,
   image: String,
