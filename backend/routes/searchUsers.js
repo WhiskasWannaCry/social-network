@@ -54,9 +54,6 @@ router.get("/search/get-all-users", async (req, res) => {
 
     const users = await User.find(filter, { secret: 0 }).limit(100);
 
-    console.log(users)
-    console.log(filter)
-
     if (users) {
       res.json({ success: true, users });
     } else {
