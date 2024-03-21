@@ -1,9 +1,10 @@
 import styled from "@emotion/styled";
-import { Box, Button, TextField } from "@mui/material";
+import { Avatar, Box, Button, TextField } from "@mui/material";
 import { Context } from "./Context";
 import { useContext, useState } from "react";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { postNewPost } from "../http/Fetches";
+import { postChangeUserAvatar, postNewPost } from "../http/Fetches";
+import ImageCropper from "./ImageCropper";
 
 const Container = styled("div")`
   display: flex;
@@ -28,6 +29,8 @@ const AddNewPost = () => {
     image: "",
   });
 
+  const [postImage, setPostImage] = useState("");
+
   const handleSendNewPost = async () => {
     setNewPostSending(true);
 
@@ -40,9 +43,23 @@ const AddNewPost = () => {
       return alert("Invalit text field");
     }
 
-    if (!postData.text && !postData.image) {
+    if (!postData.text && !postImage) {
       setNewPostSending(false);
       return alert("Invalid fields");
+    }
+
+    let imgPathOnServer;
+
+    if(postImage) { 
+      const { data } = await postChangeUserAvatar(postImage, currentUser._id, "post");
+      const {success} = data;
+      if(!success) {
+        const {message} = data;
+        console.log(message)
+        return alert(message)
+      }
+      const {relativePath} = data;
+      imgPathOnServer = relativePath;
     }
 
     const date = new Date();
@@ -55,11 +72,16 @@ const AddNewPost = () => {
     const seconds = String(date.getSeconds()).padStart(2, "0");
 
     const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    // console.log(new Date(formattedDate));
     const newPost = {
       ...postData,
       author: currentUser._id,
       date: formattedDate,
+      image: "",
     };
+    if(imgPathOnServer) {
+      newPost.image = imgPathOnServer;
+    }
     const { data } = await postNewPost(currentUser._id, "profile", newPost);
     if (!data) {
       setNewPostSending(false);
@@ -73,9 +95,17 @@ const AddNewPost = () => {
       return alert(message);
     }
     const { allPosts } = data;
+    console.log(allPosts)
     setPosts(allPosts);
+    setPostData(prev => ({
+      ...prev,
+      authorID: "",
+      date: "",
+      text: "",
+      image: "",
+    }))
+    setPostImage("")
     setNewPostSending(false);
-    console.log(allPosts);
   };
 
   return (
@@ -115,13 +145,33 @@ const AddNewPost = () => {
             },
         }}
       />
+      {postImage && <Avatar title="post_img" src={postImage} sx={{
+        width: "100%",
+        height: "auto",
+        borderRadius: 0,
+      }}></Avatar>}
       <Box
         sx={{
           display: "flex",
           width: "100%",
-          justifyContent: "flex-end",
+          justifyContent: "space-between",
         }}
       >
+        <Box
+          sx={{
+            display: "flex",
+            flexGrow: 1,
+          }}
+        >
+          <ImageCropper
+            imageType={"post"}
+            ASPECT_RATIO={3 / 4}
+            circularCrop={false}
+            MIN_DEMENSION={150}
+            textForButton={"Add image"}
+            setNewAvatar={setPostImage}
+          ></ImageCropper>
+        </Box>
         <LoadingButton
           loading={newPostSending}
           variant="contained"

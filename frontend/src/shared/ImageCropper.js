@@ -14,14 +14,13 @@ import { postChangeUserAvatar } from "../http/Fetches";
 const StyledInputFile = styled("input")``;
 
 const ImageCropper = ({
-  imageType,  
+  imageType,
   ASPECT_RATIO,
   MIN_DEMENSION,
   circularCrop,
   textForButton,
   setNewAvatar,
 }) => {
-
   const [imgSrc, setImgSrc] = useState("");
   const [crop, setCrop] = useState("");
   const [imgError, setImgError] = useState("");
@@ -75,19 +74,23 @@ const ImageCropper = ({
   };
 
   const changeUserAvatar = async (newAvatar, userId) => {
-    const { data } = await postChangeUserAvatar(newAvatar, userId,imageType);
-    console.log(data);
-    const { success } = data;
-    if (!success) {
-      const { message } = data;
-      alert(message);
-      return;
+    if (imageType === "avatar" || imageType === "background") {
+      const { data } = await postChangeUserAvatar(newAvatar, userId, imageType);
+      const { success } = data;
+      if (!success) {
+        const { message } = data;
+        alert(message);
+        return;
+      }
+      const { user } = data;
+      setCurrentUser(user);
+      const avatarFullPath = `http://localhost:8000/${user?.images[imageType]}`;
+      console.log(avatarFullPath);
+      setNewAvatar(avatarFullPath);
     }
-    const { user } = data;
-    setCurrentUser(user);
-    const avatarFullPath = `http://localhost:8000/${user?.images[imageType]}`;
-    setNewAvatar(avatarFullPath);
-    console.log(user);
+    if (imageType === "post") {
+      setNewAvatar(newAvatar);
+    }
   };
 
   const updateAvatar = (dataURL) => {

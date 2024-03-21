@@ -56,15 +56,16 @@ const ChangeBackground = styled("div")`
   }
 `;
 
-const UserBackground = styled("div")`
+const UserBackground = styled(Avatar)`
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url(${(props) => props.bgImg});
+  min-width: 100%;
+  height: 60%;
+  /* background-image: url(${(props) => props.bgImg});
   background-size: 100%;
-  background-repeat: no-repeat;
+  background-repeat: no-repeat; */
+  object-fit: fill;
   z-index: 1;
 `;
 
@@ -214,13 +215,15 @@ const Profile = () => {
           <PageLoader></PageLoader>
         ) : (
           <>
-            <UserBackground bgImg={newBackground}></UserBackground>
+            <UserBackground title={newBackground} src={newBackground} sx={{
+              borderRadius: 0,
+            }}></UserBackground>
             {profileOwner?._id == currentUser._id && (
               // <ChangeBackground>Change background</ChangeBackground>\
               <ChangeBackground>
                 <ImageCropper
                   imageType={"background"}
-                  ASPECT_RATIO={6 / 2}
+                  ASPECT_RATIO={7 / 2}
                   circularCrop={false}
                   MIN_DEMENSION={400}
                   textForButton={"Change background"}
