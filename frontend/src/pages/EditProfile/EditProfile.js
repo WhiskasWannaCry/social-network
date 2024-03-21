@@ -158,7 +158,7 @@ const EditProfile = () => {
       if (newSex !== currentUser?.primary.sex) {
         changedFields.sex = newSex;
       }
-      console.log(newSex)
+      console.log(newSex);
       if (
         newDateOfBirth ||
         newName ||
@@ -200,6 +200,11 @@ const EditProfile = () => {
           }}
         ></Avatar>
         <ImageCropper
+          imageType={"avatar"}
+          ASPECT_RATIO={1}
+          MIN_DEMENSION={150}
+          circularCrop={true}
+          textForButton={"Upload a new avatar"}
           newAvatar={newAvatar}
           setNewAvatar={setNewAvatar}
         ></ImageCropper>

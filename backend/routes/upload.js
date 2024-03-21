@@ -7,6 +7,7 @@ const router = Router();
 router.post('/upload', fileUploadMiddleware.single('avatar') ,async (req,res) => {
   try {
     const userId = req.query.userId;
+    const imageType = req.query.imageType;
     // const filePath = req.file.path;
     const file = req.file
 
@@ -26,9 +27,9 @@ router.post('/upload', fileUploadMiddleware.single('avatar') ,async (req,res) =>
       return res.json({success:false, message: "Error at the time saving img: user wan't found"})
     }
 
-    const relativePath = `avatars/${userId}/${file.filename}`
+    const relativePath = `${imageType + "s"}/${userId}/${file.filename}`
     
-    user.images.avatar = relativePath
+    user.images[imageType] = relativePath
 
     await user.save()
 

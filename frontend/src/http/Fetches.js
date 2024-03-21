@@ -150,16 +150,16 @@ export const postChangeUserInfo = async (changedFields, userId) => {
   }
 };
 
-export const postChangeUserAvatar = async (newAvatar, userId) => {
+export const postChangeUserAvatar = async (newAvatar, userId,imageType) => {
   try {
     // Преобразовываем строку base64 обратно в файл
     const blob = await fetch(newAvatar).then((res) => res.blob());
-    const file = new File([blob], "avatar.jpg", { type: "image/jpeg" });
+    const file = new File([blob], `${imageType}.jpg`, { type: "image/jpeg" });
 
     const formData = new FormData();
     formData.append("avatar", file);
 
-    const url = `http://localhost:8000/api/upload?userId=${userId}`;
+    const url = `http://localhost:8000/api/upload?userId=${userId}&imageType=${imageType}`;
     const data = await axios.post(url, formData, {
       headers: {
         "content-type": "multipart/form-data",

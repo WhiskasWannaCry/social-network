@@ -13,10 +13,15 @@ import { postChangeUserAvatar } from "../http/Fetches";
 
 const StyledInputFile = styled("input")``;
 
-const ASPECT_RATIO = 1;
-const MIN_DEMENSION = 150;
+const ImageCropper = ({
+  imageType,  
+  ASPECT_RATIO,
+  MIN_DEMENSION,
+  circularCrop,
+  textForButton,
+  setNewAvatar,
+}) => {
 
-const ImageCropper = ({ newAvatar, setNewAvatar }) => {
   const [imgSrc, setImgSrc] = useState("");
   const [crop, setCrop] = useState("");
   const [imgError, setImgError] = useState("");
@@ -43,7 +48,7 @@ const ImageCropper = ({ newAvatar, setNewAvatar }) => {
         if (imgError) setImgError("");
         const { naturalWidth, naturalHeight } = e.currentTarget;
         if (naturalWidth < MIN_DEMENSION || naturalHeight < MIN_DEMENSION) {
-          setImgError("The image must be least 150x150 pxs");
+          setImgError(`The image must be least ${MIN_DEMENSION} pxs`);
           return setImgSrc("");
         }
       });
@@ -70,7 +75,7 @@ const ImageCropper = ({ newAvatar, setNewAvatar }) => {
   };
 
   const changeUserAvatar = async (newAvatar, userId) => {
-    const { data } = await postChangeUserAvatar(newAvatar, userId);
+    const { data } = await postChangeUserAvatar(newAvatar, userId,imageType);
     console.log(data);
     const { success } = data;
     if (!success) {
@@ -80,9 +85,9 @@ const ImageCropper = ({ newAvatar, setNewAvatar }) => {
     }
     const { user } = data;
     setCurrentUser(user);
-    const avatarFullPath = `http://localhost:8000/${user?.images?.avatar}`
-    setNewAvatar(avatarFullPath)
-    console.log(user)
+    const avatarFullPath = `http://localhost:8000/${user?.images[imageType]}`;
+    setNewAvatar(avatarFullPath);
+    console.log(user);
   };
 
   const updateAvatar = (dataURL) => {
@@ -92,7 +97,7 @@ const ImageCropper = ({ newAvatar, setNewAvatar }) => {
 
   return (
     <>
-      <Button onClick={handleOpenModal}>Upload a new image</Button>
+      <Button onClick={handleOpenModal}>{textForButton}</Button>
       <Modal
         keepMounted
         open={openModal}
@@ -114,7 +119,7 @@ const ImageCropper = ({ newAvatar, setNewAvatar }) => {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            height: "90vh",
+            minHeight: "50%",
             width: 700,
             backgroundColor: (theme) => theme.palette.primary.grey[6],
             border: (theme) => `1px solid ${theme.palette.primary.grey[3]}`,
@@ -164,7 +169,7 @@ const ImageCropper = ({ newAvatar, setNewAvatar }) => {
               >
                 <ReactCrop
                   crop={crop}
-                  circularCrop
+                  circularCrop={circularCrop}
                   keepSelection
                   aspect={ASPECT_RATIO}
                   minWidth={MIN_DEMENSION}

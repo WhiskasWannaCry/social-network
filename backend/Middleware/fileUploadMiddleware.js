@@ -5,9 +5,10 @@ const fs = require("fs");
 const storage = multer.diskStorage({
   destination(req,file,cb) {
     const userId = req.query.userId; // Получаем userId из параметров запроса
+    const imageType = req.query.imageType; // Получаем userId из параметров запроса
 
     // Путь к директории для сохранения аватаров пользователя
-    const userAvatarDir = path.join(__dirname, "..", "public", "avatars", userId);
+    const userAvatarDir = path.join(__dirname, "..", "public", `${imageType + "s"}`, userId);
 
     // Создаем директорию пользователя, если она еще не существует
     if (!fs.existsSync(userAvatarDir)) {

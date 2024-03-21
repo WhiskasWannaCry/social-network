@@ -3,6 +3,8 @@ import beginImg from "../../images/icons/begin.svg";
 import beginCloseImg from "../../images/icons/begin_close.svg";
 import nonePostsImg from "../../images/icons/none_posts.svg";
 import friendsIcon from "../../images/icons/Navigation_icons/Friends.svg";
+import websiteIcon from "../../images/icons/website.png";
+import infoIcon from "../../images/icons/info.png";
 import AddNewPost from "../../shared/AddNewPost";
 import styled from "@emotion/styled";
 import { Context } from "../../shared/Context";
@@ -307,7 +309,7 @@ const MainSide = ({ loading, profileOwner }) => {
                 {!profileOwner.primary.description && (
                   <BeginBlock>
                     <BeginBlockIcon
-                      // src={musicIcon}
+                      src={infoIcon}
                       alt="blockIcon"
                     ></BeginBlockIcon>
                     <BeginBlockTitle>
@@ -321,7 +323,7 @@ const MainSide = ({ loading, profileOwner }) => {
                 {!profileOwner.primary.website && (
                   <BeginBlock>
                     <BeginBlockIcon
-                      // src={educationIcon}
+                      src={websiteIcon}
                       alt="blockIcon"
                     ></BeginBlockIcon>
                     <BeginBlockTitle>Write your Website</BeginBlockTitle>

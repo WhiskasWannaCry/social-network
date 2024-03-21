@@ -25,6 +25,7 @@ app.use(cors());
 
 // Создаю статику для картинок аватарок и постов
 app.use("/avatars", express.static(path.join(__dirname, "public", "avatars")));
+app.use("/backgrounds", express.static(path.join(__dirname, "public", "backgrounds")));
 app.use("/posts", express.static(path.join(__dirname, "public", "posts")));
 app.use(express.static("public/default"));
 

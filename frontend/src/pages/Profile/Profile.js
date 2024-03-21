@@ -10,6 +10,7 @@ import { Avatar, Link, Typography } from "@mui/material";
 import { getUserInfo } from "../../http/Fetches";
 import { calculateAge } from "../../shared/functions";
 import { PageLoader } from "../../shared/Loaders";
+import ImageCropper from "../../shared/ImageCropper";
 
 const Container = styled("div")`
   width: 100%;
@@ -39,7 +40,6 @@ const ChangeBackground = styled("div")`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 8px 16px 8px 16px;
   top: 12px;
   right: 12px;
   z-index: 2;
@@ -159,8 +159,19 @@ const Profile = () => {
   const { currentUser } = currentUserContext;
 
   const [profileOwner, setProfileOwner] = useState(null);
+  const [newBackground, setNewBackground] = useState("");
 
   const [loading, setLoading] = useState(true);
+
+  let avatarFullPath =
+    `http://localhost:8000/${profileOwner?.images.avatar}` || userImg;
+  let backgroundFullPath =
+    `http://localhost:8000/${profileOwner?.images.background}` ||
+    backgroundImage;
+
+  useEffect(() => {
+    setNewBackground(`http://localhost:8000/${profileOwner?.images.background}`)
+  },[])
 
   useEffect(() => {
     const fetchUserInfo = async (profileId) => {
@@ -179,6 +190,7 @@ const Profile = () => {
       const { user } = data;
 
       setProfileOwner(user);
+      setNewBackground(`http://localhost:8000/${user.images.background}`);
       setLoading(false);
     };
     fetchUserInfo(profileId);
@@ -194,11 +206,6 @@ const Profile = () => {
       }
     }
   }, [profileOwner]);
-  let avatarFullPath =
-    `http://localhost:8000/${profileOwner?.images.avatar}` || userImg;
-  let backgroundFullPath =
-    `http://localhost:8000/${profileOwner?.images.background}` ||
-    backgroundImage;
 
   return (
     <Container>
@@ -207,9 +214,19 @@ const Profile = () => {
           <PageLoader></PageLoader>
         ) : (
           <>
-            <UserBackground bgImg={backgroundFullPath}></UserBackground>
+            <UserBackground bgImg={newBackground}></UserBackground>
             {profileOwner?._id == currentUser._id && (
-              <ChangeBackground>Change background</ChangeBackground>
+              // <ChangeBackground>Change background</ChangeBackground>\
+              <ChangeBackground>
+                <ImageCropper
+                  imageType={"background"}
+                  ASPECT_RATIO={6 / 2}
+                  circularCrop={false}
+                  MIN_DEMENSION={400}
+                  textForButton={"Change background"}
+                  setNewAvatar={setNewBackground}
+                ></ImageCropper>
+              </ChangeBackground>
             )}
             <InfoOuterContainer>
               <Avatar
