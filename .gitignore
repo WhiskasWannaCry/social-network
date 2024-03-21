@@ -1,6 +1,7 @@
 node_modules
 backend/public/avatars/
 backend/public/backgrounds/
+backend/public/posts/
 config/default.json
 data
 .pnp
