@@ -6,7 +6,8 @@ const userSchema = new Schema({
   primary: {
     name: { type: String, required: true },
     surname: { type: String, required: true },
-    dateOfBirth: { type: String },
+    dateOfBirth: { type: Date },
+    sex: { type: String },
     email: { type: String, required: true },
     website: { type: String },
     description: { type: String },

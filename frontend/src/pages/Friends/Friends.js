@@ -36,8 +36,8 @@ const Friends = () => {
         </> // нужно будет написать когда у юзера есть друзья
       ) : (
         <>
-          <FriendsMainSide></FriendsMainSide>
-          <FriendsFiltersSide></FriendsFiltersSide>
+          <FriendsMainSide peopleSearchParams={peopleSearchParams}></FriendsMainSide>
+          <FriendsFiltersSide peopleSearchParams={peopleSearchParams} setPeopleSearchParams={setPeopleSearchParams}></FriendsFiltersSide>
         </>
       )}
     </Container>

@@ -54,10 +54,13 @@ export const postLogin = async (userData) => {
   }
 };
 
-export const getUsersInfo = async () => {
+export const getUsersInfo = async (peopleSearchParams) => {
   try {
     const data = await axios.get(
-      "http://localhost:8000/api/search/get-all-users"
+      "http://localhost:8000/api/search/get-all-users",
+      {
+        params: peopleSearchParams,
+      }
     );
     return data;
   } catch (error) {

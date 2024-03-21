@@ -123,7 +123,7 @@ app.post("/api/change-user-info", async (req, res) => {
     return res.json({ success: false, message: "User id is falsy" });
   }
 
-  const { name, surname, website, city, description, dateOfBirth, avatar } =
+  const { name, surname, website, city, description, dateOfBirth, avatar, sex } =
     changedFields;
 
   if (
@@ -133,7 +133,8 @@ app.post("/api/change-user-info", async (req, res) => {
     !city &&
     !description &&
     !dateOfBirth &&
-    !avatar
+    !avatar &&
+    !sex
   ) {
     return res.json({ success: false, message: "Nothing to change" });
   }
@@ -158,6 +159,10 @@ app.post("/api/change-user-info", async (req, res) => {
   }
   if (dateOfBirth) {
     user.primary.dateOfBirth = dateOfBirth;
+  }
+
+  if (sex) {
+    user.primary.sex = sex;
   }
 
   await user.save();

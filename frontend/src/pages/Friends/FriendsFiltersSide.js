@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import styled from "@emotion/styled";
 import {
   Radio,
@@ -9,7 +9,10 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Button,
 } from "@mui/material";
+import { getUsersInfo } from "../../http/Fetches";
+import { Context } from "../../shared/Context";
 
 const Container = styled("div")`
   position: sticky;
@@ -77,74 +80,14 @@ const InputSexContainer = styled("div")`
 
 const FriendsFiltersSide = ({ peopleSearchParams, setPeopleSearchParams }) => {
   const agesArr = [
-    14,
-    15,
-    16,
-    17,
-    18,
-    19,
-    20,
-    21,
-    22,
-    23,
-    24,
-    25,
-    26,
-    27,
-    28,
-    29,
-    30,
-    31,
-    32,
-    33,
-    34,
-    35,
-    36,
-    37,
-    38,
-    39,
-    40,
-    41,
-    42,
-    43,
-    44,
-    45,
-    46,
-    47,
-    48,
-    49,
-    50,
-    51,
-    52,
-    53,
-    54,
-    55,
-    56,
-    57,
-    58,
-    59,
-    60,
-    61,
-    62,
-    63,
-    64,
-    65,
-    66,
-    67,
-    68,
-    69,
-    70,
-    71,
-    72,
-    73,
-    74,
-    75,
-    76,
-    77,
-    78,
-    79,
-    80,
+    0, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+    32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
+    51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69,
+    70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80,
   ];
+
+  const currentUserContext = useContext(Context);
+  const { setUsersFromSearch } = currentUserContext;
 
   const handleRadioChange = (event) => {
     setPeopleSearchParams((prev) => ({
@@ -170,20 +113,33 @@ const FriendsFiltersSide = ({ peopleSearchParams, setPeopleSearchParams }) => {
     console.log(peopleSearchParams);
   };
 
+  const handleFilter = async () => {
+    const { data } = await getUsersInfo({
+      peopleSearchParams: peopleSearchParams,
+    });
+    const { success } = data;
+    if (!success) {
+      const { message } = data;
+      console.log(message);
+      return alert(message);
+    }
+    const { users } = data;
+    setUsersFromSearch(users);
+  };
+
   return (
     <Container>
       <SortTitle>Age</SortTitle>
       <SortByAgeContainer>
-        {/* <FormControl sx={{ m: 1, display: "flex", flexGrow: 1 }} size="small">
+        <FormControl sx={{ m: 1, display: "flex", flexGrow: 1 }} size="small">
           <InputLabel id="demo-select-small-label">From</InputLabel>
           <Select
             labelId="demo-select-small-label"
             id="demo-select-small"
-            value={0}
+            value={peopleSearchParams.selectedFromAge}
             label="Age"
             onChange={handleChangeFromAge}
           >
-            <MenuItem value="">From</MenuItem>
             {agesArr.map((age) =>
               age ? (
                 <MenuItem key={age} value={age}>
@@ -203,11 +159,10 @@ const FriendsFiltersSide = ({ peopleSearchParams, setPeopleSearchParams }) => {
           <Select
             labelId="demo-select-small-label"
             id="demo-select-small"
-            value={0}
+            value={peopleSearchParams.selectedToAge}
             label="Age"
             onChange={handleChangeToAge}
           >
-            <MenuItem value="">To</MenuItem>
             {agesArr.map((age) =>
               age ? (
                 <MenuItem key={age} value={age}>
@@ -220,41 +175,12 @@ const FriendsFiltersSide = ({ peopleSearchParams, setPeopleSearchParams }) => {
               )
             )}
           </Select>
-        </FormControl> */}
-
-        {/* <SortByAgeSelect name="age_select">
-          {agesArr.map((age) =>
-            age ? (
-              <SortByAgeOption key={age} value={age}>
-                From {age}
-              </SortByAgeOption>
-            ) : (
-              <SortByAgeOption key={age} value={age} defaultValue>
-                From
-              </SortByAgeOption>
-            )
-          )}
-        </SortByAgeSelect>
-
-        <SortByAgeSelect>
-          {agesArr.map((age) =>
-            age > 0 ? (
-              <SortByAgeOption key={age} value={age}>
-                To {age}
-              </SortByAgeOption>
-            ) : (
-              <SortByAgeOption key={age} value={age} defaultValue>
-                To
-              </SortByAgeOption>
-            )
-          )}
-        </SortByAgeSelect> */}
+        </FormControl>
       </SortByAgeContainer>
       <HR></HR>
       <SortTitle>Sex</SortTitle>
       <InputSexContainer>
         <FormControl>
-          {/* <FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel> */}
           <RadioGroup
             aria-labelledby="demo-radio-buttons-group-label"
             name="radio-buttons-group"
@@ -280,38 +206,10 @@ const FriendsFiltersSide = ({ peopleSearchParams, setPeopleSearchParams }) => {
             />
           </RadioGroup>
         </FormControl>
-        {/* <InputSex
-          type="radio"
-          name="sex"
-          value="female"
-          id="sex1"
-          checked={peopleSearchParams.selectedSex === "female"}
-          onChange={(e) => handleRadioChange(e)}
-        ></InputSex>
-        <label htmlFor="sex1">Female</label>
       </InputSexContainer>
-      <InputSexContainer>
-        <InputSex
-          type="radio"
-          name="sex"
-          value="male"
-          id="sex2"
-          checked={peopleSearchParams.selectedSex === "male"}
-          onChange={(e) => handleRadioChange(e)}
-        ></InputSex>
-        <label htmlFor="sex2">Male</label>
-      </InputSexContainer>
-      <InputSexContainer>
-        <InputSex
-          type="radio"
-          name="sex"
-          value="any"
-          id="sex3"
-          checked={peopleSearchParams.selectedSex === "any"}
-          onChange={(e) => handleRadioChange(e)}
-        ></InputSex>
-        <label htmlFor="sex3">Any</label> */}
-      </InputSexContainer>
+      <Button variant="outlined" onClick={handleFilter}>
+        Filter
+      </Button>
     </Container>
   );
 };

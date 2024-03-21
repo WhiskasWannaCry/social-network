@@ -2,7 +2,16 @@ import { useContext, useEffect, useRef, useState } from "react";
 import userImg from "../../images/posts_img/post_img4.jpg";
 import styled from "@emotion/styled";
 import { Context } from "../../shared/Context";
-import { Avatar, Box, Button, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Typography,
+} from "@mui/material";
 import ImageCropper from "../../shared/ImageCropper";
 import { postChangeUserAvatar, postChangeUserInfo } from "../../http/Fetches";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +27,7 @@ const EditMainInfo = styled("div")`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  height: 500px;
+  min-height: 500px;
   background-color: ${(props) => props.theme.palette.primary.grey[5]};
   border: 1px solid #363738;
   border-radius: 12px;
@@ -86,27 +95,29 @@ const EditProfile = () => {
   const { currentUser, setCurrentUser, userInit } = currentUserContext;
 
   let avatarFullPath =
-  `http://localhost:8000/${currentUser?.images.avatar}` || userImg;
+    `http://localhost:8000/${currentUser?.images.avatar}` || userImg;
 
-  const [newDateOfBirth, setNewDateOfBirth] = useState(null);
-  const [newAvatar, setNewAvatar] = useState(null);
-  const [newName, setNewName] = useState(null);
-  const [newSurname, setNewSurname] = useState(null);
-  const [newDescription, setNewDescription] = useState(null);
-  const [newCity, setNewCity] = useState(null);
-  const [newWebSite, setNewWebSite] = useState(null);
+  const [newDateOfBirth, setNewDateOfBirth] = useState("");
+  const [newAvatar, setNewAvatar] = useState("");
+  const [newName, setNewName] = useState("");
+  const [newSurname, setNewSurname] = useState("");
+  const [newDescription, setNewDescription] = useState("");
+  const [newCity, setNewCity] = useState("");
+  const [newWebSite, setNewWebSite] = useState("");
+  const [newSex, setNewSex] = useState("");
 
   const navigate = useNavigate();
 
   useEffect(() => {
     document.title = "Editing my profile";
-    setNewAvatar(avatarFullPath)
-    setNewName(currentUser?.primary.name)
-    setNewSurname(currentUser?.primary.surname)
-    setNewDescription(currentUser?.primary.description)
-    setNewDateOfBirth(currentUser?.primary.dateOfBirth)
-    setNewCity(currentUser?.primary.city)
-    setNewWebSite(currentUser?.primary.website)
+    setNewAvatar(avatarFullPath);
+    setNewName(currentUser?.primary.name);
+    setNewSurname(currentUser?.primary.surname);
+    setNewDescription(currentUser?.primary.description);
+    setNewDateOfBirth(currentUser?.primary.dateOfBirth);
+    setNewCity(currentUser?.primary.city);
+    setNewWebSite(currentUser?.primary.website);
+    setNewSex(currentUser?.primary.sex);
   }, []);
 
   const handleChangeInfoField = (e, setLocalState) => {
@@ -115,6 +126,7 @@ const EditProfile = () => {
   };
 
   const changeUserInfo = async () => {
+    console.log(new Date(newDateOfBirth));
     if (
       newDateOfBirth ||
       newName ||
@@ -126,7 +138,7 @@ const EditProfile = () => {
     ) {
       const changedFields = {};
       if (newDateOfBirth !== currentUser?.primary.dateOfBirth) {
-        changedFields.dateOfBirth = newDateOfBirth;
+        changedFields.dateOfBirth = new Date(newDateOfBirth);
       }
       if (newName !== currentUser?.primary.name) {
         changedFields.name = newName;
@@ -143,13 +155,18 @@ const EditProfile = () => {
       if (newWebSite !== currentUser?.primary.website) {
         changedFields.website = newWebSite;
       }
+      if (newSex !== currentUser?.primary.sex) {
+        changedFields.sex = newSex;
+      }
+      console.log(newSex)
       if (
         newDateOfBirth ||
         newName ||
         newSurname ||
         newDescription ||
         newCity ||
-        newWebSite
+        newWebSite ||
+        newSex
       ) {
         const { data } = await postChangeUserInfo(
           changedFields,
@@ -223,10 +240,44 @@ const EditProfile = () => {
           }}
         >
           <InfoContainer>
+            <InfoTitle>Sex:</InfoTitle>
+            <InfoForChange>
+              <FormControl
+                sx={{ m: 1, display: "flex", flexGrow: 1, width: "100%" }}
+                size="small"
+              >
+                <InputLabel id="demo-select-small-label">To</InputLabel>
+                <Select
+                  labelId="demo-select-small-label"
+                  id="demo-select-small"
+                  value={newSex}
+                  label="Age"
+                  onChange={(e) => handleChangeInfoField(e, setNewSex)}
+                >
+                  <MenuItem key={"other"} value={"other"}>
+                    Other
+                  </MenuItem>
+                  <MenuItem key={"male"} value={"male"}>
+                    Male
+                  </MenuItem>
+                  <MenuItem key={"female"} value={"female"}>
+                    Female
+                  </MenuItem>
+                </Select>
+              </FormControl>
+            </InfoForChange>
+          </InfoContainer>
+        </Box>
+        <HR></HR>
+        <Box
+          sx={{
+            display: "flex",
+          }}
+        >
+          <InfoContainer>
             <InfoTitle>A short information:</InfoTitle>
             <InfoForChange>
               <InputInfo
-                height={"64px"}
                 type="text"
                 placeholder="Some info about you"
                 value={newDescription}

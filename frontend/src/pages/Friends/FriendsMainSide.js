@@ -101,7 +101,7 @@ const FriendsMainSide = (peopleSearchParams) => {
   const { currentUser, setCurrentUser, usersFromSearch, setUsersFromSearch } =
     currentUserContext;
   const fetchAllUsers = async () => {
-    const { data } = await getUsersInfo();
+    const { data } = await getUsersInfo(peopleSearchParams);
     const { success } = data;
     if (success) {
       const { users } = data;
@@ -116,7 +116,6 @@ const FriendsMainSide = (peopleSearchParams) => {
     if (success) {
       const { user } = data;
       setCurrentUser(user)
-      console.log(user)
     } else {
       const {message} =  data;
       console.log(message)
