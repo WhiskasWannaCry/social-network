@@ -90,7 +90,7 @@ const MainNavigation = () => {
           <NavImg src={newsImg} alt="navImg"></NavImg>
           <NavText>Feed</NavText>
         </NavBtnContainer>
-        <NavBtnContainer>
+        <NavBtnContainer onClick={() => navigate(`chat/${currentUser._id}`)}>
           <NavImg src={messagesImg} alt="navImg"></NavImg>
           <NavText>Messages</NavText>
           <NavNotificationCounter>5</NavNotificationCounter>

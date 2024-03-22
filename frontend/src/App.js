@@ -23,6 +23,10 @@ import { theme } from "./shared/styles.js";
 import { ThemeProvider } from "@mui/material";
 import { PageLoader } from "./shared/Loaders.js";
 
+import { io as socketIO } from "socket.io-client";
+import { connectToSocket } from "./shared/SocketFunctions.js";
+import Chat from "./pages/Chat/Chat.js";
+
 const Container = styled("div")`
   display: flex;
   flex-direction: column;
@@ -79,6 +83,8 @@ function App() {
   const [usersFromSearch, setUsersFromSearch] = useState([]);
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState([]);
+
+  const [socketConnectState, setSocketConnectState] = useState(null);
 
   useEffect(() => {
     const tokenLS = JSON.parse(localStorage.getItem("token"));
@@ -142,6 +148,11 @@ function App() {
         }
       };
       fetchUserData();
+      const socket = connectToSocket(currentUser._id);
+      setSocketConnectState(socket);
+      socket.on("connect", () => {
+        console.log(socket.id);
+      });
     }
   }, []);
 
@@ -158,6 +169,8 @@ function App() {
           setUsersFromSearch,
           posts,
           setPosts,
+          socketConnectState,
+          setSocketConnectState,
         }}
       >
         <ThemeProvider theme={theme}>
@@ -180,6 +193,9 @@ function App() {
                     path="/edit/:_id"
                     element={<EditProfile></EditProfile>}
                   ></Route>
+                  {currentUser && currentUser._id && !loading && (
+                    <Route path="/chat/:_id" element={<Chat></Chat>}></Route>
+                  )}
                   <Route path="/login" element={<Login></Login>}></Route>
                   <Route path="/friends" element={<Friends></Friends>}></Route>
                   <Route

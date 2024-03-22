@@ -18,6 +18,8 @@ const {
   addAsFriendsUsers,
   removeFriend,
 } = require("./functions/userFunctions");
+const startSocketServer = require("./socketServer");
+
 require("dotenv").config();
 
 const app = express();
@@ -72,8 +74,11 @@ async function start() {
     process.exit(1);
   }
 }
-
+// Starting default server
 start();
+
+// Starting Socket server
+startSocketServer();
 
 // требуется оптимизация кода
 app.post("/api/follow-user", async (req, res) => {
