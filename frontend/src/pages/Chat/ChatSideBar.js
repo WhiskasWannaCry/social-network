@@ -1,11 +1,11 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Context } from "../../shared/Context";
 import userImg from "../../images/posts_img/avatar.png";
 import { PageLoader } from "../../shared/Loaders";
 
 const { Box, Avatar, Typography } = require("@mui/material");
 
-const ChatSideBar = ({ chats, chatsLoading }) => {
+const ChatSideBar = ({ chats, chatsLoading, setSelectedChat }) => {
   const currentUserContext = useContext(Context);
   const { currentUser, socketConnectState } = currentUserContext;
 
@@ -54,11 +54,16 @@ const ChatSideBar = ({ chats, chatsLoading }) => {
             return (
               <Box
                 key={`Container + ${_id}`}
+                onClick={() => setSelectedChat(chat)}
                 sx={{
+                  cursor: "pointer",
                   display: "flex",
                   width: "100%",
                   padding: "8px",
                   gap: "8px",
+                  "&:hover": {
+                    backgroundColor: (theme) => theme.palette.primary.grey[3],
+                  },
                 }}
               >
                 <Avatar titie={"user-avatar"} src={avatarFullPath}></Avatar>
@@ -104,7 +109,7 @@ const ChatSideBar = ({ chats, chatsLoading }) => {
                   </Box>
                   <Typography
                     sx={{
-											width: "100%",
+                      width: "100%",
                       color: (theme) => theme.palette.primary.grey[2],
                       fontFamily: "Roboto",
                       fontSize: "12px",
