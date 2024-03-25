@@ -12,6 +12,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Fade from "@mui/material/Fade";
 import { Avatar, Box, IconButton, Tooltip } from "@mui/material";
 import styled from "@emotion/styled";
+import { connectToSocket } from "../shared/SocketFunctions";
 
 const OuterContainer = styled("div")`
   position: fixed;
@@ -90,7 +91,13 @@ const Header = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const navigate = useNavigate();
   const currentUserContext = React.useContext(Context);
-  const { currentUser, setCurrentUser, userInit } = currentUserContext;
+  const {
+    currentUser,
+    setCurrentUser,
+    userInit,
+    socketConnectState,
+    setSocketConnectState,
+  } = currentUserContext;
 
   const avatarFullPath = `http://localhost:8000/${currentUser.images.avatar}`;
 
@@ -105,6 +112,8 @@ const Header = () => {
   const handleLogout = () => {
     setCurrentUser(userInit);
     localStorage.setItem("token", JSON.stringify({ value: "0" }));
+    socketConnectState.disconnect()
+    setSocketConnectState(null);
     navigate("/login");
   };
 

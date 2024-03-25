@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import { postLogin } from "../../http/Fetches";
 import { Context } from "../../shared/Context";
+import { connectToSocket } from "../../shared/SocketFunctions";
 
 const Container = styled("div")`
   display: flex;
@@ -123,7 +124,8 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const currentUserContext = useContext(Context);
-  const { setCurrentUser } = currentUserContext;
+  const { currentUser, setCurrentUser, setSocketConnectState } =
+    currentUserContext;
   const [serverError, setServerError] = useState("");
 
   const emailRegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -142,6 +144,11 @@ const Login = () => {
     const { token, user } = data;
     localStorage.setItem("token", JSON.stringify({ value: token }));
     setCurrentUser(user);
+    const socket = connectToSocket(currentUser._id);
+    socket.on("connect", () => {
+      console.log(socket.id);
+    });
+    setSocketConnectState(socket);
     navigate(`/profile/${user._id}`);
   };
 

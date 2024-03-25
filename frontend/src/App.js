@@ -125,6 +125,11 @@ function App() {
             const { foundUser } = data;
             setCurrentUser(foundUser);
             setLoading(false);
+            const socket = connectToSocket(currentUser._id);
+            setSocketConnectState(socket);
+            socket.on("connect", () => {
+              console.log(socket.id);
+            });
             if (
               location.pathname === "/login" ||
               location.pathname === "/register"
@@ -148,11 +153,6 @@ function App() {
         }
       };
       fetchUserData();
-      const socket = connectToSocket(currentUser._id);
-      setSocketConnectState(socket);
-      socket.on("connect", () => {
-        console.log(socket.id);
-      });
     }
   }, []);
 

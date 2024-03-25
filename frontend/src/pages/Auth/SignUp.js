@@ -4,6 +4,7 @@ import styled from "@emotion/styled";
 import { postSignUp } from "../../http/Fetches";
 import { Context } from "../../shared/Context";
 import { Box, Button } from "@mui/material";
+import { connectToSocket } from "../../shared/SocketFunctions";
 
 const Container = styled("div")`
   display: flex;
@@ -128,7 +129,8 @@ const SignUp = () => {
   const [serverError, setServerError] = useState("");
 
   const currentUserContext = useContext(Context);
-  const { setCurrentUser } = currentUserContext;
+  const { currentUser, setCurrentUser, setSocketConnectState } =
+    currentUserContext;
 
   const navigate = useNavigate();
 
@@ -150,7 +152,7 @@ const SignUp = () => {
       const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
       return regex.test(email);
     }
-    
+
     const signUp = async () => {
       if (!checkNamesFields(name)) {
         alert("The name is incorrect!");
@@ -160,7 +162,7 @@ const SignUp = () => {
         alert("The surname is incorrect!");
         return;
       }
-      if(!checkEmail(email)) {
+      if (!checkEmail(email)) {
         alert("Email is incorrect!");
         return;
       }
@@ -177,6 +179,11 @@ const SignUp = () => {
       console.log(_id);
       localStorage.setItem("token", JSON.stringify({ value: token }));
       setCurrentUser(user);
+      const socket = connectToSocket(currentUser._id);
+      socket.on("connect", () => {
+        console.log(socket.id);
+      });
+      setSocketConnectState(socket);
       navigate(`/profile/${_id}`);
     };
     return signUp();
