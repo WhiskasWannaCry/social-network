@@ -8,17 +8,17 @@ const { Box } = require("@mui/material");
 const Chat = () => {
   const currentUserContext = useContext(Context);
   const { currentUser, socketConnectState } = currentUserContext;
-  const [chats, setChats] = useState([])
-  const [chatsLoading,setChatsLoading] = useState(true)
+  const [chats, setChats] = useState([]);
+  const [chatsLoading, setChatsLoading] = useState(true);
 
-  const [selectedChat, setSelectedChat] = useState(null)
+  const [selectedChat, setSelectedChat] = useState(null);
 
   useEffect(() => {
-    socketConnectState.emit("get-all-chats", currentUser._id);
-    socketConnectState.on("get-all-chats", (CHATS) => {
-        setChats(CHATS)
-        setChatsLoading(false)
-    })
+    socketConnectState.emit("get-all-user-chats", currentUser._id);
+    socketConnectState.on("get-all-user-chats", (chatsData) => {
+      setChats(chatsData);
+      setChatsLoading(false);
+    });
   }, []);
   return (
     <Box
@@ -26,11 +26,19 @@ const Chat = () => {
         display: "flex",
         width: "100%",
         height: "90vh",
-        
       }}
     >
-      <ChatSideBar chats={chats} chatsLoading={chatsLoading} setSelectedChat={setSelectedChat}></ChatSideBar>
-      <ChatMessages chatsLoading={chatsLoading} selectedChat={selectedChat}></ChatMessages>
+      <ChatSideBar
+        chats={chats}
+        chatsLoading={chatsLoading}
+        setSelectedChat={setSelectedChat}
+      ></ChatSideBar>
+      <ChatMessages
+        chatsLoading={chatsLoading}
+        setChats={setChats}
+        selectedChat={selectedChat}
+        setSelectedChat={setSelectedChat}
+      ></ChatMessages>
     </Box>
   );
 };

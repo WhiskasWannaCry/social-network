@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Context } from "../../shared/Context";
 import userImg from "../../images/posts_img/avatar.png";
 import { PageLoader } from "../../shared/Loaders";
@@ -36,17 +36,16 @@ const ChatSideBar = ({ chats, chatsLoading, setSelectedChat }) => {
           ></Box>
           {chats.map((chat) => {
             const { _id, sender, recipient, messages } = chat;
-            const sortedMessages = messages.sort(
-              (a, b) => new Date(b.date) - new Date(a.date)
-            );
-            const lastMessage = sortedMessages[0];
-            const {
-              sender: lastMessageSender,
-              date: lastMessageDate,
-              text: lastMessageText,
-            } = lastMessage;
-            const avatarFullPath = `http://localhost:8000/${lastMessageSender.images.avatar}`;
-            const formattedDate = new Date(lastMessageDate);
+            // const sortedMessages = messages.sort(
+            //   (a, b) => new Date(b.date) - new Date(a.date)
+            // );
+            const lastMessage = messages.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+            const { text: lastMessageText } = lastMessage;
+            let avatarFullPath =
+              sender._id === currentUser._id
+                ? `http://localhost:8000/${recipient.images.avatar}`
+                : `http://localhost:8000/${sender.images.avatar}`;
+            const formattedDate = new Date(messages[messages.length - 1].date);
             const day = formattedDate.getDate();
             const monthName = formattedDate.toLocaleString("default", {
               month: "short",
@@ -91,9 +90,11 @@ const ChatSideBar = ({ chats, chatsLoading, setSelectedChat }) => {
                         fontWeight: 500,
                       }}
                     >
-                      {lastMessageSender.primary.name +
-                        " " +
-                        lastMessageSender.primary.surname}
+                      {sender._id === currentUser._id
+                        ? recipient.primary.name +
+                          " " +
+                          recipient.primary.surname
+                        : sender.primary.name + " " + sender.primary.surname}
                     </Typography>
                     <Typography
                       sx={{

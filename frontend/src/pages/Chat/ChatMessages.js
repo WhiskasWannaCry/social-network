@@ -11,7 +11,12 @@ const {
   Button,
 } = require("@mui/material");
 
-const ChatMessages = ({ chatsLoading, selectedChat }) => {
+const ChatMessages = ({
+  chatsLoading,
+  setChats,
+  selectedChat,
+  setSelectedChat,
+}) => {
   const currentUserContext = useContext(Context);
   const { currentUser, socketConnectState } = currentUserContext;
   const [inputMessageText, setInputMessageText] = useState("");
@@ -25,6 +30,34 @@ const ChatMessages = ({ chatsLoading, selectedChat }) => {
       setIsValidText(false);
     }
   }
+  const handleSendMessageBtn = () => {
+    const newMessage = {
+      date: new Date(),
+      text: inputMessageText,
+    };
+
+    socketConnectState.emit("send-private-message", {
+      userId: currentUser._id,
+      newMessage,
+      recipient:
+        selectedChat.recipient._id === currentUser._id
+          ? selectedChat.sender._id
+          : selectedChat.recipient._id,
+    });
+    setInputMessageText("");
+  };
+
+  socketConnectState.on("send-private-message", (data) => {
+    const { success } = data;
+    if (!success) {
+      const { message } = data;
+      return alert(message);
+    }
+    const { chat, allUserChats } = data;
+    setSelectedChat(chat);
+    console.log(allUserChats);
+    setChats(allUserChats);
+  });
 
   return (
     <Box
@@ -32,7 +65,7 @@ const ChatMessages = ({ chatsLoading, selectedChat }) => {
         display: "flex",
         flexDirection: "column",
         width: "70%",
-        height: "100%",
+        // height: "100%",
         backgroundColor: (theme) => theme.palette.primary.grey[5],
         borderRadius: "0 12px 12px 0",
         borderTop: (theme) => `1px solid ${theme.palette.primary.grey[3]}`,
@@ -47,7 +80,7 @@ const ChatMessages = ({ chatsLoading, selectedChat }) => {
           <Box
             sx={{
               display: "flex",
-              height: "42px",
+              minHeight: "42px",
               width: "100%",
               borderBottom: (theme) =>
                 `1px solid ${theme.palette.primary.grey[3]}`,
@@ -64,42 +97,71 @@ const ChatMessages = ({ chatsLoading, selectedChat }) => {
                     gap: "12px",
                     width: "100%",
                     padding: "12px",
+                    overflowY: "scroll",
                   }}
                 >
-                  {selectedChat.messages.map((message) => (
-                    <Box //Container for 1 message
-                      key={`MsgContainer-${message._id}`}
-                      sx={{
-                        display: "flex",
-                        justifyContent:
-                          message.sender._id === currentUser._id
-                            ? "flex-end"
-                            : "flex-start",
-                      }}
-                    >
-                      <Typography
+                  {selectedChat.messages
+                    .sort((a, b) => new Date(b.date) - new Date(a.date))
+                    .map((message) => (
+                      <Box // Line Container for 1 message
+                        key={`MsgContainer-${message._id}`}
                         sx={{
-                          border: (theme) =>
-                            `1px solid ${theme.palette.primary.grey[3]}`,
-                          backgroundColor: (theme) =>
-                            theme.palette.primary.grey[4],
-                          minHeight: "24px",
-                          minWidth: "48px",
-                          padding: "8px",
-                          borderRadius:
+                          display: "flex",
+                          justifyContent:
                             message.sender._id === currentUser._id
-                              ? "8px 8px 0 8px"
-                              : "8px 8px 8px 0",
-                          fontFamily: "Roboto",
-                          fontSize: "13px",
-                          fontStyle: "normal",
-                          fontWeight: 500,
+                              ? "flex-end"
+                              : "flex-start",
                         }}
                       >
-                        {message.text}
-                      </Typography>
-                    </Box>
-                  ))}
+                        <Box // Box container for 1 message
+                          sx={{
+                            border: (theme) =>
+                              `1px solid ${theme.palette.primary.grey[3]}`,
+                            backgroundColor: (theme) =>
+                              theme.palette.primary.grey[4],
+                            minHeight: "24px",
+                            minWidth: "48px",
+                            padding: "8px",
+                            borderRadius:
+                              message.sender._id === currentUser._id
+                                ? "8px 8px 0 8px"
+                                : "8px 8px 8px 0",
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              fontFamily: "Roboto",
+                              fontSize: "13px",
+                              fontStyle: "normal",
+                              fontWeight: 500,
+                            }}
+                          >
+                            {message.text}
+                          </Typography>
+                          <Box // Box for date
+                            sx={{
+                              display: "flex",
+                              width: "100%",
+                            }}
+                          ></Box>
+                          <Typography
+                            sx={{
+                              display: "flex",
+                              justifyContent: message.sender._id === currentUser._id ? "flex-end" : "flex-start",
+                              color: (theme) => theme.palette.primary.grey[3],
+                              fontFamily: "Roboto",
+                              fontSize: "10px",
+                              fontStyle: "normal",
+                              fontWeight: 500,
+                            }}
+                          >
+                            {new Date(message.date).getHours() +
+                              ":" +
+                              new Date(message.date).getMinutes()}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    ))}
                 </Box>
               ) : (
                 <Box // Box for empty chat
@@ -162,6 +224,7 @@ const ChatMessages = ({ chatsLoading, selectedChat }) => {
                 <Button
                   variant="contained"
                   disabled={!isValidText}
+                  onClick={handleSendMessageBtn}
                   sx={{
                     backgroundColor: (theme) => theme.palette.primary.grey[3],
                     color: (theme) => theme.palette.primary.grey[1],
@@ -175,11 +238,12 @@ const ChatMessages = ({ chatsLoading, selectedChat }) => {
             <Box
               sx={{
                 display: "flex",
+                flexGrow: 1,
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
                 width: "100%",
-                height: "100%",
+                // height: "100%",
               }}
             >
               <svg

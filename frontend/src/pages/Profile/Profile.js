@@ -6,7 +6,7 @@ import userImg from "../../images/posts_img/post_img4.jpg";
 import { useNavigate, useParams } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../../shared/Context";
-import { Avatar, Badge, Link, Typography } from "@mui/material";
+import { Avatar, Badge, Button, Link, Typography } from "@mui/material";
 import { getUserInfo } from "../../http/Fetches";
 import { calculateAge } from "../../shared/functions";
 import { PageLoader } from "../../shared/Loaders";
@@ -216,18 +216,19 @@ const Profile = () => {
 
   useEffect(() => {
     if (profileOwner?._id) {
-      const isConnProfOwner = connectedUsers.findIndex(
-        (connUser) => connUser.userId === profileOwner._id
-      ) !== -1;
-      if(isConnProfOwner) {
-        setIsOnline(true)
+      const isConnProfOwner =
+        connectedUsers.findIndex(
+          (connUser) => connUser.userId === profileOwner._id
+        ) !== -1;
+      if (isConnProfOwner) {
+        setIsOnline(true);
       } else {
-        setIsOnline(false)
+        setIsOnline(false);
       }
       // console.log(isConnProfOwner)
-      // console.log(connectedUsers)
+      console.log(connectedUsers);
     }
-  }, [connectedUsers,profileOwner]);
+  }, [connectedUsers, profileOwner]);
 
   // SOCKET
   socketConnectState.on("get-connected-users", (CONNECTED_USERS) => {
@@ -343,14 +344,74 @@ const Profile = () => {
                     </Typography>
                   )}
                 </UserInfo>
-                {profileOwner?._id === currentUser._id && (
-                  <EditProfileBtn
+                {profileOwner?._id === currentUser._id ? (
+                  <Button
+                    variant="outlined"
                     onClick={() =>
                       profileOwner._id && navigate(`/edit/${currentUser._id}`)
                     }
+                    sx={{
+                      padding: "6px 16px 6px 16px",
+                      borderRadius: "8px",
+                      height: "auto",
+                      background: (theme) => theme.palette.primary.grey[4],
+                      color: (theme) => theme.palette.primary.grey[1],
+                      border: (theme) =>
+                        `1px solid ${theme.palette.primary.grey[3]}`,
+                      textAlign: "center",
+                      fontFamily: "Roboto",
+                      fontSize: "13.781px",
+                      fontStyle: "normal",
+                      fontWeight: "500",
+                      transition: "background-color 0.3s",
+                      transition: "color 0.3s",
+                      WebkitBoxShadow: (theme) =>
+                        theme.palette.primary.blackShadow.small,
+                      MozBoxShadow: (theme) =>
+                        theme.palette.primary.blackShadow.small,
+                      boxShadow: (theme) =>
+                        theme.palette.primary.blackShadow.small,
+                      "&:hover": {
+                        background: (theme) => theme.palette.primary.grey[3],
+                      },
+                    }}
                   >
                     Edit profile
-                  </EditProfileBtn>
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outlined"
+                    // onClick={() =>
+                    //   profileOwner._id && navigate(`/edit/${currentUser._id}`)
+                    // }
+                    sx={{
+                      padding: "6px 16px 6px 16px",
+                      borderRadius: "8px",
+                      height: "auto",
+                      background: (theme) => theme.palette.primary.grey[4],
+                      color: (theme) => theme.palette.primary.grey[1],
+                      border: (theme) =>
+                        `1px solid ${theme.palette.primary.grey[3]}`,
+                      textAlign: "center",
+                      fontFamily: "Roboto",
+                      fontSize: "13.781px",
+                      fontStyle: "normal",
+                      fontWeight: "500",
+                      transition: "background-color 0.3s",
+                      transition: "color 0.3s",
+                      WebkitBoxShadow: (theme) =>
+                        theme.palette.primary.blackShadow.small,
+                      MozBoxShadow: (theme) =>
+                        theme.palette.primary.blackShadow.small,
+                      boxShadow: (theme) =>
+                        theme.palette.primary.blackShadow.small,
+                      "&:hover": {
+                        background: (theme) => theme.palette.primary.grey[3],
+                      },
+                    }}
+                  >
+                    Send message
+                  </Button>
                 )}
               </UserInfoContainer>
             </InfoOuterContainer>

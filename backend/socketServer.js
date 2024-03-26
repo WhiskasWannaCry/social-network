@@ -32,7 +32,7 @@ const message2 = {
   recipient: senderId,
 };
 
-const getAllChats = async (userId) => {
+const getAllUserChats = async (userId) => {
   try {
     CHATS = [];
     const chats = await Chat.find({
@@ -56,10 +56,38 @@ const getAllChats = async (userId) => {
         select: "-secret",
       })
       .exec();
-    CHATS.push(...chats);
+    return chats
   } catch (e) {
     console.error(e);
   }
+};
+
+const getPrivateChat = async (userId, recipient) => {
+  const foundChat = await Chat.findOne({
+    $or: [
+      { sender: userId, recipient },
+      { sender: recipient, recipient: userId },
+    ],
+  })
+    .limit(100)
+    .populate({
+      path: "sender",
+      select: "-secret",
+    })
+    .populate({
+      path: "recipient",
+      select: "-secret",
+    })
+    .populate({
+      path: "messages.sender",
+      select: "-secret",
+    })
+    .populate({
+      path: "messages.recipient",
+      select: "-secret",
+    })
+    .exec();
+  return foundChat;
 };
 
 socketIO.on("connect", (socket) => {
@@ -85,29 +113,101 @@ socketIO.on("connect", (socket) => {
   // Если юзер уже есть в списке подключенных, то меняем сокет айди и пушим
   if (userInList) {
     const userInListIdx = CONNECTED_USERS.findIndex(
-      (connUser) => connUser._id === userId
+      (connUser) => connUser.userId === userId
     );
-    CONNECTED_USERS.splice(userInListIdx, 1);
     const newUser = {
       userId,
       socketId: socket.id,
     };
-    CONNECTED_USERS.push(newUser);
+    CONNECTED_USERS.splice(userInListIdx, 1, newUser);
   }
+  console.log(userId);
+  console.log(CONNECTED_USERS);
 
-  socketIO.emit("get-connected-users", CONNECTED_USERS)
+  socketIO.emit("get-connected-users", CONNECTED_USERS);
 
   // Когда юзер вошел в чат и получает чаты по своему айди
-  socket.on("get-all-chats", async (userId) => {
-    await getAllChats(userId);
-    socket.emit("get-all-chats", CHATS);
+  socket.on("get-all-user-chats", async (userId) => {
+    const chats = await getAllUserChats(userId);
+    socket.emit("get-all-user-chats", chats);
   });
 
   socket.on("get-connected-users", () => {
-    socket.emit("get-connected-users",CONNECTED_USERS)
-    console.log(CONNECTED_USERS)
-  })
+    socket.emit("get-connected-users", CONNECTED_USERS);
+    console.log(CONNECTED_USERS);
+  });
 
+  // Когда юзер прислал приватное сообщение
+  socket.on(
+    "send-private-message",
+    async ({ userId, newMessage, recipient }) => {
+      // Формирую сообщение в вид по схеме
+      newMessage.id = newMessage.date;
+      newMessage.sender = userId;
+      newMessage.recipient = recipient;
+      newMessage.date = new Date(newMessage.date);
+
+      // Ищу получателя в списке подключенных
+      const connRecipient = CONNECTED_USERS.find(
+        (connUser) => connUser.userId === recipient
+      );
+      try {
+        const foundChat = await getPrivateChat(userId, recipient);
+        if (foundChat) {
+          foundChat.messages.push(newMessage);
+          await foundChat.save();
+          const chat = await getPrivateChat(userId, recipient);
+          const senderChats = await getAllUserChats(userId);
+          const recipientChats = await getAllUserChats(recipient);
+          // Если получатель не подключен то слать сообщение только отправителю
+          if (!connRecipient) {
+            socketIO.to(socket.id).emit("send-private-message", {
+              success: true,
+              chat,
+              allUserChats: senderChats,
+            });
+          }
+          // Если получатель подключен то слать сообщение и отправителю и получателю
+          if (connRecipient) {
+            socketIO.to(socket.id).emit("send-private-message", {
+              success: true,
+              chat,
+              allUserChats: senderChats,
+            });
+            socketIO.to(connRecipient.socketId).emit("send-private-message", {
+              success: true,
+              chat,
+              allUserChats: recipientChats,
+            });
+          }
+        }
+        if (!foundChat) {
+          await Chat.create({
+            sender: userId,
+            recipient,
+            messages: [newMessage],
+          });
+          const chat = getPrivateChat(userId, recipient);
+          socketIO
+            .to(socket.id)
+            .emit("send-private-message", { success: true, chat });
+        }
+        // const chat = await Chat.findOne({
+        //   $or: [
+        //     { sender: userId, recipient },
+        //     { sender: recipient, recipient: userId },
+        //   ],
+        // });
+        // console.log(chat);
+      } catch (e) {
+        console.error("Error on send-private-message: ", e);
+        socketIO.to(socket.id).emit("send-private-message", {
+          success: false,
+          message: "Caught error on send-private-message",
+        });
+      }
+    }
+  );
 
   // Когда юзер отключился
   socket.on("disconnect", () => {
@@ -115,9 +215,12 @@ socketIO.on("connect", (socket) => {
       const disconnectedUserIdx = CONNECTED_USERS.findIndex(
         (connUser) => connUser.socketId === socket.id
       );
-      CONNECTED_USERS.splice(disconnectedUserIdx, 1);
+      if (disconnectedUserIdx !== -1) {
+        CONNECTED_USERS.splice(disconnectedUserIdx, 1);
+      }
       console.log(`${socket.id} disconnected`);
-      socketIO.emit("get-connected-users",CONNECTED_USERS)
+      socketIO.emit("get-connected-users", CONNECTED_USERS);
+      console.log(CONNECTED_USERS);
     } catch (e) {
       console.error(e);
     }
