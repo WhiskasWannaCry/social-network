@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { PageLoader } from "../../shared/Loaders";
 import { Context } from "../../shared/Context";
 
@@ -11,14 +11,9 @@ const {
   Button,
 } = require("@mui/material");
 
-const ChatMessages = ({
-  chatsLoading,
-  setChats,
-  selectedChat,
-  setSelectedChat,
-}) => {
+const ChatMessages = ({ chatsLoading, selectedChat, setSelectedChat }) => {
   const currentUserContext = useContext(Context);
-  const { currentUser, socketConnectState } = currentUserContext;
+  const { currentUser, socketConnectState, setChats } = currentUserContext;
   const [inputMessageText, setInputMessageText] = useState("");
   const [isValidText, setIsValidText] = useState(false);
 
@@ -30,11 +25,19 @@ const ChatMessages = ({
       setIsValidText(false);
     }
   }
+
   const handleSendMessageBtn = () => {
     const newMessage = {
       date: new Date(),
       text: inputMessageText,
     };
+
+    // EFFECT
+    // useEffect(() => {
+
+    // },[])
+
+    // SOCKET
 
     socketConnectState.emit("send-private-message", {
       userId: currentUser._id,
@@ -57,6 +60,10 @@ const ChatMessages = ({
     setSelectedChat(chat);
     console.log(allUserChats);
     setChats(allUserChats);
+  });
+
+  socketConnectState.on("open-chat-with-user", (data) => {
+    console.log(data);
   });
 
   return (
@@ -147,7 +154,10 @@ const ChatMessages = ({
                           <Typography
                             sx={{
                               display: "flex",
-                              justifyContent: message.sender._id === currentUser._id ? "flex-end" : "flex-start",
+                              justifyContent:
+                                message.sender._id === currentUser._id
+                                  ? "flex-end"
+                                  : "flex-start",
                               color: (theme) => theme.palette.primary.grey[3],
                               fontFamily: "Roboto",
                               fontSize: "10px",
@@ -183,7 +193,7 @@ const ChatMessages = ({
                       fontWeight: 500,
                     }}
                   >
-                    Start messaging
+                    Enter Your first message
                   </Typography>
                 </Box>
               )}

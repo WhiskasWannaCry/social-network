@@ -159,8 +159,13 @@ const Profile = () => {
   const { _id: profileId } = useParams();
 
   const currentUserContext = useContext(Context);
-  const { currentUser, connectedUsers, socketConnectState, setConnectedUsers } =
-    currentUserContext;
+  const {
+    currentUser,
+    connectedUsers,
+    socketConnectState,
+    setConnectedUsers,
+    setChats,
+  } = currentUserContext;
 
   const [profileOwner, setProfileOwner] = useState(null);
   const [newBackground, setNewBackground] = useState("");
@@ -179,6 +184,26 @@ const Profile = () => {
       `http://localhost:8000/${profileOwner?.images.background}`
     );
   }, []);
+
+  const handleOpenChatWithUser = () => {
+    socketConnectState.emit("open-chat-with-user", {
+      userId: currentUser._id,
+      recipient: profileOwner._id,
+    });
+    socketConnectState.on("open-chat-with-user", (data) => {
+      const { success } = data;
+      if (!success) {
+        const { message } = data;
+        return alert(message);
+      }
+      const { chat, allUserChats } = data;
+      setChats(allUserChats)
+      console.log(allUserChats)
+    });
+    navigate(`../chat/${currentUser._id}`)
+  };
+
+  // SOCKET
 
   useEffect(() => {
     const fetchUserInfo = async (profileId) => {
@@ -226,14 +251,16 @@ const Profile = () => {
         setIsOnline(false);
       }
       // console.log(isConnProfOwner)
-      console.log(connectedUsers);
+      // console.log(connectedUsers);
     }
   }, [connectedUsers, profileOwner]);
 
-  // SOCKET
-  socketConnectState.on("get-connected-users", (CONNECTED_USERS) => {
-    setConnectedUsers(CONNECTED_USERS);
-  });
+  useEffect(() => {
+    socketConnectState.on("get-connected-users", (CONNECTED_USERS) => {
+      setConnectedUsers(CONNECTED_USERS);
+    });
+  },[])
+  
 
   return (
     <Container>
@@ -353,7 +380,7 @@ const Profile = () => {
                     sx={{
                       padding: "6px 16px 6px 16px",
                       borderRadius: "8px",
-                      height: "auto",
+                      height: "48px",
                       background: (theme) => theme.palette.primary.grey[4],
                       color: (theme) => theme.palette.primary.grey[1],
                       border: (theme) =>
@@ -381,13 +408,11 @@ const Profile = () => {
                 ) : (
                   <Button
                     variant="outlined"
-                    // onClick={() =>
-                    //   profileOwner._id && navigate(`/edit/${currentUser._id}`)
-                    // }
+                    onClick={handleOpenChatWithUser}
                     sx={{
                       padding: "6px 16px 6px 16px",
                       borderRadius: "8px",
-                      height: "auto",
+                      height: "48px",
                       background: (theme) => theme.palette.primary.grey[4],
                       color: (theme) => theme.palette.primary.grey[1],
                       border: (theme) =>

@@ -56,7 +56,7 @@ const getAllUserChats = async (userId) => {
         select: "-secret",
       })
       .exec();
-    return chats
+    return chats;
   } catch (e) {
     console.error(e);
   }
@@ -187,18 +187,11 @@ socketIO.on("connect", (socket) => {
             recipient,
             messages: [newMessage],
           });
-          const chat = getPrivateChat(userId, recipient);
+          const chat = await getPrivateChat(userId, recipient);
           socketIO
             .to(socket.id)
             .emit("send-private-message", { success: true, chat });
         }
-        // const chat = await Chat.findOne({
-        //   $or: [
-        //     { sender: userId, recipient },
-        //     { sender: recipient, recipient: userId },
-        //   ],
-        // });
-        // console.log(chat);
       } catch (e) {
         console.error("Error on send-private-message: ", e);
         socketIO.to(socket.id).emit("send-private-message", {
@@ -208,6 +201,55 @@ socketIO.on("connect", (socket) => {
       }
     }
   );
+
+  // Когда юзер нажал кнопку "Написать сообщение" в профиле
+  socket.on("open-chat-with-user", async ({ userId, recipient }) => {
+    try {
+      const chat = await getPrivateChat(userId, recipient);
+    if (!chat) {
+      await Chat.create({
+        sender: userId,
+        recipient,
+        messages: [],
+      });
+      
+    }
+    const foundChat = await getPrivateChat(userId, recipient);
+      const senderChats = await getAllUserChats(userId);
+      const recipientChats = await getAllUserChats(recipient);
+      // Ищу получателя в списке подключенных
+      const connRecipient = CONNECTED_USERS.find(
+        (connUser) => connUser.userId === recipient
+      );
+      // Если получатель не подключен то слать сообщение только отправителю
+      if (!connRecipient) {
+        socketIO.to(socket.id).emit("open-chat-with-user", {
+          success: true,
+          chat: foundChat,
+          allUserChats: senderChats,
+        });
+      }
+      // Если получатель подключен то слать сообщение и отправителю и получателю
+      if (connRecipient) {
+        socketIO.to(socket.id).emit("open-chat-with-user", {
+          success: true,
+          chat: foundChat,
+          allUserChats: senderChats,
+        });
+        socketIO.to(connRecipient.socketId).emit("open-chat-with-user", {
+          success: true,
+          chat: foundChat,
+          allUserChats: recipientChats,
+        });
+      }
+    } catch (e) {
+      console.error(e)
+      socketIO.to(socket.id).emit("open-chat-with-user", {
+        success: false,
+        message: "Caught error on open-chat-with-user"
+      });
+    }
+  });
 
   // Когда юзер отключился
   socket.on("disconnect", () => {

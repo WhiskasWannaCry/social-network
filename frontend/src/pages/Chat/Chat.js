@@ -7,8 +7,7 @@ const { Box } = require("@mui/material");
 
 const Chat = () => {
   const currentUserContext = useContext(Context);
-  const { currentUser, socketConnectState } = currentUserContext;
-  const [chats, setChats] = useState([]);
+  const { currentUser, socketConnectState, setChats } = currentUserContext;
   const [chatsLoading, setChatsLoading] = useState(true);
 
   const [selectedChat, setSelectedChat] = useState(null);
@@ -29,13 +28,11 @@ const Chat = () => {
       }}
     >
       <ChatSideBar
-        chats={chats}
         chatsLoading={chatsLoading}
         setSelectedChat={setSelectedChat}
       ></ChatSideBar>
       <ChatMessages
         chatsLoading={chatsLoading}
-        setChats={setChats}
         selectedChat={selectedChat}
         setSelectedChat={setSelectedChat}
       ></ChatMessages>

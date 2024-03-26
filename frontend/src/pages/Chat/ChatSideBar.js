@@ -5,9 +5,9 @@ import { PageLoader } from "../../shared/Loaders";
 
 const { Box, Avatar, Typography } = require("@mui/material");
 
-const ChatSideBar = ({ chats, chatsLoading, setSelectedChat }) => {
+const ChatSideBar = ({ chatsLoading, setSelectedChat }) => {
   const currentUserContext = useContext(Context);
-  const { currentUser, socketConnectState } = currentUserContext;
+  const { currentUser, socketConnectState, chats } = currentUserContext;
 
   return (
     <Box
@@ -36,20 +36,25 @@ const ChatSideBar = ({ chats, chatsLoading, setSelectedChat }) => {
           ></Box>
           {chats.map((chat) => {
             const { _id, sender, recipient, messages } = chat;
-            // const sortedMessages = messages.sort(
-            //   (a, b) => new Date(b.date) - new Date(a.date)
-            // );
-            const lastMessage = messages.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
-            const { text: lastMessageText } = lastMessage;
+            let lastMessage;
+            let formattedDate;
+            let day;
+            let monthName;
             let avatarFullPath =
               sender._id === currentUser._id
                 ? `http://localhost:8000/${recipient.images.avatar}`
                 : `http://localhost:8000/${sender.images.avatar}`;
-            const formattedDate = new Date(messages[messages.length - 1].date);
-            const day = formattedDate.getDate();
-            const monthName = formattedDate.toLocaleString("default", {
-              month: "short",
-            });
+            if (messages.length) {
+              lastMessage = messages.sort(
+                (a, b) => new Date(b.date) - new Date(a.date)
+              )[0];
+
+              formattedDate = new Date(messages[messages.length - 1].date);
+              day = formattedDate.getDate();
+              monthName = formattedDate.toLocaleString("default", {
+                month: "short",
+              });
+            }
             return (
               <Box
                 key={`Container + ${_id}`}
@@ -105,13 +110,15 @@ const ChatSideBar = ({ chats, chatsLoading, setSelectedChat }) => {
                         fontWeight: 500,
                       }}
                     >
-                      {day + " " + monthName}
+                      {messages.length ? day + " " + monthName : null}
                     </Typography>
                   </Box>
                   <Typography
                     sx={{
                       width: "100%",
-                      color: (theme) => theme.palette.primary.grey[2],
+                      color: messages.length
+                        ? (theme) => theme.palette.primary.grey[2]
+                        : (theme) => theme.palette.primary.grey[3],
                       fontFamily: "Roboto",
                       fontSize: "12px",
                       fontStyle: "normal",
@@ -121,7 +128,7 @@ const ChatSideBar = ({ chats, chatsLoading, setSelectedChat }) => {
                       textOverflow: "ellipsis",
                     }}
                   >
-                    {lastMessageText}
+                    {messages.length ? lastMessage.text : "No messages"}
                   </Typography>
                 </Box>
               </Box>

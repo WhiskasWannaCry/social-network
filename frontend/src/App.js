@@ -86,6 +86,8 @@ function App() {
   const [usersFromSearch, setUsersFromSearch] = useState([]);
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState([]);
+  const [chats, setChats] = useState([]);
+
 
   const [socketConnectState, setSocketConnectState] = useState(null);
 
@@ -177,7 +179,8 @@ function App() {
           socketConnectState,
           setSocketConnectState,
           connectedUsers,
-          setConnectedUsers
+          setConnectedUsers,
+          chats, setChats
         }}
       >
         <ThemeProvider theme={theme}>

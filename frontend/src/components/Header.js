@@ -134,10 +134,11 @@ const Header = () => {
     }
   }, [connectedUsers,currentUser]);
 
-  // SOCKET
-  socketConnectState.on("get-connected-users", (CONNECTED_USERS) => {
-    setConnectedUsers(CONNECTED_USERS);
-  });
+  useEffect(() => {
+    socketConnectState.on("get-connected-users", (CONNECTED_USERS) => {
+      setConnectedUsers(CONNECTED_USERS);
+    });
+  },[])
 
   return (
     <OuterContainer>
