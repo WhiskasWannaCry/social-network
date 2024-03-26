@@ -3,14 +3,12 @@ import notificationImg from "../images/icons/notification.svg";
 import openUserMenuImg from "../images/icons/open_user_menu.svg";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../shared/Context";
-import { useContext } from "react";
-import { useState } from "react";
-import * as React from "react";
+import { useContext, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Fade from "@mui/material/Fade";
-import { Avatar, Box, IconButton, Tooltip } from "@mui/material";
+import { Avatar, Badge, Box, IconButton, Tooltip } from "@mui/material";
 import styled from "@emotion/styled";
 import { connectToSocket } from "../shared/SocketFunctions";
 
@@ -88,15 +86,18 @@ const StyledMenuItem = styled(MenuItem)`
 `;
 
 const Header = () => {
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [isOnline, setIsOnline] = useState(false);
   const navigate = useNavigate();
-  const currentUserContext = React.useContext(Context);
+  const currentUserContext = useContext(Context);
   const {
     currentUser,
     setCurrentUser,
     userInit,
     socketConnectState,
     setSocketConnectState,
+    connectedUsers,
+    setConnectedUsers,
   } = currentUserContext;
 
   const avatarFullPath = `http://localhost:8000/${currentUser.images.avatar}`;
@@ -112,10 +113,31 @@ const Header = () => {
   const handleLogout = () => {
     setCurrentUser(userInit);
     localStorage.setItem("token", JSON.stringify({ value: "0" }));
-    socketConnectState.disconnect()
+    socketConnectState.disconnect();
     setSocketConnectState(null);
     navigate("/login");
   };
+
+  useEffect(() => {
+    if (currentUser?._id) {
+      const isConnUser =
+        connectedUsers.findIndex(
+          (connUser) => connUser.userId === currentUser._id
+        ) !== -1;
+      if (isConnUser) {
+        setIsOnline(true);
+      } else {
+        setIsOnline(false);
+      }
+      // console.log(isConnProfOwner)
+      // console.log(connectedUsers);
+    }
+  }, [connectedUsers,currentUser]);
+
+  // SOCKET
+  socketConnectState.on("get-connected-users", (CONNECTED_USERS) => {
+    setConnectedUsers(CONNECTED_USERS);
+  });
 
   return (
     <OuterContainer>
@@ -135,20 +157,34 @@ const Header = () => {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleClick} sx={{ p: 0 }}>
-                <Avatar
-                  id="fade-button"
-                  aria-controls={open ? "fade-menu" : undefined}
-                  aria-haspopup="true"
-                  aria-expanded={open ? "true" : undefined}
-                  alt="user-avatar"
-                  src={(currentUser.images.avatar && avatarFullPath) || null}
+                <Badge
+                  overlap="circular"
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  variant="dot"
                   sx={{
-                    width: "32px",
-                    height: "32px",
-                    border: (theme) =>
-                      "1px solid" + theme.palette.primary.grey[5],
+                    "& .MuiBadge-badge": {
+                      backgroundColor: "#44b700",
+                      // color: "#44b700",
+                      boxShadow: (theme) =>
+                        `0 0 0 1px ${theme.palette.primary.grey[1]}`,
+                    },
                   }}
-                ></Avatar>
+                >
+                  <Avatar
+                    id="fade-button"
+                    aria-controls={open ? "fade-menu" : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open ? "true" : undefined}
+                    alt="user-avatar"
+                    src={(currentUser.images.avatar && avatarFullPath) || null}
+                    sx={{
+                      width: "32px",
+                      height: "32px",
+                      border: (theme) =>
+                        "1px solid" + theme.palette.primary.grey[5],
+                    }}
+                  ></Avatar>
+                </Badge>
               </IconButton>
             </Tooltip>
           </Box>

@@ -66,14 +66,61 @@ socketIO.on("connect", (socket) => {
   // Когда юзер подключился
   console.log(`${socket.id} connected`);
 
+  const { userId } = socket.handshake.query;
+
+  const findUserInConnList = () => {
+    return CONNECTED_USERS.find((connUser) => connUser.userId === userId);
+  };
+
+  const userInList = findUserInConnList();
+
+  // Если юзера еще нет в списке подключенных, то пушим нового
+  if (!userInList) {
+    const connectedUser = {
+      userId,
+      socketId: socket.id,
+    };
+    CONNECTED_USERS.push(connectedUser);
+  }
+  // Если юзер уже есть в списке подключенных, то меняем сокет айди и пушим
+  if (userInList) {
+    const userInListIdx = CONNECTED_USERS.findIndex(
+      (connUser) => connUser._id === userId
+    );
+    CONNECTED_USERS.splice(userInListIdx, 1);
+    const newUser = {
+      userId,
+      socketId: socket.id,
+    };
+    CONNECTED_USERS.push(newUser);
+  }
+
+  socketIO.emit("get-connected-users", CONNECTED_USERS)
+
+  // Когда юзер вошел в чат и получает чаты по своему айди
   socket.on("get-all-chats", async (userId) => {
     await getAllChats(userId);
     socket.emit("get-all-chats", CHATS);
   });
 
+  socket.on("get-connected-users", () => {
+    socket.emit("get-connected-users",CONNECTED_USERS)
+    console.log(CONNECTED_USERS)
+  })
+
+
   // Когда юзер отключился
   socket.on("disconnect", () => {
-    console.log(`${socket.id} disconnected`);
+    try {
+      const disconnectedUserIdx = CONNECTED_USERS.findIndex(
+        (connUser) => connUser.socketId === socket.id
+      );
+      CONNECTED_USERS.splice(disconnectedUserIdx, 1);
+      console.log(`${socket.id} disconnected`);
+      socketIO.emit("get-connected-users",CONNECTED_USERS)
+    } catch (e) {
+      console.error(e);
+    }
   });
 });
 

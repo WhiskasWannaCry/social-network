@@ -6,11 +6,13 @@ import userImg from "../../images/posts_img/post_img4.jpg";
 import { useNavigate, useParams } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../../shared/Context";
-import { Avatar, Link, Typography } from "@mui/material";
+import { Avatar, Badge, Link, Typography } from "@mui/material";
 import { getUserInfo } from "../../http/Fetches";
 import { calculateAge } from "../../shared/functions";
 import { PageLoader } from "../../shared/Loaders";
 import ImageCropper from "../../shared/ImageCropper";
+import { connectToSocket } from "../../shared/SocketFunctions";
+import { io } from "socket.io-client";
 
 const Container = styled("div")`
   width: 100%;
@@ -157,12 +159,14 @@ const Profile = () => {
   const { _id: profileId } = useParams();
 
   const currentUserContext = useContext(Context);
-  const { currentUser } = currentUserContext;
+  const { currentUser, connectedUsers, socketConnectState, setConnectedUsers } =
+    currentUserContext;
 
   const [profileOwner, setProfileOwner] = useState(null);
   const [newBackground, setNewBackground] = useState("");
 
   const [loading, setLoading] = useState(true);
+  const [isOnline, setIsOnline] = useState(false);
 
   let avatarFullPath =
     `http://localhost:8000/${profileOwner?.images.avatar}` || userImg;
@@ -171,8 +175,10 @@ const Profile = () => {
     backgroundImage;
 
   useEffect(() => {
-    setNewBackground(`http://localhost:8000/${profileOwner?.images.background}`)
-  },[])
+    setNewBackground(
+      `http://localhost:8000/${profileOwner?.images.background}`
+    );
+  }, []);
 
   useEffect(() => {
     const fetchUserInfo = async (profileId) => {
@@ -208,6 +214,26 @@ const Profile = () => {
     }
   }, [profileOwner]);
 
+  useEffect(() => {
+    if (profileOwner?._id) {
+      const isConnProfOwner = connectedUsers.findIndex(
+        (connUser) => connUser.userId === profileOwner._id
+      ) !== -1;
+      if(isConnProfOwner) {
+        setIsOnline(true)
+      } else {
+        setIsOnline(false)
+      }
+      // console.log(isConnProfOwner)
+      // console.log(connectedUsers)
+    }
+  }, [connectedUsers,profileOwner]);
+
+  // SOCKET
+  socketConnectState.on("get-connected-users", (CONNECTED_USERS) => {
+    setConnectedUsers(CONNECTED_USERS);
+  });
+
   return (
     <Container>
       <UserHeaderContainer>
@@ -215,9 +241,13 @@ const Profile = () => {
           <PageLoader></PageLoader>
         ) : (
           <>
-            <UserBackground title={newBackground} src={newBackground} sx={{
-              borderRadius: 0,
-            }}></UserBackground>
+            <UserBackground
+              title={newBackground}
+              src={newBackground}
+              sx={{
+                borderRadius: 0,
+              }}
+            ></UserBackground>
             {profileOwner?._id == currentUser._id && (
               // <ChangeBackground>Change background</ChangeBackground>\
               <ChangeBackground>
@@ -232,19 +262,32 @@ const Profile = () => {
               </ChangeBackground>
             )}
             <InfoOuterContainer>
-              <Avatar
-                alt="user-avatar"
-                src={avatarFullPath || null}
+              <Badge
+                overlap="circular"
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                variant="dot"
                 sx={{
                   position: "absolute",
                   top: 0,
                   left: "42px",
-                  width: "112px",
-                  height: "112px",
-                  border: (theme) =>
-                    "1px solid" + theme.palette.primary.grey[5],
+                  "& .MuiBadge-badge": {
+                    backgroundColor: isOnline ? "#44b700" : "#912424",
+                    boxShadow: (theme) =>
+                      `0 0 0 1px ${theme.palette.primary.grey[1]}`,
+                  },
                 }}
-              ></Avatar>
+              >
+                <Avatar
+                  alt="user-avatar"
+                  src={avatarFullPath || null}
+                  sx={{
+                    width: "112px",
+                    height: "112px",
+                    border: (theme) =>
+                      "1px solid" + theme.palette.primary.grey[5],
+                  }}
+                ></Avatar>
+              </Badge>
               <UserInfoContainer>
                 <UserInfo>
                   <UserName>

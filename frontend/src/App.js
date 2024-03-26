@@ -23,7 +23,7 @@ import { theme } from "./shared/styles.js";
 import { ThemeProvider } from "@mui/material";
 import { PageLoader } from "./shared/Loaders.js";
 
-import { io as socketIO } from "socket.io-client";
+import { io } from "socket.io-client";
 import { connectToSocket } from "./shared/SocketFunctions.js";
 import Chat from "./pages/Chat/Chat.js";
 
@@ -79,12 +79,17 @@ const userInit = {
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
+
+  let socket;
+
   const [currentUser, setCurrentUser] = useState(userInit);
   const [usersFromSearch, setUsersFromSearch] = useState([]);
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState([]);
 
   const [socketConnectState, setSocketConnectState] = useState(null);
+
+  const [connectedUsers, setConnectedUsers] = useState([])
 
   useEffect(() => {
     const tokenLS = JSON.parse(localStorage.getItem("token"));
@@ -125,11 +130,11 @@ function App() {
             const { foundUser } = data;
             setCurrentUser(foundUser);
             setLoading(false);
-            const socket = connectToSocket(currentUser._id);
+            socket = connectToSocket(foundUser._id);
             setSocketConnectState(socket);
-            socket.on("connect", () => {
-              console.log(socket.id);
-            });
+            socket.on("get-is-connected-user", (data) => {
+              setConnectedUsers(data)
+            })
             if (
               location.pathname === "/login" ||
               location.pathname === "/register"
@@ -171,6 +176,8 @@ function App() {
           setPosts,
           socketConnectState,
           setSocketConnectState,
+          connectedUsers,
+          setConnectedUsers
         }}
       >
         <ThemeProvider theme={theme}>

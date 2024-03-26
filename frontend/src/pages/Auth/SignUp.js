@@ -179,7 +179,7 @@ const SignUp = () => {
       console.log(_id);
       localStorage.setItem("token", JSON.stringify({ value: token }));
       setCurrentUser(user);
-      const socket = connectToSocket(currentUser._id);
+      const socket = connectToSocket(user._id);
       socket.on("connect", () => {
         console.log(socket.id);
       });
