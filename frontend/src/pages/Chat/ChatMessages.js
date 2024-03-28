@@ -13,7 +13,8 @@ const {
 
 const ChatMessages = ({ chatsLoading, selectedChat, setSelectedChat }) => {
   const currentUserContext = useContext(Context);
-  const { currentUser, socketConnectState, setChats } = currentUserContext;
+  const { currentUser, socketConnectState, chats, setChats } =
+    currentUserContext;
   const [inputMessageText, setInputMessageText] = useState("");
   const [isValidText, setIsValidText] = useState(false);
 
@@ -282,7 +283,7 @@ const ChatMessages = ({ chatsLoading, selectedChat, setSelectedChat }) => {
                   fontWeight: 500,
                 }}
               >
-                Select a chat
+                {chats.length ? "Select a chat" : "You don't have any chats"}
               </Typography>
             </Box>
           )}

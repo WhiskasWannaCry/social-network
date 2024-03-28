@@ -51,6 +51,15 @@ const addFollowToLists = async (res, userFollowerId, userFollowedId) => {
     return res.json({ success: false, message: "User(s) was(were) not found" });
   }
 
+  const userInFollowerList =
+    userFollowed.socialContacts.following.findIndex(
+      (followingId) => followingId === userFollowerId
+    ) !== -1;
+
+  if (userInFollowerList) {
+    return res.json({ success: false, message: "User is already in list" });
+  }
+
   userFollower.socialContacts.following.push(userFollowedId);
   await userFollower.save();
 

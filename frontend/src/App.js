@@ -85,13 +85,23 @@ function App() {
   const [currentUser, setCurrentUser] = useState(userInit);
   const [usersFromSearch, setUsersFromSearch] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // All posts arr
   const [posts, setPosts] = useState([]);
+
+  // All user chats arr
   const [chats, setChats] = useState([]);
 
-
+  // Socket connect state, obj socket
   const [socketConnectState, setSocketConnectState] = useState(null);
 
-  const [connectedUsers, setConnectedUsers] = useState([])
+  // All connected users arr
+  const [connectedUsers, setConnectedUsers] = useState([]);
+
+  // States for managing user's state in socialContacts
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollower, setIsFollower] = useState(false);
+  const [isFriend, setIsFriend] = useState(false);
 
   useEffect(() => {
     const tokenLS = JSON.parse(localStorage.getItem("token"));
@@ -135,8 +145,9 @@ function App() {
             socket = connectToSocket(foundUser._id);
             setSocketConnectState(socket);
             socket.on("get-is-connected-user", (data) => {
-              setConnectedUsers(data)
-            })
+              setConnectedUsers(data);
+              console.log(data);
+            });
             if (
               location.pathname === "/login" ||
               location.pathname === "/register"
@@ -180,7 +191,14 @@ function App() {
           setSocketConnectState,
           connectedUsers,
           setConnectedUsers,
-          chats, setChats
+          chats,
+          setChats,
+          isFollowing,
+          setIsFollowing,
+          isFollower,
+          setIsFollower,
+          isFriend,
+          setIsFriend,
         }}
       >
         <ThemeProvider theme={theme}>

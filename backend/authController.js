@@ -40,6 +40,7 @@ class authController {
           email,
           website: "",
           description: "",
+          sex: "other"
         },
         images: {
           avatar: "user-avatar.png",

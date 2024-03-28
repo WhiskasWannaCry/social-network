@@ -6,8 +6,23 @@ import userImg from "../../images/posts_img/post_img4.jpg";
 import { useNavigate, useParams } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../../shared/Context";
-import { Avatar, Badge, Button, Link, Typography } from "@mui/material";
-import { getUserInfo } from "../../http/Fetches";
+import {
+  Avatar,
+  Badge,
+  Box,
+  Button,
+  Link,
+  Slide,
+  Snackbar,
+  Typography,
+} from "@mui/material";
+import {
+  getUserInfo,
+  postAddAsFriend,
+  postFollow,
+  postRemoveFriend,
+  postUnfollow,
+} from "../../http/Fetches";
 import { calculateAge } from "../../shared/functions";
 import { PageLoader } from "../../shared/Loaders";
 import ImageCropper from "../../shared/ImageCropper";
@@ -88,7 +103,7 @@ const UserInfoContainer = styled("div")`
   min-height: 95px;
   background-color: ${(props) => props.theme.palette.primary.grey[5]};
   padding: 20px;
-  padding-left: 25%;
+  padding-left: 20%;
   transition: background-color 0.3s;
   transition: color 0.3s;
 `;
@@ -105,7 +120,7 @@ const UserName = styled("div")`
   font-size: 20.836px;
   font-style: normal;
   font-weight: 600;
-  min-width: 100px;
+  min-width: 200px;
   max-width: 150px;
   height: auto;
   transition: background-color 0.3s;
@@ -165,6 +180,12 @@ const Profile = () => {
     socketConnectState,
     setConnectedUsers,
     setChats,
+    isFollowing,
+    setIsFollowing,
+    isFollower,
+    setIsFollower,
+    isFriend,
+    setIsFriend,
   } = currentUserContext;
 
   const [profileOwner, setProfileOwner] = useState(null);
@@ -197,14 +218,60 @@ const Profile = () => {
         return alert(message);
       }
       const { chat, allUserChats } = data;
-      setChats(allUserChats)
-      console.log(allUserChats)
+      setChats(allUserChats);
+      console.log(allUserChats);
     });
-    navigate(`../chat/${currentUser._id}`)
+    navigate(`../chat/${currentUser._id}`);
   };
 
-  // SOCKET
+  const handleFollow = async () => {
+    const data = await postFollow(currentUser._id, profileOwner._id);
+    const { success } = data;
+    if (!success) {
+      const { message } = data;
+      console.log(message);
+      return;
+    }
+    setIsFollowing(true);
+  };
 
+  const handleUnfollow = async () => {
+    const { data } = await postUnfollow(currentUser._id, profileOwner._id);
+    const { success } = data;
+    if (!success) {
+      const { message } = data;
+      console.log(message);
+      return;
+    }
+    setIsFollowing(false);
+  };
+
+  const handleAddAsFriend = async () => {
+    const { data } = await postAddAsFriend(currentUser._id, profileOwner._id);
+    const { success } = data;
+    if (!success) {
+      const { message } = data;
+      console.log(message);
+      return;
+    }
+    setIsFollowing(false);
+    setIsFollower(false);
+    setIsFriend(true);
+  };
+
+  const handleRemoveFriend = async () => {
+    const { data } = await postRemoveFriend(currentUser._id, profileOwner._id);
+    const { success } = data;
+    if (!success) {
+      const { message } = data;
+      console.log(message);
+      return;
+    }
+    setIsFollower(true);
+    setIsFriend(false);
+  };
+
+  // Effects
   useEffect(() => {
     const fetchUserInfo = async (profileId) => {
       const { data } = await getUserInfo(profileId);
@@ -220,6 +287,23 @@ const Profile = () => {
         return;
       }
       const { user } = data;
+
+      const currUserIsFriend =
+        user.socialContacts.friends.findIndex(
+          (friendId) => friendId === currentUser._id
+        ) !== -1;
+      const currUserIsFollowing =
+        user.socialContacts.followers.findIndex(
+          (friendId) => friendId === currentUser._id
+        ) !== -1;
+      const currUserIsFollower =
+        user.socialContacts.following.findIndex(
+          (friendId) => friendId === currentUser._id
+        ) !== -1;
+
+      currUserIsFriend ? setIsFriend(true) : setIsFriend(false);
+      currUserIsFollowing ? setIsFollowing(true) : setIsFollowing(false);
+      currUserIsFollower ? setIsFollower(true) : setIsFollower(false);
 
       setProfileOwner(user);
       setNewBackground(`http://localhost:8000/${user.images.background}`);
@@ -259,8 +343,7 @@ const Profile = () => {
     socketConnectState.on("get-connected-users", (CONNECTED_USERS) => {
       setConnectedUsers(CONNECTED_USERS);
     });
-  },[])
-  
+  }, []);
 
   return (
     <Container>
@@ -406,37 +489,89 @@ const Profile = () => {
                     Edit profile
                   </Button>
                 ) : (
-                  <Button
-                    variant="outlined"
-                    onClick={handleOpenChatWithUser}
+                  <Box
                     sx={{
-                      padding: "6px 16px 6px 16px",
-                      borderRadius: "8px",
-                      height: "48px",
-                      background: (theme) => theme.palette.primary.grey[4],
-                      color: (theme) => theme.palette.primary.grey[1],
-                      border: (theme) =>
-                        `1px solid ${theme.palette.primary.grey[3]}`,
-                      textAlign: "center",
-                      fontFamily: "Roboto",
-                      fontSize: "13.781px",
-                      fontStyle: "normal",
-                      fontWeight: "500",
-                      transition: "background-color 0.3s",
-                      transition: "color 0.3s",
-                      WebkitBoxShadow: (theme) =>
-                        theme.palette.primary.blackShadow.small,
-                      MozBoxShadow: (theme) =>
-                        theme.palette.primary.blackShadow.small,
-                      boxShadow: (theme) =>
-                        theme.palette.primary.blackShadow.small,
-                      "&:hover": {
-                        background: (theme) => theme.palette.primary.grey[3],
-                      },
+                      display: "flex",
+                      gap: "12px",
                     }}
                   >
-                    Send message
-                  </Button>
+                    <Button
+                      variant="outlined"
+                      onClick={handleOpenChatWithUser}
+                      sx={{
+                        padding: "6px 16px 6px 16px",
+                        borderRadius: "8px",
+                        height: "48px",
+                        background: (theme) => theme.palette.primary.grey[4],
+                        color: (theme) => theme.palette.primary.grey[1],
+                        border: (theme) =>
+                          `1px solid ${theme.palette.primary.grey[3]}`,
+                        textAlign: "center",
+                        fontFamily: "Roboto",
+                        fontSize: "13.781px",
+                        fontStyle: "normal",
+                        fontWeight: "500",
+                        transition: "background-color 0.3s",
+                        transition: "color 0.3s",
+                        WebkitBoxShadow: (theme) =>
+                          theme.palette.primary.blackShadow.small,
+                        MozBoxShadow: (theme) =>
+                          theme.palette.primary.blackShadow.small,
+                        boxShadow: (theme) =>
+                          theme.palette.primary.blackShadow.small,
+                        "&:hover": {
+                          background: (theme) => theme.palette.primary.grey[3],
+                        },
+                      }}
+                    >
+                      Send message
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      onClick={
+                        isFriend
+                          ? handleRemoveFriend
+                          : isFollower
+                          ? handleAddAsFriend
+                          : isFollowing
+                          ? handleUnfollow
+                          : handleFollow
+                      }
+                      sx={{
+                        padding: "6px 16px 6px 16px",
+                        borderRadius: "8px",
+                        height: "48px",
+                        background: (theme) => theme.palette.primary.grey[4],
+                        color: (theme) => theme.palette.primary.grey[1],
+                        border: (theme) =>
+                          `1px solid ${theme.palette.primary.grey[3]}`,
+                        textAlign: "center",
+                        fontFamily: "Roboto",
+                        fontSize: "13.781px",
+                        fontStyle: "normal",
+                        fontWeight: "500",
+                        transition: "background-color 0.3s",
+                        transition: "color 0.3s",
+                        WebkitBoxShadow: (theme) =>
+                          theme.palette.primary.blackShadow.small,
+                        MozBoxShadow: (theme) =>
+                          theme.palette.primary.blackShadow.small,
+                        boxShadow: (theme) =>
+                          theme.palette.primary.blackShadow.small,
+                        "&:hover": {
+                          background: (theme) => theme.palette.primary.grey[3],
+                        },
+                      }}
+                    >
+                      {isFriend
+                        ? "Remove friend"
+                        : isFollower
+                        ? "Add as friend"
+                        : isFollowing
+                        ? "Unfollow"
+                        : "Follow"}
+                    </Button>
+                  </Box>
                 )}
               </UserInfoContainer>
             </InfoOuterContainer>
@@ -450,6 +585,14 @@ const Profile = () => {
           profileOwner={profileOwner}
         ></SecondarySide>
       </UserBody>
+      <Snackbar
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        open={true}
+        // onClose={handleClose}
+        message="I love snacks"
+        autoHideDuration={3200}
+        TransitionComponent={Slide}
+      />
     </Container>
   );
 };

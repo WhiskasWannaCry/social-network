@@ -8,9 +8,10 @@ router.get("/search/get-all-users", async (req, res) => {
   const { searchInputValue, selectedFromAge, selectedToAge, selectedSex } =
     peopleSearchParams;
   try {
-    const filter = {
-      "primary.sex": selectedSex,
-    };
+    const filter = {};
+    if(selectedSex === "male" || selectedSex === "female") {
+      filter["primary.sex"] = selectedSex;
+    }
 
     function getBirthdayFromAge(age) {
       // Получаем текущую дату

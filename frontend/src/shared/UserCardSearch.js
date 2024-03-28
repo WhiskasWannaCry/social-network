@@ -83,12 +83,17 @@ const DoBtn = styled(Button)`
 `;
 
 const UserCardSearch = ({ user }) => {
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [isFollower, setIsFollower] = useState(false);
-  const [isFriend, setIsFriend] = useState(false);
-
   const currentUserContext = useContext(Context);
-  const { currentUser, setCurrentUser,setUsersFromSearch } = currentUserContext;
+  const {
+    currentUser,
+    setUsersFromSearch,
+    isFollowing,
+    setIsFollowing,
+    isFollower,
+    setIsFollower,
+    isFriend,
+    setIsFriend,
+  } = currentUserContext;
   const navigate = useNavigate();
   const avatarFullPath = user && `http://localhost:8000/${user.images.avatar}`;
 
@@ -135,7 +140,7 @@ const UserCardSearch = ({ user }) => {
       console.log(message);
       return;
     }
-    fetchAllUsers()
+    fetchAllUsers();
     setIsFollowing(true);
   };
 
@@ -147,7 +152,7 @@ const UserCardSearch = ({ user }) => {
       console.log(message);
       return;
     }
-    fetchAllUsers()
+    fetchAllUsers();
     setIsFollowing(false);
   };
 
@@ -159,7 +164,7 @@ const UserCardSearch = ({ user }) => {
       console.log(message);
       return;
     }
-    fetchAllUsers()
+    fetchAllUsers();
     setIsFollowing(false);
     setIsFollower(false);
     setIsFriend(true);
