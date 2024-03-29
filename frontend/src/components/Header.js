@@ -8,9 +8,19 @@ import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Fade from "@mui/material/Fade";
-import { Avatar, Badge, Box, IconButton, Tooltip } from "@mui/material";
+import {
+  Autocomplete,
+  Avatar,
+  Badge,
+  Box,
+  CircularProgress,
+  IconButton,
+  TextField,
+  Tooltip,
+} from "@mui/material";
 import styled from "@emotion/styled";
 import { connectToSocket } from "../shared/SocketFunctions";
+import { getUsersInfo } from "../http/Fetches";
 
 const OuterContainer = styled("div")`
   position: fixed;
@@ -86,6 +96,10 @@ const StyledMenuItem = styled(MenuItem)`
 `;
 
 const Header = () => {
+  const [openAutoComplete, setOpenAutoComplete] = useState(false);
+  const [dataOptions, setDataOptions] = useState([]);
+  const load = openAutoComplete && dataOptions.length === 0;
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [isOnline, setIsOnline] = useState(false);
   const navigate = useNavigate();
@@ -132,13 +146,71 @@ const Header = () => {
       // console.log(isConnProfOwner)
       // console.log(connectedUsers);
     }
-  }, [connectedUsers,currentUser]);
+  }, [connectedUsers, currentUser]);
 
   useEffect(() => {
-    socketConnectState.on("get-connected-users", (CONNECTED_USERS) => {
-      setConnectedUsers(CONNECTED_USERS);
+    if (socketConnectState) {
+      socketConnectState.on("get-connected-users", (CONNECTED_USERS) => {
+        setConnectedUsers(CONNECTED_USERS);
+      });
+    }
+  }, [socketConnectState]);
+
+  const data = [
+    {
+      label: "JS",
+    },
+    {
+      label: "JS",
+    },
+    {
+      label: "JS",
+    },
+    {
+      label: "JS",
+    },
+    {
+      label: "JS",
+    },
+  ];
+
+  function delaySleep(delay = 0) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, delay);
     });
-  },[])
+  }
+
+  useEffect(() => {
+    let active = true;
+
+    if (!load) {
+      return undefined;
+    }
+
+    (async () => {
+      const { data } = await getUsersInfo();
+      console.log(data);
+      // await delaySleep(1e3);
+      const { success } = data;
+      if (success && active) {
+        const { users } = data;
+        setDataOptions([...users]);
+      }
+
+      // if (active) {
+      //   setDataOptions([...data]);
+      // }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [load]);
+
+  useEffect(() => {
+    if (!open) {
+      setDataOptions([]);
+    }
+  }, [open]);
 
   return (
     <OuterContainer>
@@ -147,7 +219,83 @@ const Header = () => {
           <Logo src={logoImg} alt="logoImg"></Logo>
           <LogoText>Social Network</LogoText>
         </LogoContainer>
-        <SearchBarContainer></SearchBarContainer>
+        {/* <SearchBarContainer></SearchBarContainer> */}
+        <Autocomplete
+          filterOptions={(x) => x}
+          open={openAutoComplete}
+          onOpen={() => {
+            setOpenAutoComplete(true);
+          }}
+          onClose={() => {
+            setOpenAutoComplete(false);
+          }}
+          getOptionLabel={(selectUser) =>
+            selectUser.primary.name + " " + selectUser.primary.surname
+          }
+          isOptionEqualToValue={
+            (optionUser) =>
+              // option._id === value._id
+              optionUser._id
+            // console.log(optionUser)
+          }
+          loading={load}
+          options={dataOptions}
+          onChange={(event, optionUserData) => {
+            if (optionUserData) {
+              navigate(`profile/${optionUserData._id}`);
+            }
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Search a user"
+              inputProps={{
+                ...params.inputProps,
+                endadorment: (
+                  <div>
+                    {load ? (
+                      <CircularProgress
+                        color="primary"
+                        size={30}
+                      ></CircularProgress>
+                    ) : null}
+                    {params.inputProps.endAdorment}
+                  </div>
+                ),
+              }}
+            ></TextField>
+          )}
+          sx={{
+            display: "flex",
+            height: "100%",
+            width: "20%",
+            "& input": {
+              color: (theme) => theme.palette.primary.grey[2],
+            },
+            "& label": {
+              display: "none",
+              color: (theme) => theme.palette.primary.grey[2],
+            },
+            "& .MuiFormControl-root": {
+              display: "flex",
+              justifyContent: "center",
+
+              bgcolor: (theme) => theme.palette.primary.grey[3],
+              borderRadius: "8px",
+            },
+            "& .MuiAutocomplete-root": {
+              height: "80%",
+            },
+            "& .MuiInputBase-root": {},
+            "& .MuiAutocomplete-inputRoot": {
+              display: "flex",
+              position: "relative",
+            },
+            "& .MuiAutocomplete-input": {
+              padding: "0",
+            },
+          }}
+        ></Autocomplete>
         <NotificationContainer>
           <NotificationImg
             src={notificationImg}
