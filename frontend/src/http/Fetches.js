@@ -10,7 +10,12 @@ const catchFunc = (error) => {
     // Запрос был сделан, но ответ не был получен
     console.log("Request was made but no response was received");
     console.log("Request:", error.request);
-    return { data: error.request };
+    return {
+      data: {
+        success: false,
+        message: "Request was made but no response was received",
+      },
+    };
   } else {
     // Произошла ошибка при настройке запроса
     console.log("Error setting up the request:", error.message);
@@ -150,7 +155,7 @@ export const postChangeUserInfo = async (changedFields, userId) => {
   }
 };
 
-export const postChangeUserAvatar = async (newAvatar, userId,imageType) => {
+export const postChangeUserAvatar = async (newAvatar, userId, imageType) => {
   try {
     // Преобразовываем строку base64 обратно в файл
     const blob = await fetch(newAvatar).then((res) => res.blob());

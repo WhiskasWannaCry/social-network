@@ -20,17 +20,23 @@ router.get("/validation-token", async (req, res) => {
       });
     }
   } catch (err) {
-    if (err instanceof jwt.JsonWebTokenError) {
-      console.log(err);
-      res.sendStatus(401);
-    } else if (err instanceof jwt.TokenExpiredError) {
-      // If token is expired
-      console.log(err);
-      res.json({ success: false, message: "Token expired" });
-    } else {
-      console.error(err);
-      res.sendStatus(500); // Internal server error for other errors
-    }
+    console.error(err)
+    res.json({success:false, message: err.message})
+    // if (err instanceof jwt.JsonWebTokenError) {
+    //   console.log(err);
+    //   // res.sendStatus(401);
+    //   console.log("here1")
+    //   res.json({ success: false, message: "JsonWebTokenError" });
+    // } else if (err instanceof jwt.TokenExpiredError) {
+    //   // If token is expired
+    //   console.log(err);
+    //   console.log("here2")
+    //   res.json({ success: false, message: "Token expired" });
+    // } else {
+    //   console.error(err);
+    //   console.log("here3")
+    //   res.sendStatus(500); // Internal server error for other errors
+    // }
   }
 });
 

@@ -65,6 +65,10 @@ const addFollowToLists = async (res, userFollowerId, userFollowedId) => {
 
   userFollowed.socialContacts.followers.push(userFollowerId);
   await userFollowed.save();
+  return res.json({
+    success: true,
+    message: "Successful added to follow list",
+  });
 };
 
 const addAsFriendsUsers = async (res, acceptedUserId, sentUserId) => {

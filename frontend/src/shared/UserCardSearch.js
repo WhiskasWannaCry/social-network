@@ -87,15 +87,15 @@ const UserCardSearch = ({ user }) => {
   const {
     currentUser,
     setUsersFromSearch,
-    isFollowing,
-    setIsFollowing,
-    isFollower,
-    setIsFollower,
-    isFriend,
-    setIsFriend,
+
   } = currentUserContext;
   const navigate = useNavigate();
   const avatarFullPath = user && `http://localhost:8000/${user.images.avatar}`;
+
+   // States for managing user's state in socialContacts
+   const [isFollowing, setIsFollowing] = useState(false);
+   const [isFollower, setIsFollower] = useState(false);
+   const [isFriend, setIsFriend] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -204,7 +204,7 @@ const UserCardSearch = ({ user }) => {
         ) : null}
       </UserInfo>
       {currentUser &&
-        user._id != currentUser._id &&
+        // user._id != currentUser._id &&
         (!isFollowing && !isFollower && !isFriend ? ( // если никто не подписан то кнопка "Следить"
           <DoBtn onClick={handleFollow}>Follow</DoBtn>
         ) : isFollowing && !isFollower && !isFriend ? ( // если юзер подписан безответно то кнопка "Отписаться"
