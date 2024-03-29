@@ -28,6 +28,7 @@ import { PageLoader } from "../../shared/Loaders";
 import ImageCropper from "../../shared/ImageCropper";
 import { connectToSocket } from "../../shared/SocketFunctions";
 import { io } from "socket.io-client";
+import NotifyMessage from "../../shared/NotifyMessage";
 
 const Container = styled("div")`
   width: 100%;
@@ -179,14 +180,18 @@ const Profile = () => {
     connectedUsers,
     socketConnectState,
     setConnectedUsers,
+    chats,
     setChats,
-    isFollowing,
-    setIsFollowing,
-    isFollower,
-    setIsFollower,
-    isFriend,
-    setIsFriend,
   } = currentUserContext;
+
+  // States for notification
+  const [notifData, setNotifData] = useState(null);
+  const [notifOpen, setNotifOpen] = useState(false);
+
+  // States for managing user's state in socialContacts
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollower, setIsFollower] = useState(false);
+  const [isFriend, setIsFriend] = useState(false);
 
   const [profileOwner, setProfileOwner] = useState(null);
   const [newBackground, setNewBackground] = useState("");
@@ -340,10 +345,29 @@ const Profile = () => {
   }, [connectedUsers, profileOwner]);
 
   useEffect(() => {
-    socketConnectState.on("get-connected-users", (CONNECTED_USERS) => {
-      setConnectedUsers(CONNECTED_USERS);
-    });
+    if (socketConnectState) {
+      socketConnectState.on("get-connected-users", (CONNECTED_USERS) => {
+        setConnectedUsers(CONNECTED_USERS);
+      });
+    }
   }, []);
+
+  useEffect(() => {
+    if (socketConnectState) {
+      socketConnectState.on(
+        "last-message-for-notification",
+        ({ senderData, lastMessageData }) => {
+          setNotifData({ senderData, lastMessageData });
+        }
+      );
+    }
+  }, []);
+
+  useEffect(() => {
+    if (notifData) {
+      setNotifOpen(true);
+    }
+  }, [notifData]);
 
   return (
     <Container>
@@ -585,14 +609,13 @@ const Profile = () => {
           profileOwner={profileOwner}
         ></SecondarySide>
       </UserBody>
-      <Snackbar
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        open={true}
-        // onClose={handleClose}
-        message="I love snacks"
-        autoHideDuration={3200}
-        TransitionComponent={Slide}
-      />
+      {notifData && (
+        <NotifyMessage
+          notifData={notifData}
+          notifOpen={notifOpen}
+          setNotifOpen={setNotifOpen}
+        ></NotifyMessage>
+      )}
     </Container>
   );
 };

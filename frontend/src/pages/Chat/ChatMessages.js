@@ -33,13 +33,6 @@ const ChatMessages = ({ chatsLoading, selectedChat, setSelectedChat }) => {
       text: inputMessageText,
     };
 
-    // EFFECT
-    // useEffect(() => {
-
-    // },[])
-
-    // SOCKET
-
     socketConnectState.emit("send-private-message", {
       userId: currentUser._id,
       newMessage,
@@ -51,21 +44,26 @@ const ChatMessages = ({ chatsLoading, selectedChat, setSelectedChat }) => {
     setInputMessageText("");
   };
 
-  socketConnectState.on("send-private-message", (data) => {
-    const { success } = data;
-    if (!success) {
-      const { message } = data;
-      return alert(message);
-    }
-    const { chat, allUserChats } = data;
-    setSelectedChat(chat);
-    console.log(allUserChats);
-    setChats(allUserChats);
-  });
+  useEffect(() => {
+    socketConnectState.on("send-private-message", (data) => {
+      const { success } = data;
+      if (!success) {
+        const { message } = data;
+        return alert(message);
+      }
+      const { chat, allUserChats } = data;
+      console.log(selectedChat);
+      console.log(chat);
+      if (selectedChat) {
+        setSelectedChat(chat);
+      }
+      setChats(allUserChats);
+    });
 
-  socketConnectState.on("open-chat-with-user", (data) => {
-    console.log(data);
-  });
+    socketConnectState.on("open-chat-with-user", (data) => {
+      console.log(data);
+    });
+  }, []);
 
   return (
     <Box

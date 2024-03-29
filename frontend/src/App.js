@@ -98,11 +98,6 @@ function App() {
   // All connected users arr
   const [connectedUsers, setConnectedUsers] = useState([]);
 
-  // States for managing user's state in socialContacts
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [isFollower, setIsFollower] = useState(false);
-  const [isFriend, setIsFriend] = useState(false);
-
   useEffect(() => {
     const tokenLS = JSON.parse(localStorage.getItem("token"));
 
@@ -130,8 +125,8 @@ function App() {
             const { success } = data;
             if (!success) {
               const { message } = data;
-              console.log(data);
-              alert(data);
+              console.log(message);
+              alert(message);
               setCurrentUser(userInit);
               localStorage.setItem("token", JSON.stringify({ value: "0" }));
               setLoading(false);
@@ -193,12 +188,6 @@ function App() {
           setConnectedUsers,
           chats,
           setChats,
-          isFollowing,
-          setIsFollowing,
-          isFollower,
-          setIsFollower,
-          isFriend,
-          setIsFriend,
         }}
       >
         <ThemeProvider theme={theme}>

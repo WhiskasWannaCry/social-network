@@ -121,8 +121,8 @@ socketIO.on("connect", (socket) => {
     };
     CONNECTED_USERS.splice(userInListIdx, 1, newUser);
   }
-  console.log(userId);
-  console.log(CONNECTED_USERS);
+  // console.log(userId);
+  // console.log(CONNECTED_USERS);
 
   socketIO.emit("get-connected-users", CONNECTED_USERS);
 
@@ -169,6 +169,13 @@ socketIO.on("connect", (socket) => {
           }
           // Если получатель подключен то слать сообщение и отправителю и получателю
           if (connRecipient) {
+            let senderData;
+            if(chat.sender._id.toString() === userId) {
+              senderData = chat.sender
+            }
+            if(chat.recipient._id.toString() === userId) {
+              senderData = chat.recipient
+            }
             socketIO.to(socket.id).emit("send-private-message", {
               success: true,
               chat,
@@ -178,6 +185,11 @@ socketIO.on("connect", (socket) => {
               success: true,
               chat,
               allUserChats: recipientChats,
+            });
+            socketIO.to(connRecipient.socketId).emit("last-message-for-notification", {
+              success: true,
+              senderData,
+              lastMessageData: newMessage,
             });
           }
         }

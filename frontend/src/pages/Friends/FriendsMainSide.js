@@ -111,24 +111,24 @@ const FriendsMainSide = (peopleSearchParams) => {
   };
 
   const fetchCurrentUser = async () => {
-    const {data} = await getUserInfo(currentUser._id)
+    const { data } = await getUserInfo(currentUser._id);
     const { success } = data;
     if (success) {
       const { user } = data;
-      setCurrentUser(user)
+      setCurrentUser(user);
     } else {
-      const {message} =  data;
-      console.log(message)
-      alert(message)
+      const { message } = data;
+      console.log(message);
+      alert(message);
     }
-  }
+  };
 
   useEffect(() => {
     fetchAllUsers();
   }, []);
 
   useEffect(() => {
-    fetchCurrentUser()
+    fetchCurrentUser();
     const filteredFriends = [];
     const filteredOtherUsers = [];
     if (currentUser.socialContacts.friends.length) {
@@ -198,10 +198,12 @@ const FriendsMainSide = (peopleSearchParams) => {
             {otherUsers.length &&
               otherUsers.map((otherUser) => {
                 return (
-                  <UserCardSearch
-                    key={otherUser._id}
-                    user={otherUser}
-                  ></UserCardSearch>
+                  otherUser._id !== currentUser._id && (
+                    <UserCardSearch
+                      key={otherUser._id}
+                      user={otherUser}
+                    ></UserCardSearch>
+                  )
                 );
               })}
           </>
@@ -210,10 +212,12 @@ const FriendsMainSide = (peopleSearchParams) => {
             {otherUsers.length
               ? otherUsers.map((otherUser) => {
                   return (
-                    <UserCardSearch
-                      key={otherUser._id}
-                      user={otherUser}
-                    ></UserCardSearch>
+                    otherUser._id !== currentUser._id && (
+                      <UserCardSearch
+                        key={otherUser._id}
+                        user={otherUser}
+                      ></UserCardSearch>
+                    )
                   );
                 })
               : null}
