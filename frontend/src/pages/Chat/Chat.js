@@ -7,12 +7,16 @@ const { Box } = require("@mui/material");
 
 const Chat = () => {
   const currentUserContext = useContext(Context);
-  const { currentUser, socketConnectState, setChats } = currentUserContext;
+  const {
+    currentUser,
+    socketConnectState,
+    setChats,
+    selectedChat,
+    setSelectedChat,
+  } = currentUserContext;
   const [chatsLoading, setChatsLoading] = useState(true);
 
-  const [selectedChat, setSelectedChat] = useState(null);
-
-  const [messages, setMessages] = useState(null)
+  const [messages, setMessages] = useState(null);
 
   useEffect(() => {
     socketConnectState.emit("get-all-user-chats", currentUser._id);

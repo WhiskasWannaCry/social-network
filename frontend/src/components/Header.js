@@ -72,10 +72,10 @@ const SearchBarContainer = styled("div")`
   background-color: ${({ theme }) => theme.palette.primary.grey[3]};
 `;
 
-const NotificationContainer = styled("div")`
-  width: 24px;
-  height: 24px;
-`;
+// const NotificationContainer = styled("div")`
+//   width: 24px;
+//   height: 24px;
+// `;
 
 const NotificationImg = styled("img")`
   width: 100%;
@@ -98,6 +98,8 @@ const StyledMenuItem = styled(MenuItem)`
 const Header = () => {
   const [openAutoComplete, setOpenAutoComplete] = useState(false);
   const [dataOptions, setDataOptions] = useState([]);
+  const [unreadMsgCounter, setUnreadMsgCounter] = useState(0);
+  
   const load = openAutoComplete && dataOptions.length === 0;
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -112,6 +114,7 @@ const Header = () => {
     setSocketConnectState,
     connectedUsers,
     setConnectedUsers,
+    chats,
   } = currentUserContext;
 
   const avatarFullPath = `http://localhost:8000/${currentUser.images.avatar}`;
@@ -156,23 +159,19 @@ const Header = () => {
     }
   }, [socketConnectState]);
 
-  const data = [
-    {
-      label: "JS",
-    },
-    {
-      label: "JS",
-    },
-    {
-      label: "JS",
-    },
-    {
-      label: "JS",
-    },
-    {
-      label: "JS",
-    },
-  ];
+  // Notification counter
+  useEffect(() => {
+    if (chats && chats.length) {
+      let counter = 0;
+      chats.forEach((chat) => {
+        return (counter += chat.messages.filter(
+          (message) => message.read === false && message.sender._id !==currentUser._id
+        ).length);
+      });
+      setUnreadMsgCounter(counter);
+      console.log(chats)
+    }
+  }, [chats]);
 
   function delaySleep(delay = 0) {
     return new Promise((resolve) => {
@@ -267,8 +266,11 @@ const Header = () => {
           )}
           sx={{
             display: "flex",
-            height: "100%",
+            height: "80%",
             width: "20%",
+            "& .base-Popper-root": {
+              backgroundColor: "red !important", // Пример: установка красного фона для выпадающих вариантов
+            },
             "& input": {
               color: (theme) => theme.palette.primary.grey[2],
             },
@@ -286,7 +288,10 @@ const Header = () => {
             "& .MuiAutocomplete-root": {
               height: "80%",
             },
-            "& .MuiInputBase-root": {},
+            "& .MuiInputBase-root": {
+              height: "80%",
+              border: "none",
+            },
             "& .MuiAutocomplete-inputRoot": {
               display: "flex",
               position: "relative",
@@ -296,12 +301,40 @@ const Header = () => {
             },
           }}
         ></Autocomplete>
-        <NotificationContainer>
-          <NotificationImg
+
+        <Badge
+          overlap="circular"
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          badgeContent={unreadMsgCounter}
+          sx={{
+            "& .MuiBadge-badge": {
+              width: "14px",
+              height: "14px",
+              backgroundColor: "#44b700",
+              boxShadow: (theme) =>
+                `0 0 0 1px ${theme.palette.primary.grey[1]}`,
+            },
+          }}
+        >
+          <Avatar
+            id="fade-button"
+            aria-controls={open ? "fade-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+            alt="user-avatar"
+            src={notificationImg}
+            sx={{
+              width: "32px",
+              height: "32px",
+              border: (theme) => "1px solid" + theme.palette.primary.grey[5],
+            }}
+          ></Avatar>
+        </Badge>
+        {/* <NotificationImg
             src={notificationImg}
             alt="notificationImg"
-          ></NotificationImg>
-        </NotificationContainer>
+          ></NotificationImg> */}
+
         <UserMenuContainer>
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
@@ -313,7 +346,6 @@ const Header = () => {
                   sx={{
                     "& .MuiBadge-badge": {
                       backgroundColor: "#44b700",
-                      // color: "#44b700",
                       boxShadow: (theme) =>
                         `0 0 0 1px ${theme.palette.primary.grey[1]}`,
                     },

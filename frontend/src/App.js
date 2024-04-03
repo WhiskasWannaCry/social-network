@@ -96,6 +96,7 @@ function App() {
 
   // All user chats arr
   const [chats, setChats] = useState([]);
+  const [selectedChat, setSelectedChat] = useState(null);
 
   // Socket connect state, obj socket
   const [socketConnectState, setSocketConnectState] = useState(null);
@@ -185,6 +186,17 @@ function App() {
     }
   }, [socketConnectState]);
 
+  // First receiving chats
+  useEffect(() => {
+    if (currentUser && currentUser._id && socketConnectState) {
+      socketConnectState.emit("get-all-user-chats", currentUser._id);
+      socketConnectState.on("get-all-user-chats", chats => {
+        console.log(chats)
+        setChats(chats)
+      });
+    }
+  }, [currentUser]);
+
   useEffect(() => {
     if (notifData) {
       setNotifOpen(true);
@@ -210,6 +222,8 @@ function App() {
           setConnectedUsers,
           chats,
           setChats,
+          selectedChat,
+          setSelectedChat,
         }}
       >
         <ThemeProvider theme={theme}>

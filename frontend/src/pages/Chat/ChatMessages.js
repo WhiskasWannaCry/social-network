@@ -7,8 +7,6 @@ import grayDone from "../../images/icons/gray-done.png";
 const {
   Box,
   Typography,
-  FormControl,
-  OutlinedInput,
   Input,
   Button,
   Avatar,
@@ -69,9 +67,6 @@ const ChatMessages = ({
     const { chat, allUserChats } = data;
 
     if (selectedChat?._id === chat._id) {
-      console.log(selectedChat);
-      console.log(chat);
-
       setSelectedChat(chat);
       setMessages(chat.messages);
     }
@@ -107,8 +102,7 @@ const ChatMessages = ({
 
       if (selectedChat?._id === chat._id) {
         setChats(chats);
-        // console.log(chat);
-        // console.log(selectedChat);
+
         setMessages(chat.messages);
       }
     });

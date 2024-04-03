@@ -12,7 +12,7 @@ const ChatSideBar = ({
   setMessages,
 }) => {
   const currentUserContext = useContext(Context);
-  const { currentUser, socketConnectState, chats } = currentUserContext;
+  const { currentUser, chats } = currentUserContext;
 
   return (
     <Box
@@ -119,7 +119,6 @@ const ChatSideBar = ({
                         fontFamily: "Roboto",
                         fontSize: "12px",
                         fontStyle: "normal",
-                        fontWeight: 500,
                       }}
                     >
                       {messages.length ? day + " " + monthName : null}
@@ -134,7 +133,7 @@ const ChatSideBar = ({
                       fontFamily: "Roboto",
                       fontSize: "12px",
                       fontStyle: "normal",
-                      fontWeight: 500,
+                      fontWeight: lastMessage && lastMessage.read ? 400 : 1000,
                       whiteSpace: "nowrap",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
