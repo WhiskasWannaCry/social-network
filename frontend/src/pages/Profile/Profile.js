@@ -184,9 +184,9 @@ const Profile = () => {
     setChats,
   } = currentUserContext;
 
-  // States for notification
-  const [notifData, setNotifData] = useState(null);
-  const [notifOpen, setNotifOpen] = useState(false);
+  // // States for notification
+  // const [notifData, setNotifData] = useState(null);
+  // const [notifOpen, setNotifOpen] = useState(false);
 
   // States for managing user's state in socialContacts
   const [isFollowing, setIsFollowing] = useState(false);
@@ -352,22 +352,22 @@ const Profile = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (socketConnectState) {
-      socketConnectState.on(
-        "last-message-for-notification",
-        ({ senderData, lastMessageData }) => {
-          setNotifData({ senderData, lastMessageData });
-        }
-      );
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (socketConnectState) {
+  //     socketConnectState.on(
+  //       "last-message-for-notification",
+  //       ({ senderData, lastMessageData }) => {
+  //         setNotifData({ senderData, lastMessageData });
+  //       }
+  //     );
+  //   }
+  // }, []);
 
-  useEffect(() => {
-    if (notifData) {
-      setNotifOpen(true);
-    }
-  }, [notifData]);
+  // useEffect(() => {
+  //   if (notifData) {
+  //     setNotifOpen(true);
+  //   }
+  // }, [notifData]);
 
   return (
     <Container>
@@ -609,13 +609,13 @@ const Profile = () => {
           profileOwner={profileOwner}
         ></SecondarySide>
       </UserBody>
-      {notifData && (
+      {/* {notifData && (
         <NotifyMessage
           notifData={notifData}
           notifOpen={notifOpen}
           setNotifOpen={setNotifOpen}
         ></NotifyMessage>
-      )}
+      )} */}
     </Container>
   );
 };
