@@ -26,6 +26,7 @@ import { PageLoader } from "./shared/Loaders.js";
 import { io } from "socket.io-client";
 import { connectToSocket } from "./shared/SocketFunctions.js";
 import Chat from "./pages/Chat/Chat.js";
+import NotifyMessage from "./shared/NotifyMessage.js";
 
 const Container = styled("div")`
   display: flex;
@@ -85,6 +86,10 @@ function App() {
   const [currentUser, setCurrentUser] = useState(userInit);
   const [usersFromSearch, setUsersFromSearch] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // States for notification
+  const [notifData, setNotifData] = useState(null);
+  const [notifOpen, setNotifOpen] = useState(false);
 
   // All posts arr
   const [posts, setPosts] = useState([]);
@@ -169,6 +174,23 @@ function App() {
     }
   }, []);
 
+  useEffect(() => {
+    if (socketConnectState) {
+      socketConnectState.on(
+        "last-message-for-notification",
+        ({ senderData, lastMessageData }) => {
+          setNotifData({ senderData, lastMessageData });
+        }
+      );
+    }
+  }, [socketConnectState]);
+
+  useEffect(() => {
+    if (notifData) {
+      setNotifOpen(true);
+    }
+  }, [notifData]);
+
   if (loading) {
     return <PageLoader></PageLoader>;
   } else {
@@ -237,6 +259,13 @@ function App() {
                     }
                   />
                 </Routes>
+                {notifData && (
+                  <NotifyMessage
+                    notifData={notifData}
+                    notifOpen={notifOpen}
+                    setNotifOpen={setNotifOpen}
+                  ></NotifyMessage>
+                )}
               </ContentContainer>
             </Body>
           </Container>

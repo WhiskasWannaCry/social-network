@@ -1,6 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { PageLoader } from "../../shared/Loaders";
 import { Context } from "../../shared/Context";
+import blueDone from "../../images/icons/blue-done.png";
+import grayDone from "../../images/icons/gray-done.png";
 
 const {
   Box,
@@ -9,9 +11,16 @@ const {
   OutlinedInput,
   Input,
   Button,
+  Avatar,
 } = require("@mui/material");
 
-const ChatMessages = ({ chatsLoading, selectedChat, setSelectedChat }) => {
+const ChatMessages = ({
+  chatsLoading,
+  selectedChat,
+  setSelectedChat,
+  messages,
+  setMessages,
+}) => {
   const currentUserContext = useContext(Context);
   const { currentUser, socketConnectState, chats, setChats } =
     currentUserContext;
@@ -31,6 +40,7 @@ const ChatMessages = ({ chatsLoading, selectedChat, setSelectedChat }) => {
     const newMessage = {
       date: new Date(),
       text: inputMessageText,
+      read: false,
     };
 
     socketConnectState.emit("send-private-message", {
@@ -45,8 +55,6 @@ const ChatMessages = ({ chatsLoading, selectedChat, setSelectedChat }) => {
   };
 
   useEffect(() => {
-    
-
     socketConnectState.on("open-chat-with-user", (data) => {
       console.log(data);
     });
@@ -59,13 +67,52 @@ const ChatMessages = ({ chatsLoading, selectedChat, setSelectedChat }) => {
       return alert(message);
     }
     const { chat, allUserChats } = data;
-    console.log(selectedChat);
-    console.log(chat);
-    if (selectedChat) {
+
+    if (selectedChat?._id === chat._id) {
+      console.log(selectedChat);
+      console.log(chat);
+
       setSelectedChat(chat);
+      setMessages(chat.messages);
     }
     setChats(allUserChats);
   });
+
+  useEffect(() => {
+    if (messages) {
+      const unreadMessages = messages.filter(
+        (message) =>
+          message.read === false && message.sender._id !== currentUser._id
+      );
+      // console.log(unreadMessages);
+      if (unreadMessages.length) {
+        socketConnectState.emit("send-read-status", {
+          // unreadMessages,
+          chatId: selectedChat._id,
+          userId: currentUser._id,
+        });
+      }
+    }
+
+    socketConnectState.on("send-read-status", (data) => {
+      if (!data) {
+        return console.log("Error on client: send-read-status listener");
+      }
+      const { success } = data;
+      if (!success) {
+        const { message } = data;
+        return console.log(message);
+      }
+      const { chat, chats } = data;
+
+      if (selectedChat?._id === chat._id) {
+        setChats(chats);
+        // console.log(chat);
+        // console.log(selectedChat);
+        setMessages(chat.messages);
+      }
+    });
+  }, [selectedChat]);
 
   return (
     <Box
@@ -73,7 +120,6 @@ const ChatMessages = ({ chatsLoading, selectedChat, setSelectedChat }) => {
         display: "flex",
         flexDirection: "column",
         width: "70%",
-        // height: "100%",
         backgroundColor: (theme) => theme.palette.primary.grey[5],
         borderRadius: "0 12px 12px 0",
         borderTop: (theme) => `1px solid ${theme.palette.primary.grey[3]}`,
@@ -96,7 +142,7 @@ const ChatMessages = ({ chatsLoading, selectedChat, setSelectedChat }) => {
           ></Box>
           {selectedChat ? (
             <>
-              {selectedChat.messages.length ? (
+              {messages?.length ? (
                 <Box // Box for messages
                   sx={{
                     display: "flex",
@@ -108,7 +154,7 @@ const ChatMessages = ({ chatsLoading, selectedChat, setSelectedChat }) => {
                     overflowY: "scroll",
                   }}
                 >
-                  {selectedChat.messages
+                  {messages
                     .sort((a, b) => new Date(b.date) - new Date(a.date))
                     .map((message) => (
                       <Box // Line Container for 1 message
@@ -128,7 +174,7 @@ const ChatMessages = ({ chatsLoading, selectedChat, setSelectedChat }) => {
                             backgroundColor: (theme) =>
                               theme.palette.primary.grey[4],
                             minHeight: "24px",
-                            minWidth: "48px",
+                            minWidth: "64px",
                             padding: "8px",
                             borderRadius:
                               message.sender._id === currentUser._id
@@ -139,37 +185,51 @@ const ChatMessages = ({ chatsLoading, selectedChat, setSelectedChat }) => {
                           <Typography
                             sx={{
                               fontFamily: "Roboto",
-                              fontSize: "13px",
+                              fontSize: "14px",
                               fontStyle: "normal",
                               fontWeight: 500,
                             }}
                           >
                             {message.text}
                           </Typography>
-                          <Box // Box for date
+                          <Box // Box for date and read status
                             sx={{
                               display: "flex",
+                              alignItems: "center",
+                              justifyContent: "flex-end",
+                              gap: "2px",
                               width: "100%",
                             }}
-                          ></Box>
-                          <Typography
-                            sx={{
-                              display: "flex",
-                              justifyContent:
-                                message.sender._id === currentUser._id
-                                  ? "flex-end"
-                                  : "flex-start",
-                              color: (theme) => theme.palette.primary.grey[3],
-                              fontFamily: "Roboto",
-                              fontSize: "10px",
-                              fontStyle: "normal",
-                              fontWeight: 500,
-                            }}
                           >
-                            {new Date(message.date).getHours() +
-                              ":" +
-                              new Date(message.date).getMinutes()}
-                          </Typography>
+                            <Typography
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                color: (theme) => theme.palette.primary.grey[3],
+                                fontFamily: "Roboto",
+                                fontSize: "10px",
+                                fontStyle: "normal",
+                                fontWeight: 500,
+                              }}
+                            >
+                              {new Date(message.date).getHours() +
+                                ":" +
+                                new Date(message.date).getMinutes()}
+                            </Typography>
+                            <Box></Box>
+                            <Avatar
+                              alt="readStatus"
+                              src={message.read ? blueDone : grayDone}
+                              variant="square"
+                              sx={{
+                                width: "10px",
+                                height: "10px",
+                              }}
+                            ></Avatar>
+                            {/* <Typography sx={{ color: "gray" }}>
+                              {message.read ? "read" : "not read"}
+                            </Typography> */}
+                          </Box>
                         </Box>
                       </Box>
                     ))}

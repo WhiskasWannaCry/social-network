@@ -134,7 +134,7 @@ socketIO.on("connect", (socket) => {
 
   socket.on("get-connected-users", () => {
     socket.emit("get-connected-users", CONNECTED_USERS);
-    console.log(CONNECTED_USERS);
+    // console.log(CONNECTED_USERS);
   });
 
   // Когда юзер прислал приватное сообщение
@@ -146,6 +146,7 @@ socketIO.on("connect", (socket) => {
       newMessage.sender = userId;
       newMessage.recipient = recipient;
       newMessage.date = new Date(newMessage.date);
+      newMessage.read = false;
 
       // Ищу получателя в списке подключенных
       const connRecipient = CONNECTED_USERS.find(
@@ -170,11 +171,11 @@ socketIO.on("connect", (socket) => {
           // Если получатель подключен то слать сообщение и отправителю и получателю
           if (connRecipient) {
             let senderData;
-            if(chat.sender._id.toString() === userId) {
-              senderData = chat.sender
+            if (chat.sender._id.toString() === userId) {
+              senderData = chat.sender;
             }
-            if(chat.recipient._id.toString() === userId) {
-              senderData = chat.recipient
+            if (chat.recipient._id.toString() === userId) {
+              senderData = chat.recipient;
             }
             socketIO.to(socket.id).emit("send-private-message", {
               success: true,
@@ -186,11 +187,14 @@ socketIO.on("connect", (socket) => {
               chat,
               allUserChats: recipientChats,
             });
-            socketIO.to(connRecipient.socketId).emit("last-message-for-notification", {
-              success: true,
-              senderData,
-              lastMessageData: newMessage,
-            });
+
+            socketIO
+              .to(connRecipient.socketId)
+              .emit("last-message-for-notification", {
+                success: true,
+                senderData,
+                lastMessageData: newMessage,
+              });
           }
         }
         if (!foundChat) {
@@ -218,15 +222,14 @@ socketIO.on("connect", (socket) => {
   socket.on("open-chat-with-user", async ({ userId, recipient }) => {
     try {
       const chat = await getPrivateChat(userId, recipient);
-    if (!chat) {
-      await Chat.create({
-        sender: userId,
-        recipient,
-        messages: [],
-      });
-      
-    }
-    const foundChat = await getPrivateChat(userId, recipient);
+      if (!chat) {
+        await Chat.create({
+          sender: userId,
+          recipient,
+          messages: [],
+        });
+      }
+      const foundChat = await getPrivateChat(userId, recipient);
       const senderChats = await getAllUserChats(userId);
       const recipientChats = await getAllUserChats(recipient);
       // Ищу получателя в списке подключенных
@@ -255,11 +258,80 @@ socketIO.on("connect", (socket) => {
         });
       }
     } catch (e) {
-      console.error(e)
+      console.error(e);
       socketIO.to(socket.id).emit("open-chat-with-user", {
         success: false,
-        message: "Caught error on open-chat-with-user"
+        message: "Caught error on open-chat-with-user",
       });
+    }
+  });
+
+  // Когда юзер прочитал сообщения
+  socket.on("send-read-status", async ({ unreadMessages, chatId, userId }) => {
+    try {
+      const foundChat = await Chat.findOne({ _id: chatId })
+        .populate({
+          path: "sender",
+          select: "-secret",
+        })
+        .populate({
+          path: "recipient",
+          select: "-secret",
+        })
+        .populate({
+          path: "messages.sender",
+          select: "-secret",
+        })
+        .populate({
+          path: "messages.recipient",
+          select: "-secret",
+        })
+        .exec();
+
+      let recipient;
+      if (foundChat.sender._id.toString() === userId) {
+        recipient = foundChat.recipient._id;
+      }
+      if (foundChat.recipient._id.toString() === userId) {
+        recipient = foundChat.sender._id;
+      }
+      console.log(recipient)
+      foundChat.messages.map((message) => {
+        if (
+          message.read === false &&
+          message.sender._id.toString() !== userId
+        ) {
+          message.read = true;
+        }
+      });
+
+      await foundChat.save();
+
+      const senderChats = await getAllUserChats(userId);
+      const recipientChats = await getAllUserChats(recipient);
+
+      // Ищу получателя в списке подключенных
+      const connRecipient = CONNECTED_USERS.find(
+        (connUser) => connUser.userId === recipient._id.toString()
+      );
+      console.log(connRecipient);
+
+      socketIO.to(socket.id).emit("send-read-status", {
+        success: true,
+        chat: foundChat,
+        chats: senderChats,
+      });
+
+      if (connRecipient) {
+        socketIO.to(connRecipient.socketId).emit("send-read-status", {
+          success: true,
+          chat: foundChat,
+          chats: recipientChats,
+        });
+      }
+    } catch (e) {
+      console.error(e);
+      socket.emit("send-read-status", { success: false, message: e });
     }
   });
 

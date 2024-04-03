@@ -5,7 +5,12 @@ import { PageLoader } from "../../shared/Loaders";
 
 const { Box, Avatar, Typography } = require("@mui/material");
 
-const ChatSideBar = ({ chatsLoading,selectedChat, setSelectedChat }) => {
+const ChatSideBar = ({
+  chatsLoading,
+  selectedChat,
+  setSelectedChat,
+  setMessages,
+}) => {
   const currentUserContext = useContext(Context);
   const { currentUser, socketConnectState, chats } = currentUserContext;
 
@@ -58,14 +63,20 @@ const ChatSideBar = ({ chatsLoading,selectedChat, setSelectedChat }) => {
             return (
               <Box
                 key={`Container + ${_id}`}
-                onClick={() => setSelectedChat(chat)}
+                onClick={() => {
+                  setSelectedChat(chat);
+                  setMessages(chat.messages);
+                }}
                 sx={{
                   cursor: "pointer",
                   display: "flex",
                   width: "100%",
                   padding: "8px",
                   gap: "8px",
-                  backgroundColor: (theme) => selectedChat._id === chat._id ? theme.palette.primary.grey[4] : theme.palette.primary.grey[5],
+                  backgroundColor: (theme) =>
+                    selectedChat?._id === chat._id
+                      ? theme.palette.primary.grey[4]
+                      : theme.palette.primary.grey[5],
                   "&:hover": {
                     backgroundColor: (theme) => theme.palette.primary.grey[3],
                   },

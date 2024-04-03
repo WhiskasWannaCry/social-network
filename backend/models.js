@@ -37,6 +37,7 @@ const chatSchema = new Schema({
       date: { type: Date, required: true },
       sender: { type: Schema.Types.ObjectId, ref: "User", required: true },
       recipient: { type: Schema.Types.ObjectId, ref: "User", required: true },
+      read: { type: Boolean, required: true },
     },
   ],
 });

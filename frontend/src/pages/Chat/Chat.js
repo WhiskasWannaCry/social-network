@@ -12,6 +12,8 @@ const Chat = () => {
 
   const [selectedChat, setSelectedChat] = useState(null);
 
+  const [messages, setMessages] = useState(null)
+
   useEffect(() => {
     socketConnectState.emit("get-all-user-chats", currentUser._id);
     socketConnectState.on("get-all-user-chats", (chatsData) => {
@@ -31,11 +33,14 @@ const Chat = () => {
         chatsLoading={chatsLoading}
         selectedChat={selectedChat}
         setSelectedChat={setSelectedChat}
+        setMessages={setMessages}
       ></ChatSideBar>
       <ChatMessages
         chatsLoading={chatsLoading}
         selectedChat={selectedChat}
         setSelectedChat={setSelectedChat}
+        messages={messages}
+        setMessages={setMessages}
       ></ChatMessages>
     </Box>
   );
