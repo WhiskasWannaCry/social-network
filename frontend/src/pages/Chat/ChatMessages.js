@@ -45,25 +45,27 @@ const ChatMessages = ({ chatsLoading, selectedChat, setSelectedChat }) => {
   };
 
   useEffect(() => {
-    socketConnectState.on("send-private-message", (data) => {
-      const { success } = data;
-      if (!success) {
-        const { message } = data;
-        return alert(message);
-      }
-      const { chat, allUserChats } = data;
-      console.log(selectedChat);
-      console.log(chat);
-      if (selectedChat) {
-        setSelectedChat(chat);
-      }
-      setChats(allUserChats);
-    });
+    
 
     socketConnectState.on("open-chat-with-user", (data) => {
       console.log(data);
     });
   }, []);
+
+  socketConnectState.on("send-private-message", (data) => {
+    const { success } = data;
+    if (!success) {
+      const { message } = data;
+      return alert(message);
+    }
+    const { chat, allUserChats } = data;
+    console.log(selectedChat);
+    console.log(chat);
+    if (selectedChat) {
+      setSelectedChat(chat);
+    }
+    setChats(allUserChats);
+  });
 
   return (
     <Box

@@ -5,7 +5,7 @@ import { PageLoader } from "../../shared/Loaders";
 
 const { Box, Avatar, Typography } = require("@mui/material");
 
-const ChatSideBar = ({ chatsLoading, setSelectedChat }) => {
+const ChatSideBar = ({ chatsLoading,selectedChat, setSelectedChat }) => {
   const currentUserContext = useContext(Context);
   const { currentUser, socketConnectState, chats } = currentUserContext;
 
@@ -65,6 +65,7 @@ const ChatSideBar = ({ chatsLoading, setSelectedChat }) => {
                   width: "100%",
                   padding: "8px",
                   gap: "8px",
+                  backgroundColor: (theme) => selectedChat._id === chat._id ? theme.palette.primary.grey[4] : theme.palette.primary.grey[5],
                   "&:hover": {
                     backgroundColor: (theme) => theme.palette.primary.grey[3],
                   },

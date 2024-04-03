@@ -29,6 +29,7 @@ const Chat = () => {
     >
       <ChatSideBar
         chatsLoading={chatsLoading}
+        selectedChat={selectedChat}
         setSelectedChat={setSelectedChat}
       ></ChatSideBar>
       <ChatMessages
