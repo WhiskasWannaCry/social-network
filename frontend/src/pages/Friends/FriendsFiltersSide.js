@@ -22,11 +22,11 @@ const Container = styled("div")`
   align-items: center;
   gap: 12px;
   width: 40%;
-  height: 500px;
+  /* height: 500px; */
   background-color: ${(props) => props.theme.palette.primary.grey[5]};
   border-radius: 8px;
   border: 1px solid ${(props) => props.theme.palette.primary.grey[3]};
-  padding: 8px;
+  padding: 16px;
   -webkit-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
   -moz-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
   box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
@@ -131,14 +131,34 @@ const FriendsFiltersSide = ({ peopleSearchParams, setPeopleSearchParams }) => {
     <Container>
       <SortTitle>Age</SortTitle>
       <SortByAgeContainer>
-        <FormControl sx={{ m: 1, display: "flex", flexGrow: 1 }} size="small">
-          <InputLabel id="demo-select-small-label">From</InputLabel>
+        <FormControl
+          sx={{ m: 1, display: "flex", flexGrow: 1, margin: 0 }}
+          size="small"
+        >
+          <InputLabel
+            id="demo-select-small-label"
+            sx={{ color: (theme) => theme.palette.primary.grey[2] }}
+          >
+            From
+          </InputLabel>
           <Select
             labelId="demo-select-small-label"
             id="demo-select-small"
             value={peopleSearchParams.selectedFromAge}
             label="Age"
             onChange={handleChangeFromAge}
+            sx={{
+              color: (theme) => theme.palette.primary.grey[1],
+              borderRadius: "8px",
+              border: (theme) => `1px solid ${theme.palette.primary.grey[3]}`,
+            }}
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  backgroundColor: (theme) => theme.palette.primary.grey[4],
+                },
+              },
+            }}
           >
             {agesArr.map((age) =>
               age ? (
@@ -154,14 +174,34 @@ const FriendsFiltersSide = ({ peopleSearchParams, setPeopleSearchParams }) => {
           </Select>
         </FormControl>
 
-        <FormControl sx={{ m: 1, display: "flex", flexGrow: 1 }} size="small">
-          <InputLabel id="demo-select-small-label">To</InputLabel>
+        <FormControl
+          sx={{ m: 1, display: "flex", flexGrow: 1, margin: 0 }}
+          size="small"
+        >
+          <InputLabel
+            id="demo-select-small-label"
+            sx={{ color: (theme) => theme.palette.primary.grey[2] }}
+          >
+            To
+          </InputLabel>
           <Select
             labelId="demo-select-small-label"
             id="demo-select-small"
             value={peopleSearchParams.selectedToAge}
             label="Age"
             onChange={handleChangeToAge}
+            sx={{
+              color: (theme) => theme.palette.primary.grey[1],
+              borderRadius: "8px",
+              border: (theme) => `1px solid ${theme.palette.primary.grey[3]}`,
+            }}
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  backgroundColor: (theme) => theme.palette.primary.grey[4],
+                },
+              },
+            }}
           >
             {agesArr.map((age) =>
               age ? (
@@ -207,7 +247,13 @@ const FriendsFiltersSide = ({ peopleSearchParams, setPeopleSearchParams }) => {
           </RadioGroup>
         </FormControl>
       </InputSexContainer>
-      <Button variant="outlined" onClick={handleFilter}>
+      <Button
+        variant="outlined"
+        onClick={handleFilter}
+        sx={{
+          width: "100%",
+        }}
+      >
         Filter
       </Button>
     </Container>

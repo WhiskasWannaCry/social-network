@@ -11,11 +11,13 @@ import { Context } from "../../shared/Context";
 import { getPosts } from "../../http/Fetches";
 import Post from "../../shared/Post.js";
 import { PageLoader } from "../../shared/Loaders.js";
+import { Box } from "@mui/material";
 
 const Container = styled("div")`
   display: flex;
   flex-direction: column;
   width: 60%;
+  gap: 12px;
 `;
 
 const BeginContainer = styled("div")`
@@ -135,7 +137,6 @@ const PostsNav = styled("div")`
   display: flex;
   align-items: center;
   justify-content: space-around;
-  margin-top: 16px;
   padding-left: 20px;
   padding-right: 20px;
   padding-top: 18px;
@@ -338,6 +339,7 @@ const MainSide = ({ loading, profileOwner }) => {
           <AddNewPost></AddNewPost>
         </>
       )}
+      <Box>
       <PostsNav>
         <PostsNavBtn>All posts</PostsNavBtn>
         <PostsNavBtn>My posts</PostsNavBtn>
@@ -362,6 +364,7 @@ const MainSide = ({ loading, profileOwner }) => {
           </>
         )}
       </PostsContainer>
+      </Box>
     </Container>
   );
 };

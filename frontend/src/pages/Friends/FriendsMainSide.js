@@ -93,6 +93,7 @@ const UsersForSearch = styled("div")`
 `;
 
 const FriendsMainSide = (peopleSearchParams) => {
+  // Separation user
   const [userFriends, setUserFriends] = useState([]);
   const [otherUsers, setOtherUsers] = useState([]);
   const [loading, setLoading] = useState(true);

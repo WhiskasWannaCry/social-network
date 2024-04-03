@@ -19,7 +19,7 @@ import { useNavigate } from "react-router-dom";
 const Container = styled("div")`
   display: flex;
   width: 100%;
-  min-height: 100%;
+  /* min-height: 100%; */
 `;
 
 const EditMainInfo = styled("div")`
@@ -27,13 +27,13 @@ const EditMainInfo = styled("div")`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  min-height: 500px;
+  /* min-height: 500px; */
   background-color: ${(props) => props.theme.palette.primary.grey[5]};
   border: 1px solid #363738;
   border-radius: 12px;
   overflow: hidden;
   gap: 12px;
-  padding: 16px 20px;
+  padding: 20px;
 `;
 
 const InfoContainer = styled("div")`
@@ -239,41 +239,7 @@ const EditProfile = () => {
           </InfoContainer>
         </Box>
         <HR></HR>
-        <Box
-          sx={{
-            display: "flex",
-          }}
-        >
-          <InfoContainer>
-            <InfoTitle>Sex:</InfoTitle>
-            <InfoForChange>
-              <FormControl
-                sx={{ m: 1, display: "flex", flexGrow: 1, width: "100%" }}
-                size="small"
-              >
-                <InputLabel id="demo-select-small-label">To</InputLabel>
-                <Select
-                  labelId="demo-select-small-label"
-                  id="demo-select-small"
-                  value={newSex}
-                  label="Age"
-                  onChange={(e) => handleChangeInfoField(e, setNewSex)}
-                >
-                  <MenuItem key={"other"} value={"other"}>
-                    Other
-                  </MenuItem>
-                  <MenuItem key={"male"} value={"male"}>
-                    Male
-                  </MenuItem>
-                  <MenuItem key={"female"} value={"female"}>
-                    Female
-                  </MenuItem>
-                </Select>
-              </FormControl>
-            </InfoForChange>
-          </InfoContainer>
-        </Box>
-        <HR></HR>
+
         <Box
           sx={{
             display: "flex",
@@ -334,7 +300,65 @@ const EditProfile = () => {
             </InfoForChange>
           </InfoContainer>
         </Box>
-
+        <Box
+          sx={{
+            display: "flex",
+          }}
+        >
+          <InfoContainer>
+            <InfoTitle>Sex:</InfoTitle>
+            <InfoForChange>
+              <FormControl
+                sx={{
+                  m: 1,
+                  display: "flex",
+                  flexGrow: 1,
+                  width: "100%",
+                }}
+                size="small"
+              >
+                <InputLabel
+                  id="demo-select-small-label"
+                  sx={{ color: (theme) => theme.palette.primary.grey[2] }}
+                >
+                  Sex
+                </InputLabel>
+                <Select
+                  labelId="demo-select-small-label"
+                  id="demo-select-small"
+                  value={newSex}
+                  label="Age"
+                  onChange={(e) => handleChangeInfoField(e, setNewSex)}
+                  sx={{
+                    color: (theme) => theme.palette.primary.grey[1],
+                    borderRadius: "8px",
+                    border: (theme) =>
+                      `1px solid ${theme.palette.primary.grey[3]}`,
+                  }}
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        backgroundColor: (theme) =>
+                          theme.palette.primary.grey[4],
+                      },
+                    },
+                  }}
+                >
+                  <MenuItem key={"other"} value={"other"}>
+                    Other
+                  </MenuItem>
+                  <MenuItem key={"male"} value={"male"}>
+                    Male
+                  </MenuItem>
+                  <MenuItem key={"female"} value={"female"}>
+                    Female
+                  </MenuItem>
+                </Select>
+              </FormControl>
+            </InfoForChange>
+          </InfoContainer>
+        </Box>
+        <HR></HR>
         <SaveChangesBtn onClick={changeUserInfo}>Save</SaveChangesBtn>
       </EditMainInfo>
     </Container>
