@@ -123,9 +123,10 @@ const AddNewPost = () => {
           }));
         }}
         sx={{
+          border: (theme) => `1px solid ${theme.palette.primary.grey[3]}`,
           width: "100%",
           borderRadius: "12px",
-          padding: "8px",
+          padding: "0",
           // textfield
           ".css-kptawt-MuiInputBase-root-MuiOutlinedInput-root": {
             color: (theme) => theme.palette.primary.grey[1],
