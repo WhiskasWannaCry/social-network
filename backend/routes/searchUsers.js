@@ -5,6 +5,7 @@ const router = Router();
 
 router.get("/search/get-all-users", async (req, res) => {
   const { peopleSearchParams } = req.query;
+
   if (peopleSearchParams) {
     const { searchInputValue, selectedFromAge, selectedToAge, selectedSex } =
       peopleSearchParams;
@@ -29,8 +30,18 @@ router.get("/search/get-all-users", async (req, res) => {
         return formattedBirthday;
       }
 
-      let filterFromAge = new Date(getBirthdayFromAge(selectedFromAge));
-      let filterToAge = new Date(getBirthdayFromAge(selectedToAge));
+      // If input
+      if (searchInputValue) {
+        const searchTerms = searchInputValue.split(" ");
+        filter["$or"] = searchTerms.map((term) => ({
+          "primary.name": { $regex: term, $options: "i" },
+        }));
+        filter["$or"].push(
+          ...searchTerms.map((term) => ({
+            "primary.surname": { $regex: term, $options: "i" },
+          }))
+        );
+      }
 
       // if only "from age" selected
       if (selectedFromAge !== "0" && selectedToAge === "0") {
@@ -53,7 +64,8 @@ router.get("/search/get-all-users", async (req, res) => {
           $gte: new Date(getBirthdayFromAge(selectedToAge)),
         };
       }
-
+      console.log(filter)
+      
       const users = await User.find(filter, { secret: 0 }).limit(100);
 
       if (users) {
