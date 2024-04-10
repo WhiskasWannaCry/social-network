@@ -7,15 +7,7 @@ import newsImg from "../images/icons/Navigation_icons/News.svg";
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../shared/Context";
-
-const Container = styled("div")`
-  display: flex;
-  flex-direction: column;
-  width: 15%;
-  @media (max-width: 768px) {
-    width: 10%;
-  }
-`;
+import { Box, Typography } from "@mui/material";
 
 const NavBar = styled("nav")`
   display: flex;
@@ -42,17 +34,6 @@ const NavImg = styled("img")`
   width: 20px;
 `;
 
-const NavText = styled("span")`
-  color: ${(props) => props.theme.palette.primary.grey[1]};
-  font-family: Roboto;
-  font-size: 13px;
-  font-style: normal;
-  font-weight: 400;
-  @media (max-width: 768px) {
-    display: none;
-  }
-`;
-
 const NavNotificationCounter = styled("div")`
   display: flex;
   justify-content: center;
@@ -68,6 +49,21 @@ const NavNotificationCounter = styled("div")`
   padding: 4px;
 `;
 
+const NavTextStyles = {
+  display: {
+    xl: "flex",
+    lg: "flex",
+    md: "flex",
+    sm: "none",
+    xs: "none",
+  },
+  color: (theme) => theme.palette.primary.grey[1],
+  fontFamily: "Roboto",
+  fontSize: "13px",
+  fontStyle: "normal",
+  fontWeight: 400,
+};
+
 const HR = styled("div")`
   width: 80%;
   height: 1px;
@@ -81,13 +77,14 @@ const MainNavigation = () => {
 
   const [unreadMsgCounter, setUnreadMsgCounter] = useState(0);
 
-  console.log(chats)
+  // console.log(chats);
   useEffect(() => {
     if (chats && chats.length) {
       let counter = 0;
       chats.forEach((chat) => {
         return (counter += chat.messages.filter(
-          (message) => message.read === false && message.sender._id !==currentUser._id
+          (message) =>
+            message.read === false && message.sender._id !== currentUser._id
         ).length);
       });
       setUnreadMsgCounter(counter);
@@ -95,34 +92,46 @@ const MainNavigation = () => {
   }, [chats]);
 
   return (
-    <Container>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        width: {
+          xl: "15%",
+          lg: "15%",
+          md: "15%",
+          sm: "10%",
+          xs: "10%",
+        },
+      }}
+    >
       <NavBar>
         <NavBtnContainer onClick={() => navigate(`profile/${currentUser._id}`)}>
           <NavImg src={profileImg} alt="navImg"></NavImg>
-          <NavText>Profile</NavText>
+          <Typography sx={NavTextStyles}>Profile</Typography>
         </NavBtnContainer>
         <NavBtnContainer onClick={() => navigate("/feed")}>
           <NavImg src={newsImg} alt="navImg"></NavImg>
-          <NavText>Feed</NavText>
+          <Typography sx={NavTextStyles}>Feed</Typography>
         </NavBtnContainer>
         <NavBtnContainer onClick={() => navigate(`chat/${currentUser._id}`)}>
           <NavImg src={messagesImg} alt="navImg"></NavImg>
-          <NavText>Messages</NavText>
+          <Typography sx={NavTextStyles}>Messages</Typography>
           {unreadMsgCounter ? (
             <NavNotificationCounter>{unreadMsgCounter}</NavNotificationCounter>
           ) : null}
         </NavBtnContainer>
         <NavBtnContainer onClick={() => navigate("/friends")}>
           <NavImg src={friendsImg} alt="navImg"></NavImg>
-          <NavText>Friends</NavText>
+          <Typography sx={NavTextStyles}>Friends</Typography>
         </NavBtnContainer>
         <NavBtnContainer>
           <NavImg src={photosImg} alt="navImg"></NavImg>
-          <NavText>Photos</NavText>
+          <Typography sx={NavTextStyles}>Photos</Typography>
         </NavBtnContainer>
         <HR></HR>
       </NavBar>
-    </Container>
+    </Box>
   );
 };
 

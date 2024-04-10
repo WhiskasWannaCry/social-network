@@ -74,9 +74,9 @@ const DoBtn = styled(Button)`
   font-style: normal;
   font-weight: 400;
   text-transform: none;
-  -webkit-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
+  /* -webkit-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
   -moz-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
-  box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
+  box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small}; */
   &:hover {
     background-color: ${(props) => props.theme.palette.primary.hover[1]};
   }

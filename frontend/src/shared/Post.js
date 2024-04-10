@@ -7,6 +7,7 @@ import { Avatar } from "@mui/material";
 import { postLike } from "../http/Fetches";
 import { Context } from "./Context";
 import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled("div")`
   display: flex;
@@ -37,6 +38,7 @@ const InfoContainer = styled("div")`
 `;
 
 const AuthorName = styled("div")`
+  cursor: pointer;
   color: #71aaeb;
   font-family: Roboto;
   font-size: 14px;
@@ -138,6 +140,8 @@ const FooterBtnCounter = styled("span")`
 `;
 
 const Post = ({ post }) => {
+  const navigate = useNavigate();
+
   const { author, date, image, text, likes } = post;
 
   const currentUserContext = useContext(Context);
@@ -205,13 +209,18 @@ const Post = ({ post }) => {
         <Avatar
           src={avatarFullPath}
           alt="author_img"
+          onClick={() => navigate(`/profile/${author._id}`)}
           sx={{
+            cursor: "pointer",
             width: "40px",
             height: "40px",
           }}
         ></Avatar>
+
         <InfoContainer>
-          <AuthorName>{author.primary.name}</AuthorName>
+          <AuthorName onClick={() => navigate(`/profile/${author._id}`)}>
+            {author.primary.name} {author.primary.surname}
+          </AuthorName>
           <PostDate>{date}</PostDate>
         </InfoContainer>
       </HeaderContainer>

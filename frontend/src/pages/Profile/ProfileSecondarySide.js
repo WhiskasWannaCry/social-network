@@ -137,15 +137,23 @@ const SecondarySide = ({ loading, profileOwner }) => {
             ) : (
               <NoneFriendsContainer>
                 <NoneFriendsTitle>
-                  You don't have any friends yet
+                  {profileOwner._id === currentUser._id
+                    ? "You don't have any friends yet"
+                    : `${
+                        profileOwner.primary.name +
+                        " " +
+                        profileOwner.primary.surname
+                      } hasn't any friends`}
                 </NoneFriendsTitle>
-                <AddFriendsContainer onClick={() => navigate("/friends")}>
-                  <AddFriendsImg
-                    src={addFriendsImg}
-                    alt="addFriendsImg"
-                  ></AddFriendsImg>
-                  <AddFriendsText>Add friends</AddFriendsText>
-                </AddFriendsContainer>
+                {profileOwner._id === currentUser._id ? (
+                  <AddFriendsContainer onClick={() => navigate("/friends")}>
+                    <AddFriendsImg
+                      src={addFriendsImg}
+                      alt="addFriendsImg"
+                    ></AddFriendsImg>
+                    <AddFriendsText>Add friends</AddFriendsText>
+                  </AddFriendsContainer>
+                ) : null}
               </NoneFriendsContainer>
             )}
           </>

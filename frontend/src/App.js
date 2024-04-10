@@ -20,7 +20,7 @@ import { Context } from "./shared/Context.js";
 import Friends from "./pages/Friends/Friends.js";
 import { getIsValidToken } from "./http/Fetches.js";
 import { theme } from "./shared/styles.js";
-import { ThemeProvider } from "@mui/material";
+import { Box, ThemeProvider } from "@mui/material";
 import { PageLoader } from "./shared/Loaders.js";
 
 import { io } from "socket.io-client";
@@ -47,7 +47,7 @@ const Body = styled("div")`
   min-height: 100%;
 `;
 
-const ContentContainer = styled("div")`
+const ContentContainer = styled(Box)`
   width: 70%;
   height: 100%;
 `;
@@ -191,7 +191,7 @@ function App() {
     if (currentUser && currentUser._id && socketConnectState) {
       socketConnectState.emit("get-all-user-chats", currentUser._id);
       socketConnectState.on("get-all-user-chats", chats => {
-        console.log(chats)
+        // console.log(chats)
         setChats(chats)
       });
     }
@@ -235,7 +235,15 @@ function App() {
                 location.pathname !== "/registration" && (
                   <MainNavigation></MainNavigation>
                 )}
-              <ContentContainer>
+              <ContentContainer sx={{
+                width: {
+                  xl: "70%",
+                  lg: "70%",
+                  md: "70%",
+                  sm: "80%",
+                  xs: "80%",
+                }
+              }}>
                 <Routes>
                   <Route
                     path="/profile/:_id"

@@ -13,7 +13,7 @@ const Container = styled("div")`
 
 const Friends = () => {
   const currentUserContext = useContext(Context);
-  const { currentUser, setCurrentUser, userInit } = currentUserContext;
+  const { currentUser, } = currentUserContext;
   const [peopleSearchParams, setPeopleSearchParams] = useState({
     searchInputValue: "",
     selectedFromAge: 0,
@@ -28,6 +28,7 @@ const Friends = () => {
         <>
           <FriendsMainSide
             peopleSearchParams={peopleSearchParams}
+            setPeopleSearchParams={setPeopleSearchParams}
           ></FriendsMainSide>
           <FriendsFiltersSide
             peopleSearchParams={peopleSearchParams}

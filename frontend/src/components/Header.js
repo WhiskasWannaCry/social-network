@@ -169,7 +169,7 @@ const Header = () => {
         ).length);
       });
       setUnreadMsgCounter(counter);
-      console.log(chats)
+      // console.log(chats)
     }
   }, [chats]);
 

@@ -22,7 +22,7 @@ const Container = styled("div")`
   align-items: center;
   gap: 12px;
   width: 40%;
-  /* height: 500px; */
+  height: 450px;
   background-color: ${(props) => props.theme.palette.primary.grey[5]};
   border-radius: 8px;
   border: 1px solid ${(props) => props.theme.palette.primary.grey[3]};
@@ -94,7 +94,6 @@ const FriendsFiltersSide = ({ peopleSearchParams, setPeopleSearchParams }) => {
       ...prev,
       selectedSex: event.target.value,
     }));
-    console.log(peopleSearchParams);
   };
 
   const handleChangeFromAge = (event) => {
@@ -102,7 +101,6 @@ const FriendsFiltersSide = ({ peopleSearchParams, setPeopleSearchParams }) => {
       ...prev,
       selectedFromAge: Number(event.target.value),
     }));
-    console.log(peopleSearchParams);
   };
 
   const handleChangeToAge = (event) => {

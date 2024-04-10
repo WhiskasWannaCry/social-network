@@ -54,7 +54,8 @@ const ChatSideBar = ({
                 (a, b) => new Date(b.date) - new Date(a.date)
               )[0];
 
-              formattedDate = new Date(messages[messages.length - 1].date);
+              // Дата последнего сообщения
+              formattedDate = new Date(messages[0].date);
               day = formattedDate.getDate();
               monthName = formattedDate.toLocaleString("default", {
                 month: "short",
@@ -124,23 +125,68 @@ const ChatSideBar = ({
                       {messages.length ? day + " " + monthName : null}
                     </Typography>
                   </Box>
-                  <Typography
-                    sx={{
-                      width: "100%",
-                      color: messages.length
-                        ? (theme) => theme.palette.primary.grey[2]
-                        : (theme) => theme.palette.primary.grey[3],
-                      fontFamily: "Roboto",
-                      fontSize: "12px",
-                      fontStyle: "normal",
-                      fontWeight: lastMessage && lastMessage.read ? 400 : 1000,
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                    }}
-                  >
-                    {messages.length ? lastMessage.text : "No messages"}
-                  </Typography>
+                  {lastMessage?.sender._id === currentUser._id ? (
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          color: (theme) => theme.palette.primary.grey[3],
+                          fontFamily: "Roboto",
+                          fontSize: "12px",
+                          fontStyle: "normal",
+                        }}
+                      >
+                        You:
+                      </Typography>
+                      <Typography
+                        sx={{
+                          width: "100%",
+                          color: messages.length
+                            ? (theme) => theme.palette.primary.grey[2]
+                            : (theme) => theme.palette.primary.grey[3],
+                          fontFamily: "Roboto",
+                          fontSize: "12px",
+                          fontStyle: "normal",
+                          fontWeight:
+                            lastMessage?.read ||
+                            lastMessage?.sender._id === currentUser._id
+                              ? 400
+                              : 1000,
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                      >
+                        {messages.length ? lastMessage?.text : "No messages"}
+                      </Typography>
+                    </Box>
+                  ) : (
+                    <Typography
+                      sx={{
+                        width: "100%",
+                        color: messages.length
+                          ? (theme) => theme.palette.primary.grey[2]
+                          : (theme) => theme.palette.primary.grey[3],
+                        fontFamily: "Roboto",
+                        fontSize: "12px",
+                        fontStyle: "normal",
+                        fontWeight:
+                          lastMessage?.read ||
+                          lastMessage?.sender._id === currentUser._id
+                            ? 400
+                            : 1000,
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {messages.length ? lastMessage?.text : "No messages"}
+                    </Typography>
+                  )}
                 </Box>
               </Box>
             );

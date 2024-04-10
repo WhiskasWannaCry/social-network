@@ -98,11 +98,11 @@ const InfoOuterContainer = styled("div")`
 `;
 
 const UserInfoContainer = styled("div")`
+position: absolute;
   display: flex;
   justify-content: space-between;
   width: 100%;
   min-height: 95px;
-  background-color: ${(props) => props.theme.palette.primary.grey[5]};
   padding: 20px;
   padding-left: 20%;
   transition: background-color 0.3s;
@@ -277,6 +277,12 @@ const Profile = () => {
   };
 
   // Effects
+
+  // Effect for 1 render scroll up
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   useEffect(() => {
     const fetchUserInfo = async (profileId) => {
       const { data } = await getUserInfo(profileId);
@@ -497,6 +503,7 @@ const Profile = () => {
                       fontSize: "13.781px",
                       fontStyle: "normal",
                       fontWeight: "500",
+                      textTransform: "none",
                       transition: "background-color 0.3s",
                       transition: "color 0.3s",
                       WebkitBoxShadow: (theme) =>
@@ -525,7 +532,7 @@ const Profile = () => {
                       sx={{
                         padding: "6px 16px 6px 16px",
                         borderRadius: "8px",
-                        height: "48px",
+                        height: "36px",
                         background: (theme) => theme.palette.primary.grey[4],
                         color: (theme) => theme.palette.primary.grey[1],
                         border: (theme) =>
@@ -535,6 +542,7 @@ const Profile = () => {
                         fontSize: "13.781px",
                         fontStyle: "normal",
                         fontWeight: "500",
+                        textTransform: "none",
                         transition: "background-color 0.3s",
                         transition: "color 0.3s",
                         WebkitBoxShadow: (theme) =>
@@ -564,12 +572,13 @@ const Profile = () => {
                       sx={{
                         padding: "6px 16px 6px 16px",
                         borderRadius: "8px",
-                        height: "48px",
+                        height: "36px",
                         background: (theme) => theme.palette.primary.grey[4],
                         color: (theme) => theme.palette.primary.grey[1],
                         border: (theme) =>
                           `1px solid ${theme.palette.primary.grey[3]}`,
                         textAlign: "center",
+                        textTransform: "none",
                         fontFamily: "Roboto",
                         fontSize: "13.781px",
                         fontStyle: "normal",
