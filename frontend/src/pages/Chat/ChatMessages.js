@@ -3,14 +3,10 @@ import { PageLoader } from "../../shared/Loaders";
 import { Context } from "../../shared/Context";
 import blueDone from "../../images/icons/blue-done.png";
 import grayDone from "../../images/icons/gray-done.png";
+import EmojiPicker from "emoji-picker-react";
+import emojiPickerImg from "../../images/icons/emoji-picker.png";
 
-const {
-  Box,
-  Typography,
-  Input,
-  Button,
-  Avatar,
-} = require("@mui/material");
+const { Box, Typography, Input, Button, Avatar } = require("@mui/material");
 
 const ChatMessages = ({
   chatsLoading,
@@ -22,8 +18,11 @@ const ChatMessages = ({
   const currentUserContext = useContext(Context);
   const { currentUser, socketConnectState, chats, setChats } =
     currentUserContext;
+
   const [inputMessageText, setInputMessageText] = useState("");
   const [isValidText, setIsValidText] = useState(false);
+
+  const [isOpenPicker, setIsOpenPicker] = useState(false);
 
   function validateMessage(message) {
     const regex = /^\S[\s\S]{0,254}$/;
@@ -71,6 +70,7 @@ const ChatMessages = ({
       setMessages(chat.messages);
     }
     setChats(allUserChats);
+    setIsOpenPicker(false);
   });
 
   useEffect(() => {
@@ -148,6 +148,17 @@ const ChatMessages = ({
                     overflowY: "scroll",
                   }}
                 >
+                  <EmojiPicker
+                    open={isOpenPicker}
+                    theme="dark"
+                    lazyLoadEmojis={true}
+                    style={{
+                      position: "absolute",
+                    }}
+                    onEmojiClick={(props) => {
+                      setInputMessageText((prev) => prev + props.emoji);
+                    }}
+                  ></EmojiPicker>
                   {messages
                     .sort((a, b) => new Date(b.date) - new Date(a.date))
                     .map((message) => (
@@ -265,6 +276,16 @@ const ChatMessages = ({
                   padding: "12px",
                 }}
               >
+                <Avatar
+                  alt="emoji-picker"
+                  src={emojiPickerImg}
+                  onClick={() => setIsOpenPicker(!isOpenPicker)}
+                  sx={{
+                    cursor: "pointer",
+                    width: "24px",
+                    height: "24px",
+                  }}
+                ></Avatar>
                 <Input
                   placeholder="Enter your message"
                   value={inputMessageText}

@@ -162,7 +162,6 @@ const FriendsMainSide = ({ peopleSearchParams, setPeopleSearchParams }) => {
           }
         });
       });
-      console.log(filteredOtherUsers);
       setUserFriends(filteredFriends);
       setOtherUsers(filteredOtherUsers);
       setLoading(false);
