@@ -188,6 +188,19 @@ const ChatSideBar = ({
                     </Typography>
                   )}
                 </Box>
+                {lastMessage &&
+                  !lastMessage?.read &&
+                  lastMessage?.sender._id !== currentUser._id && (
+                    <Box // if user have a new message
+                      sx={{
+                        borderRadius: "50%",
+                        backgroundColor: (theme) =>
+                          theme.palette.primary.grey[1],
+                        width: "8px",
+                        height: "8px",
+                      }}
+                    ></Box>
+                  )}
               </Box>
             );
           })}
