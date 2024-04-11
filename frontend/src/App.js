@@ -237,9 +237,9 @@ function App() {
                 )}
               <ContentContainer sx={{
                 width: {
-                  xl: "70%",
-                  lg: "70%",
-                  md: "70%",
+                  xl: "75%",
+                  lg: "75%",
+                  md: "75%",
                   sm: "80%",
                   xs: "80%",
                 }

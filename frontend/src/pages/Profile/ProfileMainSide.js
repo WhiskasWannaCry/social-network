@@ -17,7 +17,7 @@ const Container = styled("div")`
   display: flex;
   flex-direction: column;
   width: 60%;
-  gap: 12px;
+  gap: 16px;
 `;
 
 const BeginContainer = styled("div")`
@@ -167,18 +167,11 @@ const PostsNavBtn = styled("div")`
 const PostsContainer = styled("div")`
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding: 16px;
+  gap: 16px;
+  /* padding: 16px; */
   min-height: 159px;
   width: 100%;
-  border-bottom: 1px solid ${({ theme }) => theme.palette.primary.grey[3]};
-  border-left: 1px solid ${({ theme }) => theme.palette.primary.grey[3]};
-  border-right: 1px solid ${({ theme }) => theme.palette.primary.grey[3]};
   border-radius: 0 0 12px 12px;
-  background: ${({ theme }) => theme.palette.primary.grey[5]};
-  -webkit-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
-  -moz-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
-  box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
 `;
 
 const NonePostsContainer = styled("div")`
@@ -188,6 +181,9 @@ const NonePostsContainer = styled("div")`
   align-items: center;
   width: 100%;
   height: 100%;
+  background-color: ${({ theme }) => theme.palette.primary.grey[5]};
+  padding: 16px;
+  border: 1px solid ${({ theme }) => theme.palette.primary.grey[3]};
 `;
 
 const NonePostsImg = styled("img")``;
@@ -226,22 +222,22 @@ const MainSide = ({ loading, profileOwner }) => {
   };
 
   const handleGetPosts = async () => {
-    setLoadtingPosts(true)
+    setLoadtingPosts(true);
     const { data } = await getPosts(profileOwner._id);
     const { success } = data;
     if (!success) {
       const { message } = data;
-      setLoadtingPosts(false)
+      setLoadtingPosts(false);
       console.log(message);
       return alert(message);
     }
     const { allPosts } = data;
     setPosts(allPosts);
-    setLoadtingPosts(false)
+    setLoadtingPosts(false);
   };
 
   useEffect(() => {
-    if(profileOwner) {
+    if (profileOwner) {
       handleGetPosts();
     }
   }, [profileOwner]);
@@ -340,30 +336,35 @@ const MainSide = ({ loading, profileOwner }) => {
         </>
       )}
       <Box>
-      <PostsNav>
+        {/* <PostsNav>
         <PostsNavBtn>All posts</PostsNavBtn>
         <PostsNavBtn>My posts</PostsNavBtn>
-      </PostsNav>
-      <PostsContainer>
-        {loadingPosts ? (
-          <PageLoader></PageLoader>
-        ) : (
-          <>
-            {posts && posts.length ? (
-              posts
-                .sort((a, b) => new Date(b.date) - new Date(a.date))
-                .map((post) => <Post key={"PostComponent-" + post._id} post={post}></Post>)
-            ) : (
-              <NonePostsContainer>
-                <NonePostsImg src={nonePostsImg} alt="nonePosts"></NonePostsImg>
-                <NonePostsTitle>
-                  There are no posts on the wall yet
-                </NonePostsTitle>
-              </NonePostsContainer>
-            )}
-          </>
-        )}
-      </PostsContainer>
+      </PostsNav> */}
+        <PostsContainer>
+          {loadingPosts ? (
+            <PageLoader></PageLoader>
+          ) : (
+            <>
+              {posts && posts.length ? (
+                posts
+                  .sort((a, b) => new Date(b.date) - new Date(a.date))
+                  .map((post) => (
+                    <Post key={"PostComponent-" + post._id} post={post}></Post>
+                  ))
+              ) : (
+                <NonePostsContainer>
+                  <NonePostsImg
+                    src={nonePostsImg}
+                    alt="nonePosts"
+                  ></NonePostsImg>
+                  <NonePostsTitle>
+                    There are no posts on the wall yet
+                  </NonePostsTitle>
+                </NonePostsContainer>
+              )}
+            </>
+          )}
+        </PostsContainer>
       </Box>
     </Container>
   );
