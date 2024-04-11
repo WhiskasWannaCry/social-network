@@ -15,6 +15,10 @@ router.get("/get-posts", async (req, res) => {
         path: "author",
         select: "-secret",
       })
+      .populate({
+        path: "comments.author",
+        select: "-secret",
+      })
       .exec();
 
     if (!allPosts) {
@@ -89,31 +93,64 @@ router.post("/new-post", async (req, res) => {
 });
 
 router.post("/post-like", async (req, res) => {
-  const { profileId, postId} = req.body;
+  const { profileId, postId } = req.body;
   try {
-    const post = await Post.findOne({_id:postId})
-    if(!post) {
+    const post = await Post.findOne({ _id: postId });
+    if (!post) {
       return res.json({
         success: false,
         message: "Caught error on server (post-like), post not found",
       });
     }
-    const postIsLiked = post.likes.findIndex(likerId => likerId.toString() === profileId) !== -1;
+    const postIsLiked =
+      post.likes.findIndex((likerId) => likerId.toString() === profileId) !==
+      -1;
 
-    if(!postIsLiked) {
-      post.likes.push(profileId)
+    if (!postIsLiked) {
+      post.likes.push(profileId);
     }
-    if(postIsLiked) {
-      const likerIdx = post.likes.findIndex(likerId => likerId === profileId)
-      post.likes.splice(likerIdx,1)
+    if (postIsLiked) {
+      const likerIdx = post.likes.findIndex((likerId) => likerId === profileId);
+      post.likes.splice(likerIdx, 1);
     }
-    
-    await post.save()
+
+    await post.save();
 
     return res.json({
       success: true,
-      likes:post.likes,
+      likes: post.likes,
     });
+  } catch (e) {
+    console.error(e);
+    return res.json({
+      success: false,
+      message: "Caught on server (new-post)",
+    });
+  }
+});
+
+router.post("/post-comment", async (req, res) => {
+  const { postId, newComment } = req.body;
+  try {
+    let post = await Post.findOne({ _id: postId });
+    if (!post) {
+      return res.json({
+        success: false,
+        message: "Caught error on server (post-like), post not found",
+      });
+    }
+
+    post.comments.push(newComment);
+    await post.save();
+
+    post = await Post.findOne({ _id: postId })
+      .populate({
+        path: "comments.author",
+        select: "-secret",
+      })
+      .exec();
+
+    return res.json({ success: true, comments: post.comments });
   } catch (e) {
     console.error(e);
     return res.json({

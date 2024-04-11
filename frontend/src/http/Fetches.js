@@ -217,3 +217,19 @@ export const postLike = async (profileId, postId) => {
     return catchFunc(error);
   }
 };
+
+export const postComment = async (profileId, postId, newComment) => {
+  try {
+    const data = await axios.post(
+      "http://localhost:8000/api/posts/post-comment",
+      {
+        profileId,
+        postId,
+        newComment,
+      }
+    );
+    return data;
+  } catch (error) {
+    return catchFunc(error);
+  }
+};

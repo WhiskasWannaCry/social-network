@@ -48,7 +48,13 @@ const postSchema = new Schema({
   text: String,
   image: String,
   likes: [{ type: Schema.Types.ObjectId, ref: "User", required: true }],
-  comments: [{ type: Schema.Types.ObjectId, ref: "User", required: true }],
+  comments: [
+    {
+      author: { type: Schema.Types.ObjectId, ref: "User", required: true },
+      text: { type: String, required: true },
+      date: { type: Date, required: true },
+    },
+  ],
 });
 
 const User = mongoose.model("User", userSchema, "users");
