@@ -82,8 +82,6 @@ function App() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  let socket;
-
   const [currentUser, setCurrentUser] = useState(userInit);
   const [usersFromSearch, setUsersFromSearch] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -107,6 +105,7 @@ function App() {
 
   // Effects
   useEffect(() => {
+
     const tokenLS = JSON.parse(localStorage.getItem("token"));
 
     if (!tokenLS) {
@@ -145,7 +144,8 @@ function App() {
             const { foundUser } = data;
             setCurrentUser(foundUser);
             setLoading(false);
-            socket = connectToSocket(foundUser._id);
+            const socket = connectToSocket(foundUser._id);
+            console.log("connected");
             setSocketConnectState(socket);
             socket.on("get-is-connected-user", (data) => {
               setConnectedUsers(data);
@@ -191,7 +191,14 @@ function App() {
                 messageData: lastMessageData,
                 type: "default",
               }}
-            />
+            />,
+            {
+              style: {
+                padding: 0,
+                border: (theme) => `1px solid ${theme.palette.primary.grey[1]}`,
+                borderRadius: "8px",
+              },
+            }
           );
         }
       );
