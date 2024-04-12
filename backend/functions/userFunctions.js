@@ -40,35 +40,42 @@ const removeFollowFromLists = async (res, userFollowerId, userFollowedId) => {
 };
 
 const addFollowToLists = async (res, userFollowerId, userFollowedId) => {
-  if (!userFollowerId || !userFollowedId) {
-    return res.json({ success: false, message: "Ids are undefined" });
+  try {
+    if (!userFollowerId || !userFollowedId) {
+      return res.json({ success: false, message: "Ids are undefined" });
+    }
+
+    const userFollower = await User.findOne({ _id: userFollowerId });
+    const userFollowed = await User.findOne({ _id: userFollowedId });
+
+    if (!userFollower || !userFollowed) {
+      return res.json({
+        success: false,
+        message: "User(s) was(were) not found",
+      });
+    }
+
+    const userInFollowerList =
+      userFollowed.socialContacts.following.findIndex(
+        (followingId) => followingId === userFollowerId
+      ) !== -1;
+
+    if (userInFollowerList) {
+      return res.json({ success: false, message: "User is already in list" });
+    }
+
+    userFollower.socialContacts.following.push(userFollowedId);
+    await userFollower.save();
+
+    userFollowed.socialContacts.followers.push(userFollowerId);
+    await userFollowed.save();
+    return res.json({
+      success: true,
+      message: "Successful added to follow list",
+    });
+  } catch (e) {
+    console.error(e);
   }
-
-  const userFollower = await User.findOne({ _id: userFollowerId });
-  const userFollowed = await User.findOne({ _id: userFollowedId });
-
-  if (!userFollower || !userFollowed) {
-    return res.json({ success: false, message: "User(s) was(were) not found" });
-  }
-
-  const userInFollowerList =
-    userFollowed.socialContacts.following.findIndex(
-      (followingId) => followingId === userFollowerId
-    ) !== -1;
-
-  if (userInFollowerList) {
-    return res.json({ success: false, message: "User is already in list" });
-  }
-
-  userFollower.socialContacts.following.push(userFollowedId);
-  await userFollower.save();
-
-  userFollowed.socialContacts.followers.push(userFollowerId);
-  await userFollowed.save();
-  return res.json({
-    success: true,
-    message: "Successful added to follow list",
-  });
 };
 
 const addAsFriendsUsers = async (res, acceptedUserId, sentUserId) => {
