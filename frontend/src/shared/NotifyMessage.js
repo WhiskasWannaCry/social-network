@@ -1,11 +1,6 @@
 import { Avatar, Box, Slide, Snackbar, Typography } from "@mui/material";
 
-const NotifyMessage = ({ notifData, notifOpen, setNotifOpen }) => {
-  console.log(notifData);
-  const handleClose = () => {
-    setNotifOpen(false);
-  };
-
+const NotifyMessage = ({ notifData }) => {
   return (
     <Box
       sx={{
@@ -14,7 +9,7 @@ const NotifyMessage = ({ notifData, notifOpen, setNotifOpen }) => {
         gap: "12px",
         width: "250px",
         minHeight: "60px",
-        // backgroundColor: (theme) => theme.palette.primary.grey[4],
+        // backgroundColor: (theme) => theme.palette.primary.grey[3],
         // border: (theme) => `1px solid ${theme.palette.primary.grey[3]}`,
         borderRadius: "8px",
         padding: "8px",
@@ -23,7 +18,7 @@ const NotifyMessage = ({ notifData, notifOpen, setNotifOpen }) => {
     >
       <Avatar
         title="avatar"
-        src={`http://localhost:8000/${notifData.senderData.images.avatar}`}
+        src={`http://localhost:8000/${notifData?.senderData?.images.avatar}`}
       ></Avatar>
       <Box
         sx={{
@@ -36,19 +31,25 @@ const NotifyMessage = ({ notifData, notifOpen, setNotifOpen }) => {
           boxSizing: "border-box",
         }}
       >
-        <Typography>
-          {notifData.senderData.primary.name +
+        <Typography
+          sx={{
+            color: "#71aaeb",
+            fontSize: "14px",
+          }}
+        >
+          {notifData?.senderData?.primary.name +
             " " +
-            notifData.senderData.primary.surname}
+            notifData?.senderData?.primary.surname}
         </Typography>
         <Typography
           sx={{
             width: "200px",
             boxSizing: "border-box",
             fontSize: "12px",
+            fontWeight: notifData?.type === "default" ? 0 : 700,
           }}
         >
-          {notifData.lastMessageData.text}
+          {notifData.messageData.text}
         </Typography>
       </Box>
     </Box>

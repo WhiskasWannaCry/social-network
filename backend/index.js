@@ -4,9 +4,9 @@ const mongoose = require("mongoose");
 const authRouter = require("./routes/auth");
 const uploadRouter = require("./routes/upload");
 const userValidRouter = require("./routes/userValidation");
-const searchUsersRouter = require("./routes/searchUsers")
-const profileInfoRouter = require("./routes/profileInfo")
-const postsRouter = require("./routes/posts")
+const searchUsersRouter = require("./routes/searchUsers");
+const profileInfoRouter = require("./routes/profileInfo");
+const postsRouter = require("./routes/posts");
 
 const path = require("path");
 
@@ -27,7 +27,10 @@ app.use(cors());
 
 // Создаю статику для картинок аватарок и постов
 app.use("/avatars", express.static(path.join(__dirname, "public", "avatars")));
-app.use("/backgrounds", express.static(path.join(__dirname, "public", "backgrounds")));
+app.use(
+  "/backgrounds",
+  express.static(path.join(__dirname, "public", "backgrounds"))
+);
 app.use("/posts", express.static(path.join(__dirname, "public", "posts")));
 app.use(express.static("public/default"));
 
@@ -82,14 +85,13 @@ startSocketServer();
 
 // требуется оптимизация кода
 app.post("/api/follow-user", async (req, res) => {
-  const { userFollowerId, userFollowedId } = req.body;
+  try {
+    const { userFollowerId, userFollowedId } = req.body;
 
-  addFollowToLists(res, userFollowerId, userFollowedId);
-
-  return res.json({
-    success: true,
-    message: "Successful added follower and following",
-  });
+    addFollowToLists(res, userFollowerId, userFollowedId);
+  } catch (e) {
+    console.error(e);
+  }
 });
 // требуется оптимизация кода
 app.post("/api/unfollow-user", async (req, res) => {
@@ -129,8 +131,16 @@ app.post("/api/change-user-info", async (req, res) => {
     return res.json({ success: false, message: "User id is falsy" });
   }
 
-  const { name, surname, website, city, description, dateOfBirth, avatar, sex } =
-    changedFields;
+  const {
+    name,
+    surname,
+    website,
+    city,
+    description,
+    dateOfBirth,
+    avatar,
+    sex,
+  } = changedFields;
 
   if (
     !name &&

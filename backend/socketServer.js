@@ -295,7 +295,7 @@ socketIO.on("connect", (socket) => {
       if (foundChat.recipient._id.toString() === userId) {
         recipient = foundChat.sender._id;
       }
-      console.log(recipient)
+      console.log(recipient);
       foundChat.messages.map((message) => {
         if (
           message.read === false &&
@@ -334,6 +334,25 @@ socketIO.on("connect", (socket) => {
       socket.emit("send-read-status", { success: false, message: e });
     }
   });
+
+  // Уведомление Когда юзер выполнил какое-либо действие связанное с socialContacts
+  socket.on(
+    "social-contacts-change",
+    ({ senderData, message, recipientId }) => {
+      // Ищу получателя в списке подключенных
+      const connRecipient = CONNECTED_USERS.find(
+        (connUser) => connUser.userId === recipientId
+      );
+      if (connRecipient) {
+        socketIO.to(connRecipient.socketId).emit("social-contacts-change", {
+          senderData,
+          messageData: {
+            text: message,
+          },
+        });
+      }
+    }
+  );
 
   // Когда юзер отключился
   socket.on("disconnect", () => {

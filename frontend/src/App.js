@@ -177,6 +177,8 @@ function App() {
     }
   }, []);
 
+  //Notifications
+
   useEffect(() => {
     if (socketConnectState) {
       socketConnectState.on(
@@ -184,13 +186,33 @@ function App() {
         ({ senderData, lastMessageData }) => {
           enqueueSnackbar(
             <NotifyMessage
-              notifData={{ senderData, lastMessageData }}
-              notifOpen={notifOpen}
-              setNotifOpen={setNotifOpen}
+              notifData={{
+                senderData,
+                messageData: lastMessageData,
+                type: "default",
+              }}
+            />
+          );
+        }
+      );
+    }
+  }, [socketConnectState]);
+
+  useEffect(() => {
+    if (socketConnectState) {
+      socketConnectState.on(
+        "social-contacts-change",
+        ({ senderData, messageData }) => {
+          enqueueSnackbar(
+            <NotifyMessage
+              notifData={{ senderData, messageData, type: "technical" }}
             />,
             {
-              // Need for develop
-              // autoHideDuration: null,
+              style: {
+                padding: 0,
+                border: (theme) => `1px solid ${theme.palette.primary.grey[1]}`,
+                borderRadius: "8px",
+              },
             }
           );
         }
@@ -207,12 +229,6 @@ function App() {
       });
     }
   }, [currentUser]);
-
-  useEffect(() => {
-    if (notifData) {
-      setNotifOpen(true);
-    }
-  }, [notifData]);
 
   if (loading) {
     return <PageLoader></PageLoader>;
@@ -294,13 +310,6 @@ function App() {
                     }
                   />
                 </Routes>
-                {notifData && (
-                  <NotifyMessage
-                    notifData={notifData}
-                    notifOpen={notifOpen}
-                    setNotifOpen={setNotifOpen}
-                  ></NotifyMessage>
-                )}
               </ContentContainer>
             </Body>
           </Container>

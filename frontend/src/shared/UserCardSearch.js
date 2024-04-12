@@ -12,6 +12,8 @@ import {
   postUnfollow,
 } from "../http/Fetches";
 import { calculateAge } from "./functions";
+import { enqueueSnackbar } from "notistack";
+import NotifyMessage from "./NotifyMessage";
 
 const Container = styled("div")`
   display: flex;
@@ -74,9 +76,6 @@ const DoBtn = styled(Button)`
   font-style: normal;
   font-weight: 400;
   text-transform: none;
-  /* -webkit-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
-  -moz-box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
-  box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small}; */
   &:hover {
     background-color: ${(props) => props.theme.palette.primary.hover[1]};
   }
@@ -84,18 +83,17 @@ const DoBtn = styled(Button)`
 
 const UserCardSearch = ({ user }) => {
   const currentUserContext = useContext(Context);
-  const {
-    currentUser,
-    setUsersFromSearch,
-
-  } = currentUserContext;
+  const { currentUser, setUsersFromSearch, socketConnectState } =
+    currentUserContext;
   const navigate = useNavigate();
   const avatarFullPath = user && `http://localhost:8000/${user.images.avatar}`;
 
-   // States for managing user's state in socialContacts
-   const [isFollowing, setIsFollowing] = useState(false);
-   const [isFollower, setIsFollower] = useState(false);
-   const [isFriend, setIsFriend] = useState(false);
+  // States for managing user's state in socialContacts
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollower, setIsFollower] = useState(false);
+  const [isFriend, setIsFriend] = useState(false);
+
+  // Effects
 
   useEffect(() => {
     if (user) {
@@ -130,11 +128,13 @@ const UserCardSearch = ({ user }) => {
       setUsersFromSearch(users);
       // setLoading(false);
     }
+    console.log(data);
   };
 
   const handleFollow = async () => {
-    const data = await postFollow(currentUser._id, user._id);
+    const { data } = await postFollow(currentUser._id, user._id);
     const { success } = data;
+    console.log(data);
     if (!success) {
       const { message } = data;
       console.log(message);
@@ -142,11 +142,18 @@ const UserCardSearch = ({ user }) => {
     }
     fetchAllUsers();
     setIsFollowing(true);
+    socketConnectState.emit("social-contacts-change", {
+      senderData: currentUser,
+      message: "Followed You",
+      recipientId: user._id,
+    });
   };
 
   const handleUnfollow = async () => {
     const { data } = await postUnfollow(currentUser._id, user._id);
     const { success } = data;
+    console.log(data);
+
     if (!success) {
       const { message } = data;
       console.log(message);
@@ -168,6 +175,11 @@ const UserCardSearch = ({ user }) => {
     setIsFollowing(false);
     setIsFollower(false);
     setIsFriend(true);
+    socketConnectState.emit("social-contacts-change", {
+      senderData: currentUser,
+      message: "Accepted your friend request",
+      recipientId: user._id,
+    });
   };
 
   const handleRemoveFriend = async () => {
@@ -203,7 +215,7 @@ const UserCardSearch = ({ user }) => {
           <UserAge>{calculateAge(user.primary.dateOfBirth)} years</UserAge>
         ) : null}
       </UserInfo>
-      {currentUser &&
+      {/* {currentUser &&
         // user._id != currentUser._id &&
         (!isFollowing && !isFollower && !isFriend ? ( // если никто не подписан то кнопка "Следить"
           <DoBtn onClick={handleFollow}>Follow</DoBtn>
@@ -213,7 +225,13 @@ const UserCardSearch = ({ user }) => {
           <DoBtn onClick={handleAddAsFriend}>Add as friend</DoBtn>
         ) : isFriend && !isFollowing && !isFollower ? (
           <DoBtn onClick={handleRemoveFriend}>Remove friend</DoBtn>
-        ) : null)}
+        ) : null)} */}
+      {isFriend && <DoBtn onClick={handleRemoveFriend}>Remove friend</DoBtn>}
+      {isFollower && <DoBtn onClick={handleAddAsFriend}>Add as friend</DoBtn>}
+      {isFollowing && <DoBtn onClick={handleUnfollow}>Unfollow</DoBtn>}
+      {!isFriend && !isFollower && !isFollowing && (
+        <DoBtn onClick={handleFollow}>Follow</DoBtn>
+      )}
     </Container>
   );
 };
