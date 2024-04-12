@@ -5,7 +5,6 @@ import {
   Route,
   useNavigate,
   useLocation,
-  json,
   Navigate,
 } from "react-router-dom";
 import Profile from "./pages/Profile/Profile";
@@ -23,7 +22,8 @@ import { theme } from "./shared/styles.js";
 import { Box, ThemeProvider } from "@mui/material";
 import { PageLoader } from "./shared/Loaders.js";
 
-import { io } from "socket.io-client";
+import { useSnackbar } from "notistack";
+
 import { connectToSocket } from "./shared/SocketFunctions.js";
 import Chat from "./pages/Chat/Chat.js";
 import NotifyMessage from "./shared/NotifyMessage.js";
@@ -78,6 +78,7 @@ const userInit = {
 };
 
 function App() {
+  const { enqueueSnackbar } = useSnackbar();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -104,6 +105,7 @@ function App() {
   // All connected users arr
   const [connectedUsers, setConnectedUsers] = useState([]);
 
+  // Effects
   useEffect(() => {
     const tokenLS = JSON.parse(localStorage.getItem("token"));
 
@@ -180,7 +182,17 @@ function App() {
       socketConnectState.on(
         "last-message-for-notification",
         ({ senderData, lastMessageData }) => {
-          setNotifData({ senderData, lastMessageData });
+          enqueueSnackbar(
+            <NotifyMessage
+              notifData={{ senderData, lastMessageData }}
+              notifOpen={notifOpen}
+              setNotifOpen={setNotifOpen}
+            />,
+            {
+              // Need for develop
+              // autoHideDuration: null,
+            }
+          );
         }
       );
     }
@@ -190,9 +202,8 @@ function App() {
   useEffect(() => {
     if (currentUser && currentUser._id && socketConnectState) {
       socketConnectState.emit("get-all-user-chats", currentUser._id);
-      socketConnectState.on("get-all-user-chats", chats => {
-        // console.log(chats)
-        setChats(chats)
+      socketConnectState.on("get-all-user-chats", (chats) => {
+        setChats(chats);
       });
     }
   }, [currentUser]);
@@ -235,15 +246,17 @@ function App() {
                 location.pathname !== "/registration" && (
                   <MainNavigation></MainNavigation>
                 )}
-              <ContentContainer sx={{
-                width: {
-                  xl: "75%",
-                  lg: "75%",
-                  md: "75%",
-                  sm: "80%",
-                  xs: "80%",
-                }
-              }}>
+              <ContentContainer
+                sx={{
+                  width: {
+                    xl: "75%",
+                    lg: "75%",
+                    md: "75%",
+                    sm: "80%",
+                    xs: "80%",
+                  },
+                }}
+              >
                 <Routes>
                   <Route
                     path="/profile/:_id"

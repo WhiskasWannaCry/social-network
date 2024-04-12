@@ -99,7 +99,7 @@ const Header = () => {
   const [openAutoComplete, setOpenAutoComplete] = useState(false);
   const [dataOptions, setDataOptions] = useState([]);
   const [unreadMsgCounter, setUnreadMsgCounter] = useState(0);
-  
+
   const load = openAutoComplete && dataOptions.length === 0;
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -165,7 +165,8 @@ const Header = () => {
       let counter = 0;
       chats.forEach((chat) => {
         return (counter += chat.messages.filter(
-          (message) => message.read === false && message.sender._id !==currentUser._id
+          (message) =>
+            message.read === false && message.sender._id !== currentUser._id
         ).length);
       });
       setUnreadMsgCounter(counter);
@@ -218,8 +219,18 @@ const Header = () => {
           <Logo src={logoImg} alt="logoImg"></Logo>
           <LogoText>Social Network</LogoText>
         </LogoContainer>
-        {/* <SearchBarContainer></SearchBarContainer> */}
-        <Autocomplete
+        <SearchBarContainer></SearchBarContainer>
+        {/* <Autocomplete
+          sx={{
+            display: "flex",
+            "& input": {
+              width: "400px",
+              bgcolor: "red",
+              color: (theme) =>
+                theme.palette.primary.grey[5],
+            },
+          }}
+          id="custom-input-demo"
           filterOptions={(x) => x}
           open={openAutoComplete}
           onOpen={() => {
@@ -251,56 +262,61 @@ const Header = () => {
               inputProps={{
                 ...params.inputProps,
                 endadorment: (
-                  <div>
-                    {load ? (
-                      <CircularProgress
-                        color="primary"
-                        size={30}
-                      ></CircularProgress>
-                    ) : null}
-                    {params.inputProps.endAdorment}
+                  <div ref={params.InputProps.ref}>
+                    <input type="text" {...params.inputProps} />
                   </div>
+                  // <Box sx={{
+                  //   backgroundColor: "red",
+                  // }}>
+                  //   {load ? (
+                  //     <CircularProgress
+                  //       color="primary"
+                  //       size={30}
+                  //     ></CircularProgress>
+                  //   ) : null}
+                  //   {params.inputProps.endAdorment}
+                  // </Box>
                 ),
               }}
             ></TextField>
           )}
-          sx={{
-            display: "flex",
-            height: "80%",
-            width: "20%",
-            "& .base-Popper-root": {
-              backgroundColor: "red !important", // Пример: установка красного фона для выпадающих вариантов
-            },
-            "& input": {
-              color: (theme) => theme.palette.primary.grey[2],
-            },
-            "& label": {
-              display: "none",
-              color: (theme) => theme.palette.primary.grey[2],
-            },
-            "& .MuiFormControl-root": {
-              display: "flex",
-              justifyContent: "center",
+          // sx={{
+          //   display: "flex",
+          //   height: "80%",
+          //   width: "20%",
+          //   "& .base-Popper-root": {
+          //     backgroundColor: "red !important", // Пример: установка красного фона для выпадающих вариантов
+          //   },
+          //   "& input": {
+          //     // color: (theme) => theme.palette.primary.grey[2],
+          //   },
+          //   "& label": {
+          //     display: "none",
+          //     color: (theme) => theme.palette.primary.grey[2],
+          //   },
+          //   "& .MuiFormControl-root": {
+          //     display: "flex",
+          //     justifyContent: "center",
 
-              bgcolor: (theme) => theme.palette.primary.grey[3],
-              borderRadius: "8px",
-            },
-            "& .MuiAutocomplete-root": {
-              height: "80%",
-            },
-            "& .MuiInputBase-root": {
-              height: "80%",
-              border: "none",
-            },
-            "& .MuiAutocomplete-inputRoot": {
-              display: "flex",
-              position: "relative",
-            },
-            "& .MuiAutocomplete-input": {
-              padding: "0",
-            },
-          }}
-        ></Autocomplete>
+          //     bgcolor: (theme) => theme.palette.primary.grey[3],
+          //     borderRadius: "8px",
+          //   },
+          //   "& .MuiAutocomplete-root": {
+          //     height: "80%",
+          //   },
+          //   "& .MuiInputBase-root": {
+          //     height: "80%",
+          //     border: "none",
+          //   },
+          //   "& .MuiAutocomplete-inputRoot": {
+          //     display: "flex",
+          //     position: "relative",
+          //   },
+          //   "& .MuiAutocomplete-input": {
+          //     padding: "0",
+          //   },
+          // }}
+        ></Autocomplete> */}
 
         <Badge
           overlap="circular"
