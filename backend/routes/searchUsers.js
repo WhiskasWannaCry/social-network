@@ -64,7 +64,6 @@ router.get("/search/get-all-users", async (req, res) => {
           $gte: new Date(getBirthdayFromAge(selectedToAge)),
         };
       }
-      console.log(filter)
       
       const users = await User.find(filter, { secret: 0 }).limit(100);
 

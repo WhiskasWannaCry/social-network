@@ -146,6 +146,7 @@ const ChatMessages = ({
                     width: "100%",
                     padding: "12px",
                     overflowY: "scroll",
+                    overflowX: "hidden",
                   }}
                 >
                   <EmojiPicker
@@ -185,10 +186,14 @@ const ChatMessages = ({
                               message.sender._id === currentUser._id
                                 ? "8px 8px 0 8px"
                                 : "8px 8px 8px 0",
+                            wordWrap: "break-word", 
+                            maxWidth: "100%",
+                            boxSizing: "border-box",
                           }}
                         >
                           <Typography
                             sx={{
+                              maxWidth: "100%",
                               fontFamily: "Roboto",
                               fontSize: "14px",
                               fontStyle: "normal",
