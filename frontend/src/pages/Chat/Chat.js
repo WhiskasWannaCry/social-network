@@ -24,6 +24,10 @@ const Chat = () => {
       setChats(chatsData);
       setChatsLoading(false);
     });
+    return () => {
+      setChats([])
+      setSelectedChat(null)
+    }
   }, []);
   return (
     <Box

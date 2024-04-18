@@ -1,7 +1,9 @@
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../../shared/Context";
-import userImg from "../../images/posts_img/avatar.png";
 import { PageLoader } from "../../shared/Loaders";
+import TextField from "@mui/material/TextField";
+import Stack from "@mui/material/Stack";
+import Autocomplete from "@mui/material/Autocomplete";
 
 const { Box, Avatar, Typography } = require("@mui/material");
 

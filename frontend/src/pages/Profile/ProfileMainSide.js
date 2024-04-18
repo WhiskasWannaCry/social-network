@@ -169,7 +169,7 @@ const PostsContainer = styled("div")`
   flex-direction: column;
   gap: 16px;
   /* padding: 16px; */
-  min-height: 159px;
+  min-height: 215px;
   width: 100%;
   border-radius: 0 0 12px 12px;
 `;
@@ -180,7 +180,8 @@ const NonePostsContainer = styled("div")`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 100%;
+  height: 215px;
+  border-radius: 16px;
   background-color: ${({ theme }) => theme.palette.primary.grey[5]};
   padding: 16px;
   border: 1px solid ${({ theme }) => theme.palette.primary.grey[3]};

@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Avatar, Box, Button, Typography } from "@mui/material";
 import { useContext, useRef, useState } from "react";
 import Modal from "@mui/material/Modal";
 import ReactCrop, {
@@ -10,6 +10,7 @@ import setCanvasPriview from "./setCanvasPreview";
 import styled from "@emotion/styled";
 import { Context } from "./Context";
 import { postChangeUserAvatar } from "../http/Fetches";
+import uploadImageIcon from "../images/icons/add-image.png";
 
 const StyledInputFile = styled("input")``;
 
@@ -100,7 +101,21 @@ const ImageCropper = ({
 
   return (
     <>
-      <Button onClick={handleOpenModal}>{textForButton}</Button>
+      {textForButton ? (
+        <Button onClick={handleOpenModal}>{textForButton}</Button>
+      ) : (
+        <Avatar
+          src={uploadImageIcon}
+          alt="upload-image"
+          onClick={handleOpenModal}
+          sx={{
+            cursor: "pointer",
+            width: "20px",
+            height: "20px",
+            borderRadius: 0,
+          }}
+        ></Avatar>
+      )}
       <Modal
         keepMounted
         open={openModal}

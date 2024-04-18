@@ -12,8 +12,6 @@ import {
   Box,
   Button,
   Link,
-  Slide,
-  Snackbar,
   Typography,
 } from "@mui/material";
 import {
@@ -26,9 +24,7 @@ import {
 import { calculateAge } from "../../shared/functions";
 import { PageLoader } from "../../shared/Loaders";
 import ImageCropper from "../../shared/ImageCropper";
-import { connectToSocket } from "../../shared/SocketFunctions";
-import { io } from "socket.io-client";
-import NotifyMessage from "../../shared/NotifyMessage";
+
 
 const Container = styled("div")`
   width: 100%;

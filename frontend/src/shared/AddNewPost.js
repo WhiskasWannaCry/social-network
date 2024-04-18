@@ -166,10 +166,8 @@ const AddNewPost = () => {
         >
           <ImageCropper
             imageType={"post"}
-            ASPECT_RATIO={3 / 4}
             circularCrop={false}
             MIN_DEMENSION={150}
-            textForButton={"Add image"}
             setNewAvatar={setPostImage}
           ></ImageCropper>
         </Box>

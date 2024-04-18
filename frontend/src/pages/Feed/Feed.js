@@ -16,7 +16,7 @@ const Feed = () => {
   return (
     <Container>
       <FeedMainSide></FeedMainSide>
-      <FeedSecondarySide></FeedSecondarySide>
+      {/* <FeedSecondarySide></FeedSecondarySide> */}
     </Container>
   )
 }
