@@ -11,8 +11,8 @@
     "build-backend": "cd backend && npm run build",
     "build-frontend": "cd frontend && cd src && npm run build",
     "install-dep-backend-frontend": "concurrently \"npm run install-dep-backend\" \"npm run install-dep-frontend\"",
-    "install-dep-backend": "cd backend & npm i",
-    "install-dep-frontend": "cd frontend & npm i"
+    "install-dep-backend": "cd backend && npm i",
+    "install-dep-frontend": "cd frontend && npm i"
   },
   "dependencies": {
     "concurrently": "^8.1.0",
