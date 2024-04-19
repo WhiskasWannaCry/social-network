@@ -36,10 +36,10 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "eject": "react-scripts eject",
-    "test": "jest"
+    "start": "PORT=3001 react-scripts start",
+    "build": "PORT=3001 react-scripts build",
+    "eject": "PORT=3001 react-scripts eject",
+    "test": "PORT=3001 jest"
   },
   "eslintConfig": {
     "extends": [

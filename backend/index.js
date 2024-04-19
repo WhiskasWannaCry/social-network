@@ -23,7 +23,13 @@ const startSocketServer = require("./socketServer");
 require("dotenv").config();
 
 const app = express();
-app.use(cors());
+
+var corsOptions = {
+  origin: 'http://localhost:3001',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+
+app.use(cors(corsOptions));
 
 // Создаю статику для картинок аватарок и постов
 app.use("/avatars", express.static(path.join(__dirname, "public", "avatars")));
