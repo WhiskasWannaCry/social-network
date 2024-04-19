@@ -522,10 +522,11 @@ const Post = ({ post }) => {
           sx={{
             textTransform: "none",
             border: (theme) => `1px solid ${theme.palette.primary.grey[3]}`,
+            fontSize: "12px",
           }}
           onClick={handleAddNewComment}
         >
-          Add
+          Comment
         </LoadingButton>
       </Box>
     </Container>

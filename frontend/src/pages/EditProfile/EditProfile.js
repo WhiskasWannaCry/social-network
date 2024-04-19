@@ -13,7 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import ImageCropper from "../../shared/ImageCropper";
-import { postChangeUserAvatar, postChangeUserInfo } from "../../http/Fetches";
+import { postChangeUserInfo } from "../../http/Fetches";
 import { useNavigate } from "react-router-dom";
 
 const Container = styled("div")`

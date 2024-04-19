@@ -155,11 +155,18 @@ export const postChangeUserInfo = async (changedFields, userId) => {
   }
 };
 
-export const postChangeUserAvatar = async (newAvatar, userId, imageType) => {
+export const postUploadImage = async (newAvatar, userId, imageType) => {
   try {
     // Преобразовываем строку base64 обратно в файл
-    const blob = await fetch(newAvatar).then((res) => res.blob());
-    const file = new File([blob], `${imageType}.jpg`, { type: "image/jpeg" });
+    let blob;
+    let file;
+
+    if (imageType !== "msg-image") {
+      blob = await fetch(newAvatar).then((res) => res.blob());
+      file = new File([blob], `${imageType}.jpg`, { type: "image/jpeg" });
+    } else {
+      file = newAvatar;
+    }
 
     const formData = new FormData();
     formData.append("avatar", file);

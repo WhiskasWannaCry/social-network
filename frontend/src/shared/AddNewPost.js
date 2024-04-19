@@ -3,7 +3,7 @@ import { Avatar, Box, Button, TextField } from "@mui/material";
 import { Context } from "./Context";
 import { useContext, useState } from "react";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { postChangeUserAvatar, postNewPost } from "../http/Fetches";
+import { postUploadImage, postNewPost } from "../http/Fetches";
 import ImageCropper from "./ImageCropper";
 
 const Container = styled("div")`
@@ -51,7 +51,7 @@ const AddNewPost = () => {
     let imgPathOnServer;
 
     if(postImage) { 
-      const { data } = await postChangeUserAvatar(postImage, currentUser._id, "post");
+      const { data } = await postUploadImage(postImage, currentUser._id, "post");
       const {success} = data;
       if(!success) {
         const {message} = data;
