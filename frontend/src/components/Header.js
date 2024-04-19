@@ -16,7 +16,9 @@ import {
   CircularProgress,
   IconButton,
   TextField,
+  ThemeProvider,
   Tooltip,
+  createTheme,
 } from "@mui/material";
 import styled from "@emotion/styled";
 import { connectToSocket } from "../shared/SocketFunctions";
@@ -72,11 +74,6 @@ const SearchBarContainer = styled("div")`
   background-color: ${({ theme }) => theme.palette.primary.grey[3]};
 `;
 
-// const NotificationContainer = styled("div")`
-//   width: 24px;
-//   height: 24px;
-// `;
-
 const NotificationImg = styled("img")`
   width: 100%;
 `;
@@ -94,6 +91,58 @@ const StyledMenuItem = styled(MenuItem)`
     background-color: ${({ theme }) => theme.palette.primary.grey[3]};
   }
 `;
+
+const AutoCompleteTheme = createTheme({
+  components: {
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          height: "30px",
+          padding: "0 12px 0 8px !important",
+        },
+        input: {
+          height: "30px !important",
+          padding: "0 !important",
+          color: "#E1E3E6",
+          fontSize: "12px",
+        },
+      },
+    },
+    MuiFormControl: {
+      styleOverrides: {
+        root: {
+          height: "30px",
+          "& label": { display: "none" },
+        },
+      },
+    },
+    // Имя компонента MuiAutocomplete
+    MuiAutocomplete: {
+      styleOverrides: {
+        // Слот root
+        root: {
+          // Настройка стилей
+          backgroundColor: "rgba(255, 255, 255, 0.2)",
+          borderRadius: "8px",
+          width: "200px",
+          padding: 0,
+        },
+        listbox: {
+          backgroundColor: "#222222",
+        },
+        option: {
+          fontSize: "12px",
+          "&: hover": {
+            backgroundColor: "rgb(232 232 232 / 77%)",
+          },
+        },
+        loading: {
+          backgroundColor: "rgba(255, 255, 255, 0.2)",
+        },
+      },
+    },
+  },
+});
 
 const Header = () => {
   const [openAutoComplete, setOpenAutoComplete] = useState(false);
@@ -146,8 +195,6 @@ const Header = () => {
       } else {
         setIsOnline(false);
       }
-      // console.log(isConnProfOwner)
-      // console.log(connectedUsers);
     }
   }, [connectedUsers, currentUser]);
 
@@ -189,17 +236,11 @@ const Header = () => {
 
     (async () => {
       const { data } = await getUsersInfo();
-      console.log(data);
-      // await delaySleep(1e3);
       const { success } = data;
       if (success && active) {
         const { users } = data;
         setDataOptions([...users]);
       }
-
-      // if (active) {
-      //   setDataOptions([...data]);
-      // }
     })();
     return () => {
       active = false;
@@ -219,104 +260,51 @@ const Header = () => {
           <Logo src={logoImg} alt="logoImg"></Logo>
           <LogoText>Social Network</LogoText>
         </LogoContainer>
-        <SearchBarContainer></SearchBarContainer>
-        {/* <Autocomplete
-          sx={{
-            display: "flex",
-            "& input": {
-              width: "400px",
-              bgcolor: "red",
-              color: (theme) =>
-                theme.palette.primary.grey[5],
-            },
-          }}
-          id="custom-input-demo"
-          filterOptions={(x) => x}
-          open={openAutoComplete}
-          onOpen={() => {
-            setOpenAutoComplete(true);
-          }}
-          onClose={() => {
-            setOpenAutoComplete(false);
-          }}
-          getOptionLabel={(selectUser) =>
-            selectUser.primary.name + " " + selectUser.primary.surname
-          }
-          isOptionEqualToValue={
-            (optionUser) =>
-              // option._id === value._id
-              optionUser._id
-            // console.log(optionUser)
-          }
-          loading={load}
-          options={dataOptions}
-          onChange={(event, optionUserData) => {
-            if (optionUserData) {
-              navigate(`profile/${optionUserData._id}`);
+        <ThemeProvider theme={AutoCompleteTheme}>
+          <Autocomplete
+            open={openAutoComplete}
+            onOpen={() => {
+              setOpenAutoComplete(true);
+            }}
+            onClose={() => {
+              setOpenAutoComplete(false);
+            }}
+            getOptionLabel={(selectUser) =>
+              selectUser.primary.name + " " + selectUser.primary.surname
             }
-          }}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Search a user"
-              inputProps={{
-                ...params.inputProps,
-                endadorment: (
-                  <div ref={params.InputProps.ref}>
-                    <input type="text" {...params.inputProps} />
-                  </div>
-                  // <Box sx={{
-                  //   backgroundColor: "red",
-                  // }}>
-                  //   {load ? (
-                  //     <CircularProgress
-                  //       color="primary"
-                  //       size={30}
-                  //     ></CircularProgress>
-                  //   ) : null}
-                  //   {params.inputProps.endAdorment}
-                  // </Box>
-                ),
-              }}
-            ></TextField>
-          )}
-          // sx={{
-          //   display: "flex",
-          //   height: "80%",
-          //   width: "20%",
-          //   "& .base-Popper-root": {
-          //     backgroundColor: "red !important", // Пример: установка красного фона для выпадающих вариантов
-          //   },
-          //   "& input": {
-          //     // color: (theme) => theme.palette.primary.grey[2],
-          //   },
-          //   "& label": {
-          //     display: "none",
-          //     color: (theme) => theme.palette.primary.grey[2],
-          //   },
-          //   "& .MuiFormControl-root": {
-          //     display: "flex",
-          //     justifyContent: "center",
-
-          //     bgcolor: (theme) => theme.palette.primary.grey[3],
-          //     borderRadius: "8px",
-          //   },
-          //   "& .MuiAutocomplete-root": {
-          //     height: "80%",
-          //   },
-          //   "& .MuiInputBase-root": {
-          //     height: "80%",
-          //     border: "none",
-          //   },
-          //   "& .MuiAutocomplete-inputRoot": {
-          //     display: "flex",
-          //     position: "relative",
-          //   },
-          //   "& .MuiAutocomplete-input": {
-          //     padding: "0",
-          //   },
-          // }}
-        ></Autocomplete> */}
+            isOptionEqualToValue={
+              (optionUser, value) => optionUser._id === value._id
+              // console.log(optionUser)
+            }
+            loading={load}
+            options={dataOptions}
+            onChange={(event, optionUserData) => {
+              if (optionUserData) {
+                navigate(`profile/${optionUserData._id}`);
+              }
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Search a user"
+                inputProps={{
+                  ...params.inputProps,
+                  endadorment: (
+                    <Box>
+                      {load ? (
+                        <CircularProgress
+                          color="primary"
+                          size={30}
+                        ></CircularProgress>
+                      ) : null}
+                      {params.inputProps.endAdorment}
+                    </Box>
+                  ),
+                }}
+              ></TextField>
+            )}
+          ></Autocomplete>
+        </ThemeProvider>
 
         <Badge
           overlap="circular"
@@ -346,10 +334,6 @@ const Header = () => {
             }}
           ></Avatar>
         </Badge>
-        {/* <NotificationImg
-            src={notificationImg}
-            alt="notificationImg"
-          ></NotificationImg> */}
 
         <UserMenuContainer>
           <Box sx={{ flexGrow: 0 }}>
