@@ -9,10 +9,23 @@ import ReactCrop, {
 import setCanvasPriview from "./setCanvasPreview";
 import styled from "@emotion/styled";
 import { Context } from "./Context";
-import { postChangeUserAvatar } from "../http/Fetches";
+import { postUploadImage } from "../http/Fetches";
 import uploadImageIcon from "../images/icons/add-image.png";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 const StyledInputFile = styled("input")``;
+
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
 
 const ImageCropper = ({
   imageType,
@@ -76,7 +89,8 @@ const ImageCropper = ({
 
   const changeUserAvatar = async (newAvatar, userId) => {
     if (imageType === "avatar" || imageType === "background") {
-      const { data } = await postChangeUserAvatar(newAvatar, userId, imageType);
+      console.log(newAvatar)
+      const { data } = await postUploadImage(newAvatar, userId, imageType);
       const { success } = data;
       if (!success) {
         const { message } = data;
@@ -131,6 +145,7 @@ const ImageCropper = ({
           sx={{
             display: "flex",
             flexDirection: "column",
+            justifyContent: "center",
             alignItems: "center",
             gap: "16px",
             position: "absolute",
@@ -141,6 +156,7 @@ const ImageCropper = ({
             width: 700,
             backgroundColor: (theme) => theme.palette.primary.grey[6],
             border: (theme) => `1px solid ${theme.palette.primary.grey[3]}`,
+            borderRadius: "16px",
             boxShadow: 24,
             p: 4,
           }}
@@ -154,14 +170,28 @@ const ImageCropper = ({
           >
             Upload a new photo
           </Typography>
-          <StyledInputFile
+          {/* <StyledInputFile
             type="file"
             accept="image/*"
             onChange={onSelectFile}
             sx={{
               width: "100%",
             }}
-          ></StyledInputFile>
+          ></StyledInputFile> */}
+          <Button
+            component="label"
+            role={undefined}
+            variant="contained"
+            tabIndex={-1}
+            startIcon={<CloudUploadIcon />}
+            onChange={onSelectFile}
+            sx={{
+              backgroundColor: (theme) => theme.palette.primary.grey[3],
+            }}
+          >
+            Upload image
+            <VisuallyHiddenInput type="file" accept="image/*" />
+          </Button>
           {imgError && (
             <Typography
               sx={{
