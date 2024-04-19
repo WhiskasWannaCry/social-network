@@ -5,8 +5,30 @@ import blueDone from "../../images/icons/blue-done.png";
 import grayDone from "../../images/icons/gray-done.png";
 import EmojiPicker from "emoji-picker-react";
 import emojiPickerImg from "../../images/icons/emoji-picker.png";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { postUploadImage } from "../../http/Fetches";
 
-const { Box, Typography, Input, Button, Avatar } = require("@mui/material");
+const {
+  Box,
+  Typography,
+  Input,
+  Button,
+  Avatar,
+  styled,
+  Modal,
+} = require("@mui/material");
+
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
 
 const ChatMessages = ({
   chatsLoading,
@@ -24,6 +46,22 @@ const ChatMessages = ({
 
   const [isOpenPicker, setIsOpenPicker] = useState(false);
 
+  const [imageForPreviewMsg, setImageForPreviewMsg] = useState(null);
+  const [imageForMessage, setImageForMessage] = useState(null);
+
+  const [openModalMsg, setOpenModalMsg] = useState(false);
+
+  function handleChangeImgForMsg(e) {
+    setImageForPreviewMsg(URL.createObjectURL(e.target.files[0]));
+    setImageForMessage(e.target.files[0]);
+    setOpenModalMsg(true);
+  }
+
+  console.log(messages);
+
+  const handleOpen = () => setOpenModalMsg(true);
+  const handleClose = () => setOpenModalMsg(false);
+
   function validateMessage(message) {
     const regex = /^\S[\s\S]{0,254}$/;
     if (regex.test(message)) {
@@ -33,12 +71,34 @@ const ChatMessages = ({
     }
   }
 
-  const handleSendMessageBtn = () => {
+  const handleSendMessageBtn = async () => {
     const newMessage = {
       date: new Date(),
       text: inputMessageText,
       read: false,
     };
+
+    if (imageForMessage && imageForPreviewMsg) {
+      const { data } = await postUploadImage(
+        imageForMessage,
+        currentUser._id,
+        "msg-image"
+      );
+
+      const { success } = data;
+      if (!success) {
+        const { message } = data;
+        setOpenModalMsg(false);
+        setImageForMessage(null);
+        setImageForPreviewMsg(null);
+        console.log(message);
+        return alert(message);
+      }
+
+      const { relativePath } = data;
+      newMessage.image = relativePath;
+      console.log(newMessage);
+    }
 
     socketConnectState.emit("send-private-message", {
       userId: currentUser._id,
@@ -49,6 +109,10 @@ const ChatMessages = ({
           : selectedChat.recipient._id,
     });
     setInputMessageText("");
+    setIsValidText(false);
+    setOpenModalMsg(false);
+    setImageForMessage(null);
+    setImageForPreviewMsg(null);
   };
 
   useEffect(() => {
@@ -175,6 +239,8 @@ const ChatMessages = ({
                       >
                         <Box // Box container for 1 message
                           sx={{
+                            display: "flex",
+                            flexDirection: "column",
                             border: (theme) =>
                               `1px solid ${theme.palette.primary.grey[3]}`,
                             backgroundColor: (theme) =>
@@ -186,22 +252,56 @@ const ChatMessages = ({
                               message.sender._id === currentUser._id
                                 ? "8px 8px 0 8px"
                                 : "8px 8px 8px 0",
-                            wordWrap: "break-word", 
-                            maxWidth: "100%",
+                            wordWrap: "break-word",
+                            maxWidth: "80%",
                             boxSizing: "border-box",
                           }}
                         >
-                          <Typography
+                          <Box // Container for image and text
                             sx={{
-                              maxWidth: "100%",
-                              fontFamily: "Roboto",
-                              fontSize: "14px",
-                              fontStyle: "normal",
-                              fontWeight: 500,
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: "12px",
                             }}
                           >
-                            {message.text}
-                          </Typography>
+                            {message.image ? (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  // justifyContent: "flex-end",
+                                  width: "100%",
+                                }}
+                              >
+                                <Avatar
+                                  src={`http://localhost:8000/${message.image}`}
+                                  alt="message-image"
+                                  sx={{
+                                    borderRadius: "12px",
+                                    width: "100%",
+                                    height: "auto",
+                                    maxHeight: "300px",
+                                  }}
+                                ></Avatar>
+                              </Box>
+                            ) : null}
+                            <Typography
+                              sx={{
+                                display: "flex",
+                                justifyContent:
+                                  message.sender._id === currentUser._id
+                                    ? "flex-end"
+                                    : "flex-start",
+                                // maxWidth: "100%",
+                                fontFamily: "Roboto",
+                                fontSize: "14px",
+                                fontStyle: "normal",
+                                fontWeight: 500,
+                              }}
+                            >
+                              {message.text}
+                            </Typography>
+                          </Box>
+
                           <Box // Box for date and read status
                             sx={{
                               display: "flex",
@@ -281,6 +381,134 @@ const ChatMessages = ({
                   padding: "12px",
                 }}
               >
+                {imageForPreviewMsg ? (
+                  <Modal // Modal for message with image
+                    open={openModalMsg}
+                    onClose={handleClose}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        flexDirection: "column",
+                        gap: "16px",
+                        backgroundColor: (theme) =>
+                          theme.palette.primary.grey[5],
+                        border: (theme) =>
+                          `1px solid ${theme.palette.primary.grey[4]}`,
+                        width: "50%",
+                        paddingTop: "16px",
+                        borderRadius: "16px",
+                      }}
+                    >
+                      <Box // container for image
+                        sx={{
+                          width: "70%",
+                        }}
+                      >
+                        <Avatar
+                          src={imageForPreviewMsg}
+                          alt="message-img"
+                          sx={{
+                            width: "100%",
+                            height: "auto",
+                            maxHeight: "70vh",
+                            borderRadius: 0,
+                          }}
+                        ></Avatar>
+                      </Box>
+                      <Box // Contailer for input and button in modal
+                        sx={{
+                          display: "flex",
+                          gap: "12px",
+                          width: "100%",
+                          height: "84px",
+                          borderTop: (theme) =>
+                            `1px solid ${theme.palette.primary.grey[3]}`,
+                          backgroundColor: (theme) =>
+                            theme.palette.primary.grey[4],
+                          borderRadius: "0 0 16px 16px",
+                          padding: "12px",
+                        }}
+                      >
+                        <Input
+                          placeholder="Enter your message"
+                          value={inputMessageText}
+                          onChange={(e) => {
+                            validateMessage(e.target.value);
+                            setInputMessageText(e.target.value);
+                          }}
+                          sx={{
+                            display: "flex",
+                            width: "100%",
+                            color: (theme) => theme.palette.primary.grey[1],
+                            border: (theme) =>
+                              `1px solid ${theme.palette.primary.grey[3]}`,
+                            padding: "8px",
+                            borderRadius: "8px",
+                            fontFamily: "Roboto",
+                            fontSize: "13px",
+                            fontStyle: "normal",
+                            fontWeight: 500,
+                          }}
+                        ></Input>
+                        <Button
+                          variant="contained"
+                          disabled={!isValidText}
+                          onClick={handleSendMessageBtn}
+                          sx={{
+                            backgroundColor: (theme) =>
+                              theme.palette.primary.grey[3],
+                            color: (theme) => theme.palette.primary.grey[1],
+                          }}
+                        >
+                          Send
+                        </Button>
+                      </Box>
+                    </Box>
+                  </Modal>
+                ) : null}
+                <Box
+                  sx={{
+                    display: "flex",
+                  }}
+                >
+                  <Button
+                    component="label"
+                    role={undefined}
+                    variant="contained"
+                    tabIndex={-1}
+                    startIcon={<CloudUploadIcon />}
+                    onChange={handleChangeImgForMsg}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "transparent",
+                      boxShadow: "0",
+                      padding: "0",
+                      minWidth: 0,
+                      borderRadius: 0,
+                      width: "30px",
+                      height: "30px",
+                      "& span": {
+                        margin: 0,
+                      },
+                      "& :hover": {
+                        backgroundColor: "transparent",
+                      },
+                    }}
+                  >
+                    <VisuallyHiddenInput type="file" accept="image/*" />
+                  </Button>
+                </Box>
                 <Avatar
                   alt="emoji-picker"
                   src={emojiPickerImg}

@@ -38,6 +38,7 @@ app.use(
   express.static(path.join(__dirname, "public", "backgrounds"))
 );
 app.use("/posts", express.static(path.join(__dirname, "public", "posts")));
+app.use("/msg-images", express.static(path.join(__dirname, "public", "msg-images")));
 app.use(express.static("public/default"));
 
 app.use(express.json());

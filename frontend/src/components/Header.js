@@ -18,6 +18,7 @@ import {
   TextField,
   ThemeProvider,
   Tooltip,
+  Typography,
   createTheme,
 } from "@mui/material";
 import styled from "@emotion/styled";
@@ -65,17 +66,6 @@ const LogoText = styled("span")`
   @media (max-width: 768px) {
     display: none;
   }
-`;
-
-const SearchBarContainer = styled("div")`
-  width: 230px;
-  height: 32px;
-  border-radius: 8px;
-  background-color: ${({ theme }) => theme.palette.primary.grey[3]};
-`;
-
-const NotificationImg = styled("img")`
-  width: 100%;
 `;
 
 const UserMenuContainer = styled("div")`
@@ -270,7 +260,8 @@ const Header = () => {
               setOpenAutoComplete(false);
             }}
             getOptionLabel={(selectUser) =>
-              selectUser.primary.name + " " + selectUser.primary.surname
+              //
+              selectUser.primary.name + " " + selectUser.primary.surname  
             }
             isOptionEqualToValue={
               (optionUser, value) => optionUser._id === value._id

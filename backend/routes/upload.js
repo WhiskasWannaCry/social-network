@@ -49,6 +49,8 @@ router.post(
         return res.json({ success: true, user });
       } else if(imageType === "post") {
         return res.json({ success: true, relativePath });
+      } else if(imageType === "msg-image") {
+        return res.json({ success: true, relativePath });
       }
     } catch (e) {
       console.error("Error on router: ", e);
