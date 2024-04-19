@@ -163,8 +163,18 @@ const ChatSideBar = ({
                           textOverflow: "ellipsis",
                         }}
                       >
-                        {messages.length ? lastMessage?.text : "No messages"}
+                        {messages.length ? lastMessage?.text : "No messages"}{" "}
                       </Typography>
+                      {lastMessage.image && (
+                        <Typography
+                          sx={{
+                            fontSize: "12px",
+                            color: "#71aaeb",
+                          }}
+                        >
+                          image
+                        </Typography>
+                      )}
                     </Box>
                   ) : (
                     <Typography
