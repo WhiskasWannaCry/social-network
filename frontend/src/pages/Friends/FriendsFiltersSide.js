@@ -22,7 +22,7 @@ const Container = styled("div")`
   align-items: center;
   gap: 12px;
   width: 40%;
-  height: 450px;
+  height: 350px;
   background-color: ${(props) => props.theme.palette.primary.grey[5]};
   border-radius: 8px;
   border: 1px solid ${(props) => props.theme.palette.primary.grey[3]};
@@ -149,6 +149,7 @@ const FriendsFiltersSide = ({ peopleSearchParams, setPeopleSearchParams }) => {
               color: (theme) => theme.palette.primary.grey[1],
               borderRadius: "8px",
               border: (theme) => `1px solid ${theme.palette.primary.grey[3]}`,
+              fontSize: "12px",
             }}
             MenuProps={{
               PaperProps: {
@@ -192,6 +193,7 @@ const FriendsFiltersSide = ({ peopleSearchParams, setPeopleSearchParams }) => {
               color: (theme) => theme.palette.primary.grey[1],
               borderRadius: "8px",
               border: (theme) => `1px solid ${theme.palette.primary.grey[3]}`,
+              fontSize: "12px",
             }}
             MenuProps={{
               PaperProps: {
@@ -229,18 +231,42 @@ const FriendsFiltersSide = ({ peopleSearchParams, setPeopleSearchParams }) => {
               control={<Radio />}
               label="Female"
               onChange={(e) => handleRadioChange(e)}
+              sx={{
+                "& .MuiTypography-root": {
+                  fontSize: "12px",
+                },
+                "& .MuiSvgIcon-root": {
+                  width: "20px",
+                }
+              }}
             />
             <FormControlLabel
               value="male"
               control={<Radio />}
               label="Male"
               onChange={(e) => handleRadioChange(e)}
+              sx={{
+                "& .MuiTypography-root": {
+                  fontSize: "12px",
+                },
+                "& .MuiSvgIcon-root": {
+                  width: "20px",
+                }
+              }}
             />
             <FormControlLabel
               value="other"
               control={<Radio />}
               label="Other"
               onChange={(e) => handleRadioChange(e)}
+              sx={{
+                "& .MuiTypography-root": {
+                  fontSize: "12px",
+                },
+                "& .MuiSvgIcon-root": {
+                  width: "20px",
+                }
+              }}
             />
           </RadioGroup>
         </FormControl>
@@ -250,6 +276,7 @@ const FriendsFiltersSide = ({ peopleSearchParams, setPeopleSearchParams }) => {
         onClick={handleFilter}
         sx={{
           width: "100%",
+          fontSize: "12px",
         }}
       >
         Filter
