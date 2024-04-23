@@ -11,6 +11,8 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import EmojiPicker from "emoji-picker-react";
 import emojiPickerImg from "../images/icons/emoji-picker.png";
 
+import VideoPlayer from "react-video-markers";
+
 const Container = styled("div")`
   position: relative;
   display: flex;
@@ -145,7 +147,7 @@ const FooterBtnCounter = styled("span")`
 const Post = ({ post }) => {
   const navigate = useNavigate();
 
-  const { author, date, image, text, likes } = post;
+  const { author, date, image, video, text, likes } = post;
 
   const currentUserContext = useContext(Context);
   const { currentUser } = currentUserContext;
@@ -163,8 +165,25 @@ const Post = ({ post }) => {
 
   const [showAllComments, setShowAllComments] = useState(false);
 
+  const [videoState, setVideoState] = useState({
+    isPlaying: false,
+    volume: 0.7,
+  });
+
   const avatarFullPath = `http://localhost:8000/${author.images.avatar}`;
   const postImgFullPath = `http://localhost:8000/${image}`;
+
+  // const handlePlay = () => {
+  //   setVideoState((prev) => ({ ...prev, isPlaying: true }));
+  // };
+
+  // const handlePause = () => {
+  //   setVideoState((prev) => ({ ...prev, isPlaying: false }));
+  // };
+
+  // const handleVolume = (value) => {
+  //   setVideoState((prev) => ({ ...prev, volume: value }));
+  // };
 
   const handleLikeBtn = async () => {
     if (postLikes.isLiked) {
@@ -285,6 +304,18 @@ const Post = ({ post }) => {
           <BlurredBackground postImg={postImgFullPath}></BlurredBackground>
         </ImgContainer>
       ) : null}
+      {/* {video !== null && video !== undefined && (
+        <VideoPlayer
+          url={`http://localhost:8000/${video}`}
+          isPlaying={videoState.isPlaying}
+          volume={videoState.volume}
+          onPlay={handlePlay}
+          onPause={handlePause}
+          onVolume={handleVolume}
+          width={"100%"}
+          height={"auto"}
+        />
+      )} */}
       <Footer>
         <FooterBtnContainer onClick={handleLikeBtn}>
           <FooterBtnImg
