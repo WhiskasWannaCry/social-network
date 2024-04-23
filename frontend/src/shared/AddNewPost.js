@@ -179,9 +179,6 @@ const AddNewPost = () => {
             border: (theme) => "1px solid " + theme.palette.primary.grey[3],
             backgroundColor: (theme) => theme.palette.primary.grey[5],
             color: (theme) => theme.palette.primary.grey[1],
-            WebkitBoxShadow: "0px 0px 6px 2px rgba(0,0,0,0.5)",
-            MozBoxShadow: "0px 0px 6px 2px rgba(0, 0, 0, 0.5)",
-            boxShadow: "0px 0px 6px 2px rgba(0,0,0,0.5)",
             fontSize: "13px",
             textTransform: "none",
             "&:hover": {

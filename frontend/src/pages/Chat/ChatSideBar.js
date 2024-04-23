@@ -55,7 +55,7 @@ const ChatSideBar = ({
               lastMessage = messages.sort(
                 (a, b) => new Date(b.date) - new Date(a.date)
               )[0];
-
+              
               // Дата последнего сообщения
               formattedDate = new Date(messages[0].date);
               day = formattedDate.getDate();
@@ -103,7 +103,7 @@ const ChatSideBar = ({
                   >
                     <Typography
                       sx={{
-                        color: (theme) => theme.palette.primary.grey[1],
+                        color: "#71aaeb",
                         fontFamily: "Roboto",
                         fontSize: "13px",
                         fontStyle: "normal",
@@ -165,7 +165,7 @@ const ChatSideBar = ({
                       >
                         {messages.length ? lastMessage?.text : "No messages"}{" "}
                       </Typography>
-                      {lastMessage.image && (
+                      {/* {lastMessage.image && (
                         <Typography
                           sx={{
                             fontSize: "12px",
@@ -174,7 +174,7 @@ const ChatSideBar = ({
                         >
                           image
                         </Typography>
-                      )}
+                      )} */}
                     </Box>
                   ) : (
                     <Typography
@@ -197,6 +197,16 @@ const ChatSideBar = ({
                       }}
                     >
                       {messages.length ? lastMessage?.text : "No messages"}
+                    </Typography>
+                  )}
+                  {lastMessage?.image && (
+                    <Typography
+                      sx={{
+                        fontSize: "12px",
+                        color: "#71aaeb",
+                      }}
+                    >
+                      image
                     </Typography>
                   )}
                 </Box>

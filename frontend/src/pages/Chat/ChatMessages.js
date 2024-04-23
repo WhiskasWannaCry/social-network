@@ -7,6 +7,7 @@ import EmojiPicker from "emoji-picker-react";
 import emojiPickerImg from "../../images/icons/emoji-picker.png";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { postUploadImage } from "../../http/Fetches";
+import { useNavigate } from "react-router-dom";
 
 const {
   Box,
@@ -41,6 +42,8 @@ const ChatMessages = ({
   const { currentUser, socketConnectState, chats, setChats } =
     currentUserContext;
 
+  const navigate = useNavigate();
+
   const [inputMessageText, setInputMessageText] = useState("");
   const [isValidText, setIsValidText] = useState(false);
 
@@ -57,10 +60,12 @@ const ChatMessages = ({
     setOpenModalMsg(true);
   }
 
-  console.log(messages);
-
   const handleOpen = () => setOpenModalMsg(true);
-  const handleClose = () => setOpenModalMsg(false);
+  const handleClose = () => {
+    setOpenModalMsg(false);
+    setImageForMessage(null);
+    setImageForPreviewMsg(null);
+  };
 
   function validateMessage(message) {
     const regex = /^\S[\s\S]{0,254}$/;
@@ -143,10 +148,8 @@ const ChatMessages = ({
         (message) =>
           message.read === false && message.sender._id !== currentUser._id
       );
-      // console.log(unreadMessages);
       if (unreadMessages.length) {
         socketConnectState.emit("send-read-status", {
-          // unreadMessages,
           chatId: selectedChat._id,
           userId: currentUser._id,
         });
@@ -192,12 +195,55 @@ const ChatMessages = ({
           <Box
             sx={{
               display: "flex",
+              alignItems: "center",
               minHeight: "42px",
               width: "100%",
+              padding: "0 12px",
               borderBottom: (theme) =>
                 `1px solid ${theme.palette.primary.grey[3]}`,
             }}
-          ></Box>
+          >
+            {selectedChat ? (
+              selectedChat.sender._id === currentUser._id ? (
+                // console.log(selectedChat.recipient._id)
+                <Typography
+                  onClick={() =>
+                    navigate(`../profile/${selectedChat.recipient._id}`)
+                  }
+                  sx={{
+                    cursor: "pointer",
+                    color: "#71aaeb",
+                    fontFamily: "Roboto",
+                    fontSize: "14px",
+                    fontStyle: "normal",
+                    fontWeight: 500,
+                  }}
+                >
+                  {selectedChat.recipient.primary.name +
+                    " " +
+                    selectedChat.recipient.primary.surname}
+                </Typography>
+              ) : (
+                <Typography
+                  onClick={() =>
+                    navigate(`../profile/${selectedChat.sender._id}`)
+                  }
+                  sx={{
+                    cursor: "pointer",
+                    color: "#71aaeb",
+                    fontFamily: "Roboto",
+                    fontSize: "14px",
+                    fontStyle: "normal",
+                    fontWeight: 500,
+                  }}
+                >
+                  {selectedChat.sender.primary.name +
+                    " " +
+                    selectedChat.sender.primary.surname}
+                </Typography>
+              )
+            ) : null}
+          </Box>
           {selectedChat ? (
             <>
               {messages?.length ? (
@@ -402,15 +448,18 @@ const ChatMessages = ({
                         backgroundColor: (theme) =>
                           theme.palette.primary.grey[5],
                         border: (theme) =>
-                          `1px solid ${theme.palette.primary.grey[4]}`,
+                          `1px solid ${theme.palette.primary.grey[3]}`,
                         width: "50%",
                         paddingTop: "16px",
-                        borderRadius: "16px",
+                        borderRadius: "12px",
                       }}
                     >
                       <Box // container for image
                         sx={{
-                          width: "70%",
+                          // width: "70%",
+                          margin: "0 12px 0px 12px",
+                          border: (theme) =>
+                            `1px solid ${theme.palette.primary.grey[3]}`,
                         }}
                       >
                         <Avatar
