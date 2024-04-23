@@ -258,6 +258,11 @@ const Profile = () => {
     setIsFollowing(false);
     setIsFollower(false);
     setIsFriend(true);
+    socketConnectState.emit("social-contacts-change", {
+      senderData: currentUser,
+      message: "Accepted your friend request",
+      recipientId: profileId,
+    });
   };
 
   const handleRemoveFriend = async () => {
