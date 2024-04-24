@@ -25,8 +25,8 @@ require("dotenv").config();
 const app = express();
 
 var corsOptions = {
-  // origin: 'http://localhost:3001', // работает локально
-  origin: 'http://46.37.194.186:3002/',
+  origin: 'http://localhost:3002', // работает локально
+  // origin: 'http://46.37.194.186:3002/',
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 

@@ -6,14 +6,7 @@ import userImg from "../../images/posts_img/post_img4.jpg";
 import { useNavigate, useParams } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../../shared/Context";
-import {
-  Avatar,
-  Badge,
-  Box,
-  Button,
-  Link,
-  Typography,
-} from "@mui/material";
+import { Avatar, Badge, Box, Button, Link, Typography } from "@mui/material";
 import {
   getUserInfo,
   postAddAsFriend,
@@ -24,8 +17,7 @@ import {
 import { calculateAge } from "../../shared/functions";
 import { PageLoader } from "../../shared/Loaders";
 import ImageCropper from "../../shared/ImageCropper";
-import env from "react-dotenv";
-
+import { PORT_SERVICE_ROOT, URL_SERVICES } from "../../shared/config";
 
 const Container = styled("div")`
   width: 100%;
@@ -49,7 +41,7 @@ const UserHeaderContainer = styled("div")`
   box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
 `;
 
-const ChangeBackground = styled("div")`
+const ChangeBackground = styled(Box)`
   cursor: pointer;
   position: absolute;
   display: flex;
@@ -84,7 +76,7 @@ const UserBackground = styled(Avatar)`
   z-index: 1;
 `;
 
-const InfoOuterContainer = styled("div")`
+const InfoOuterContainer = styled(Box)`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -94,8 +86,8 @@ const InfoOuterContainer = styled("div")`
   z-index: 2;
 `;
 
-const UserInfoContainer = styled("div")`
-position: absolute;
+const UserInfoContainer = styled(Box)`
+  position: absolute;
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -106,12 +98,12 @@ position: absolute;
   transition: color 0.3s;
 `;
 
-const UserInfo = styled("div")`
+const UserInfo = styled(Box)`
   display: flex;
   flex-direction: column;
 `;
 
-const UserName = styled("div")`
+const UserName = styled(Box)`
   // пока что юзернейм если слишком большой то перенос не работает норм, надо фиксить
   color: ${(props) => props.theme.palette.primary.grey[1]};
   font-family: Roboto;
@@ -125,7 +117,7 @@ const UserName = styled("div")`
   transition: color 0.3s;
 `;
 
-const AddInfoBtn = styled("div")`
+const AddInfoBtn = styled(Box)`
   cursor: pointer;
   color: #71aaeb;
   font-family: Roboto;
@@ -134,7 +126,7 @@ const AddInfoBtn = styled("div")`
   font-weight: 400;
 `;
 
-const EditProfileBtn = styled("div")`
+const EditProfileBtn = styled(Box)`
   cursor: pointer;
   display: flex;
   justify-content: center;
@@ -160,7 +152,7 @@ const EditProfileBtn = styled("div")`
   }
 `;
 
-const UserBody = styled("div")`
+const UserBody = styled(Box)`
   display: flex;
   gap: 16px;
   margin-top: 16px;
@@ -197,14 +189,15 @@ const Profile = () => {
   const [isOnline, setIsOnline] = useState(false);
 
   let avatarFullPath =
-    `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${profileOwner?.images.avatar}` || userImg;
+    `${URL_SERVICES}:${PORT_SERVICE_ROOT}/${profileOwner?.images.avatar}` ||
+    userImg;
   let backgroundFullPath =
-    `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${profileOwner?.images.background}` ||
+    `${URL_SERVICES}:${PORT_SERVICE_ROOT}/${profileOwner?.images.background}` ||
     backgroundImage;
 
   useEffect(() => {
     setNewBackground(
-      `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}${profileOwner?.images.background}`
+      `${URL_SERVICES}:${PORT_SERVICE_ROOT}${profileOwner?.images.background}`
     );
   }, []);
 
@@ -319,7 +312,9 @@ const Profile = () => {
       currUserIsFollower ? setIsFollower(true) : setIsFollower(false);
 
       setProfileOwner(user);
-      setNewBackground(`${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${user.images.background}`);
+      setNewBackground(
+        `${URL_SERVICES}:${PORT_SERVICE_ROOT}/${user.images.background}`
+      );
       setLoading(false);
     };
     fetchUserInfo(profileId);
@@ -378,8 +373,18 @@ const Profile = () => {
   // }, [notifData]);
 
   return (
-    <Container>
-      <UserHeaderContainer>
+    <Container sx={{}}>
+      <UserHeaderContainer
+        sx={{
+          height: {
+            xl: "322px",
+            lg: "322px",
+            md: "400px",
+            sm: "400px",
+            xs: "none",
+          },
+        }}
+      >
         {loading ? (
           <PageLoader></PageLoader>
         ) : (
@@ -388,12 +393,29 @@ const Profile = () => {
               title={newBackground}
               src={newBackground}
               sx={{
+                // display: {
+                //   xl: "flex",
+                //   lg: "flex",
+                //   md: "none",
+                //   sm: "none",
+                //   xs: "none",
+                // },
                 borderRadius: 0,
               }}
             ></UserBackground>
             {profileOwner?._id == currentUser._id && (
               // <ChangeBackground>Change background</ChangeBackground>\
-              <ChangeBackground>
+              <ChangeBackground
+                sx={{
+                  display: {
+                    xl: "flex",
+                    lg: "flex",
+                    md: "none",
+                    sm: "none",
+                    xs: "none",
+                  },
+                }}
+              >
                 <ImageCropper
                   imageType={"background"}
                   ASPECT_RATIO={7 / 2}
@@ -404,7 +426,12 @@ const Profile = () => {
                 ></ImageCropper>
               </ChangeBackground>
             )}
-            <InfoOuterContainer>
+            <InfoOuterContainer // THIS CONTAINER FOR MOBILE AND PC
+              sx={{
+                display: "flex",
+                padding: "12px",
+              }}
+            >
               <Badge
                 overlap="circular"
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
@@ -412,7 +439,7 @@ const Profile = () => {
                 sx={{
                   position: "absolute",
                   top: 0,
-                  left: "42px",
+                  left: "24px",
                   "& .MuiBadge-badge": {
                     backgroundColor: isOnline ? "#44b700" : "#912424",
                     boxShadow: (theme) =>
@@ -420,7 +447,7 @@ const Profile = () => {
                   },
                 }}
               >
-                <Avatar
+                <Avatar // AVATAR ADAPTIVE FOR MOBILE AND PC
                   alt="user-avatar"
                   src={avatarFullPath || null}
                   sx={{
@@ -431,7 +458,84 @@ const Profile = () => {
                   }}
                 ></Avatar>
               </Badge>
-              <UserInfoContainer>
+              <UserInfo // INFO FOR MOBILE
+                sx={{
+                  position: "absolute",
+                  display: {
+                    xl: "none",
+                    lg: "none",
+                    md: "flex",
+                    sm: "flex",
+                    xs: "flex",
+                  },
+                  top: "24px",
+                  left: "150px",
+                }}
+              >
+                <UserName>
+                  {profileOwner &&
+                    profileOwner?.primary.name +
+                      " " +
+                      profileOwner?.primary.surname}
+                </UserName>
+                {profileOwner?._id == currentUser._id &&
+                  !profileOwner.primary.dateOfbirth &&
+                  !profileOwner.primary.website &&
+                  !profileOwner.primary.description && (
+                    <AddInfoBtn
+                      onClick={() =>
+                        profileOwner._id && navigate(`/edit/${currentUser._id}`)
+                      }
+                    >
+                      Provide information about yourself
+                    </AddInfoBtn>
+                  )}
+                {profileOwner.primary.dateOfBirth && (
+                  <Typography
+                    sx={{
+                      fontSize: "12px",
+                      color: (theme) => theme.palette.primary.grey[3],
+                    }}
+                  >
+                    {calculateAge(profileOwner.primary.dateOfBirth)} years
+                  </Typography>
+                )}
+                {profileOwner.primary.website && (
+                  <Link
+                    href={profileOwner.primary.website}
+                    sx={{
+                      cursor: "pointer",
+                      fontSize: "12px",
+                      color: (theme) => theme.palette.primary.grey[2],
+                    }}
+                  >
+                    {profileOwner.primary.website}
+                  </Link>
+                )}
+                {profileOwner.primary.description && (
+                  <Typography
+                    href={profileOwner.primary.website}
+                    sx={{
+                      fontSize: "14px",
+                      color: (theme) => theme.palette.primary.grey[2],
+                    }}
+                  >
+                    {profileOwner.primary.description}
+                  </Typography>
+                )}
+              </UserInfo>
+
+              <UserInfoContainer // INFO FOR PC
+                sx={{
+                  display: {
+                    xl: "flex",
+                    lg: "flex",
+                    md: "none",
+                    sm: "none",
+                    xs: "none",
+                  },
+                }}
+              >
                 <UserInfo>
                   <UserName>
                     {profileOwner &&
@@ -486,7 +590,7 @@ const Profile = () => {
                     </Typography>
                   )}
                 </UserInfo>
-                {profileOwner?._id === currentUser._id ? (
+                {profileOwner?._id === currentUser._id ? ( // BUTTONS FOR MOBILE
                   <Button
                     variant="outlined"
                     onClick={() =>
@@ -609,6 +713,147 @@ const Profile = () => {
                   </Box>
                 )}
               </UserInfoContainer>
+              {profileOwner?._id === currentUser._id ? ( // BUTTONS FOR MOBILE
+                <Box
+                  sx={{
+                    display: {
+                      xl: "none",
+                      lg: "none",
+                      md: "flex",
+                      sm: "flex",
+                      xs: "flex",
+                    },
+                    padding: "12px",
+                  }}
+                >
+                  <Button
+                    variant="outlined"
+                    onClick={() =>
+                      profileOwner._id && navigate(`/edit/${currentUser._id}`)
+                    }
+                    sx={{
+                      padding: "6px 16px 6px 16px",
+                      borderRadius: "8px",
+                      // height: "48px",
+                      background: (theme) => theme.palette.primary.grey[4],
+                      color: (theme) => theme.palette.primary.grey[1],
+                      border: (theme) =>
+                        `1px solid ${theme.palette.primary.grey[3]}`,
+                      textAlign: "center",
+                      fontFamily: "Roboto",
+                      fontSize: "13.781px",
+                      fontStyle: "normal",
+                      fontWeight: "500",
+                      textTransform: "none",
+                      transition: "background-color 0.3s",
+                      transition: "color 0.3s",
+                      WebkitBoxShadow: (theme) =>
+                        theme.palette.primary.blackShadow.small,
+                      MozBoxShadow: (theme) =>
+                        theme.palette.primary.blackShadow.small,
+                      boxShadow: (theme) =>
+                        theme.palette.primary.blackShadow.small,
+                      "&:hover": {
+                        background: (theme) => theme.palette.primary.grey[3],
+                      },
+                    }}
+                  >
+                    Edit profile
+                  </Button>
+                </Box>
+              ) : (
+                <Box
+                  sx={{
+                    display: {
+                      xl: "none",
+                      lg: "none",
+                      md: "flex",
+                      sm: "flex",
+                      xs: "flex",
+                    },
+                    gap: "12px",
+                  }}
+                >
+                  <Button
+                    variant="outlined"
+                    onClick={handleOpenChatWithUser}
+                    sx={{
+                      padding: "6px 16px 6px 16px",
+                      borderRadius: "8px",
+                      height: "36px",
+                      background: (theme) => theme.palette.primary.grey[4],
+                      color: (theme) => theme.palette.primary.grey[1],
+                      border: (theme) =>
+                        `1px solid ${theme.palette.primary.grey[3]}`,
+                      textAlign: "center",
+                      fontFamily: "Roboto",
+                      fontSize: "13.781px",
+                      fontStyle: "normal",
+                      fontWeight: "500",
+                      textTransform: "none",
+                      transition: "background-color 0.3s",
+                      transition: "color 0.3s",
+                      WebkitBoxShadow: (theme) =>
+                        theme.palette.primary.blackShadow.small,
+                      MozBoxShadow: (theme) =>
+                        theme.palette.primary.blackShadow.small,
+                      boxShadow: (theme) =>
+                        theme.palette.primary.blackShadow.small,
+                      "&:hover": {
+                        background: (theme) => theme.palette.primary.grey[3],
+                      },
+                    }}
+                  >
+                    Send message
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    onClick={
+                      isFriend
+                        ? handleRemoveFriend
+                        : isFollower
+                        ? handleAddAsFriend
+                        : isFollowing
+                        ? handleUnfollow
+                        : handleFollow
+                    }
+                    sx={{
+                      padding: "6px 16px 6px 16px",
+                      borderRadius: "8px",
+                      height: "36px",
+                      background: (theme) => theme.palette.primary.grey[4],
+                      color: (theme) => theme.palette.primary.grey[1],
+                      border: (theme) =>
+                        `1px solid ${theme.palette.primary.grey[3]}`,
+                      textAlign: "center",
+                      textTransform: "none",
+                      fontFamily: "Roboto",
+                      fontSize: "13.781px",
+                      fontStyle: "normal",
+                      fontWeight: "500",
+                      transition: "background-color 0.3s",
+                      transition: "color 0.3s",
+                      WebkitBoxShadow: (theme) =>
+                        theme.palette.primary.blackShadow.small,
+                      MozBoxShadow: (theme) =>
+                        theme.palette.primary.blackShadow.small,
+                      boxShadow: (theme) =>
+                        theme.palette.primary.blackShadow.small,
+                      "&:hover": {
+                        background: (theme) => theme.palette.primary.grey[3],
+                      },
+                    }}
+                  >
+                    {isFriend
+                      ? "Remove friend"
+                      : isFollower
+                      ? "Add as friend"
+                      : isFollowing
+                      ? "Unfollow"
+                      : "Follow"}
+                  </Button>
+                </Box>
+              )}
             </InfoOuterContainer>
           </>
         )}

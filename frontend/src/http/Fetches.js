@@ -1,5 +1,6 @@
 import axios from "axios";
-import env from "react-dotenv";
+import { PORT_SERVICE_ROOT, URL_SERVICES } from "../shared/config";
+// import env from "react-dotenv";
 
 const catchFunc = (error) => {
   if (error.response) {
@@ -30,7 +31,7 @@ const catchFunc = (error) => {
 export const getIsValidToken = async (token) => {
   try {
     const data = await axios.get(
-      `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/api/validation-token`,
+      `${URL_SERVICES}:${PORT_SERVICE_ROOT}/api/validation-token`,
       {
         params: token,
       }
@@ -45,7 +46,7 @@ export const postSignUp = async (name, surname, email, password) => {
   let userData = { name, surname, email, password, role: "user" };
   try {
     const data = await axios.post(
-      `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/auth/registration`,
+      `${URL_SERVICES}:${PORT_SERVICE_ROOT}/auth/registration`,
       userData
     );
     return data;
@@ -57,7 +58,7 @@ export const postSignUp = async (name, surname, email, password) => {
 export const postLogin = async (userData) => {
   try {
     const data = await axios.post(
-      `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/auth/login`,
+      `${URL_SERVICES}:${PORT_SERVICE_ROOT}/auth/login`,
       userData
     );
     return data;
@@ -69,7 +70,7 @@ export const postLogin = async (userData) => {
 export const getUsersInfo = async (peopleSearchParams) => {
   try {
     const data = await axios.get(
-      `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/api/search/get-all-users`,
+      `${URL_SERVICES}:${PORT_SERVICE_ROOT}/api/search/get-all-users`,
       {
         params: peopleSearchParams,
       }
@@ -83,7 +84,7 @@ export const getUsersInfo = async (peopleSearchParams) => {
 export const getUserInfo = async (profileId) => {
   try {
     const data = await axios.get(
-      `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/api/get-user-profile-info`,
+      `${URL_SERVICES}:${PORT_SERVICE_ROOT}/api/get-user-profile-info`,
       {
         params: {
           profileId: profileId,
@@ -99,7 +100,7 @@ export const getUserInfo = async (profileId) => {
 export const postFollow = async (userFollowerId, userFollowedId) => {
   try {
     const data = await axios.post(
-      `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/api/follow-user`,
+      `${URL_SERVICES}:${PORT_SERVICE_ROOT}/api/follow-user`,
       {
         userFollowerId,
         userFollowedId,
@@ -114,7 +115,7 @@ export const postFollow = async (userFollowerId, userFollowedId) => {
 export const postUnfollow = async (userFollowerId, userFollowedId) => {
   try {
     const data = await axios.post(
-      `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/api/unfollow-user`,
+      `${URL_SERVICES}:${PORT_SERVICE_ROOT}/api/unfollow-user`,
       {
         userFollowerId,
         userFollowedId,
@@ -129,7 +130,7 @@ export const postUnfollow = async (userFollowerId, userFollowedId) => {
 export const postAddAsFriend = async (acceptedUserId, sentUserId) => {
   try {
     const data = await axios.post(
-      `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/api/add-as-friend-user`,
+      `${URL_SERVICES}:${PORT_SERVICE_ROOT}/api/add-as-friend-user`,
       {
         acceptedUserId,
         sentUserId,
@@ -144,7 +145,7 @@ export const postAddAsFriend = async (acceptedUserId, sentUserId) => {
 export const postRemoveFriend = async (iniciatorId, userToRemoveId) => {
   try {
     const data = await axios.post(
-      `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/api/remove-friend-user`,
+      `${URL_SERVICES}:${PORT_SERVICE_ROOT}/api/remove-friend-user`,
       {
         iniciatorId,
         userToRemoveId,
@@ -159,7 +160,7 @@ export const postRemoveFriend = async (iniciatorId, userToRemoveId) => {
 export const postChangeUserInfo = async (changedFields, userId) => {
   try {
     const data = await axios.post(
-      `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/api/change-user-info`,
+      `${URL_SERVICES}:${PORT_SERVICE_ROOT}/api/change-user-info`,
       { changedFields, userId }
     );
     return data;
@@ -184,7 +185,7 @@ export const postUploadImage = async (newAvatar, userId, imageType) => {
     const formData = new FormData();
     formData.append("avatar", file);
 
-    const url = `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/api/upload?userId=${userId}&imageType=${imageType}`;
+    const url = `${URL_SERVICES}:${PORT_SERVICE_ROOT}/api/upload?userId=${userId}&imageType=${imageType}`;
     const data = await axios.post(url, formData, {
       headers: {
         "content-type": "multipart/form-data",
@@ -203,7 +204,7 @@ export const getPosts = async (profileId) => {
 
   try {
     const data = await axios.get(
-      `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/api/posts/get-posts`,
+      `${URL_SERVICES}:${PORT_SERVICE_ROOT}/api/posts/get-posts`,
       {
         params: {
           filter,
@@ -219,7 +220,7 @@ export const getPosts = async (profileId) => {
 export const postNewPost = async (profileId, location, postData) => {
   try {
     const data = await axios.post(
-      `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/api/posts/new-post`,
+      `${URL_SERVICES}:${PORT_SERVICE_ROOT}/api/posts/new-post`,
       {
         profileId,
         location,
@@ -235,7 +236,7 @@ export const postNewPost = async (profileId, location, postData) => {
 export const postLike = async (profileId, postId) => {
   try {
     const data = await axios.post(
-      `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/api/posts/post-like`,
+      `${URL_SERVICES}:${PORT_SERVICE_ROOT}/api/posts/post-like`,
       {
         profileId,
         postId,
@@ -250,7 +251,7 @@ export const postLike = async (profileId, postId) => {
 export const postComment = async (profileId, postId, newComment) => {
   try {
     const data = await axios.post(
-      `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/api/posts/post-comment`,
+      `${URL_SERVICES}:${PORT_SERVICE_ROOT}/api/posts/post-comment`,
       {
         profileId,
         postId,

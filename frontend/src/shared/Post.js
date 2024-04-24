@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import LoadingButton from "@mui/lab/LoadingButton";
 import EmojiPicker from "emoji-picker-react";
 import emojiPickerImg from "../images/icons/emoji-picker.png";
-import env from "react-dotenv";
+import { PORT_SERVICE_ROOT, URL_SERVICES } from "./config";
 
 const Container = styled("div")`
   position: relative;
@@ -169,8 +169,8 @@ const Post = ({ post }) => {
     volume: 0.7,
   });
 
-  const avatarFullPath = `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${author.images.avatar}`;
-  const postImgFullPath = `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${image}`;
+  const avatarFullPath = `${URL_SERVICES}:${PORT_SERVICE_ROOT}/${author.images.avatar}`;
+  const postImgFullPath = `${URL_SERVICES}:${PORT_SERVICE_ROOT}/${image}`;
 
   const handlePlay = () => {
     setVideoState((prev) => ({ ...prev, isPlaying: true }));
@@ -304,7 +304,7 @@ const Post = ({ post }) => {
         </ImgContainer>
       ) : null}
       {video && (
-        <video src={`${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${video}`} controls>
+        <video src={`${URL_SERVICES}:${PORT_SERVICE_ROOT}/${video}`} controls>
           <a href="videofile.ogg">download it</a>
         </video>
       )}
@@ -347,7 +347,7 @@ const Post = ({ post }) => {
                 >
                   <Avatar
                     onClick={() => navigate(`./profile/${comment.author._id}`)}
-                    src={`${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${comment?.author?.images?.avatar}`}
+                    src={`${URL_SERVICES}:${PORT_SERVICE_ROOT}/${comment?.author?.images?.avatar}`}
                     alt="avatar"
                     sx={{
                       cursor: "pointer",
@@ -415,7 +415,7 @@ const Post = ({ post }) => {
                       onClick={() =>
                         navigate(`./profile/${comment.author._id}`)
                       }
-                      src={`${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${comment?.author?.images?.avatar}`}
+                      src={`${URL_SERVICES}:${PORT_SERVICE_ROOT}/${comment?.author?.images?.avatar}`}
                       alt="avatar"
                       sx={{
                         cursor: "pointer",

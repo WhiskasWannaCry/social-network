@@ -1,10 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../../shared/Context";
 import { PageLoader } from "../../shared/Loaders";
-import TextField from "@mui/material/TextField";
-import Stack from "@mui/material/Stack";
-import Autocomplete from "@mui/material/Autocomplete";
-import env from "react-dotenv";
+import { PORT_SERVICE_ROOT, URL_SERVICES } from "../../shared/config";
 
 const { Box, Avatar, Typography } = require("@mui/material");
 
@@ -50,8 +47,8 @@ const ChatSideBar = ({
             let monthName;
             let avatarFullPath =
               sender._id === currentUser._id
-                ? `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${recipient.images.avatar}`
-                : `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${sender.images.avatar}`;
+                ? `${URL_SERVICES}:${PORT_SERVICE_ROOT}/${recipient.images.avatar}`
+                : `${URL_SERVICES}:${PORT_SERVICE_ROOT}/${sender.images.avatar}`;
             if (messages.length) {
               lastMessage = messages.sort(
                 (a, b) => new Date(b.date) - new Date(a.date)

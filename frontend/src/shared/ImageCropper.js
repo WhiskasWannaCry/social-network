@@ -12,9 +12,7 @@ import { Context } from "./Context";
 import { postUploadImage } from "../http/Fetches";
 import uploadImageIcon from "../images/icons/add-image.png";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import env from "react-dotenv";
-
-const StyledInputFile = styled("input")``;
+import { PORT_SERVICE_ROOT, URL_SERVICES } from "./config";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -90,7 +88,7 @@ const ImageCropper = ({
 
   const changeUserAvatar = async (newAvatar, userId) => {
     if (imageType === "avatar" || imageType === "background") {
-      console.log(newAvatar)
+      console.log(newAvatar);
       const { data } = await postUploadImage(newAvatar, userId, imageType);
       const { success } = data;
       if (!success) {
@@ -100,7 +98,7 @@ const ImageCropper = ({
       }
       const { user } = data;
       setCurrentUser(user);
-      const avatarFullPath = `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${user?.images[imageType]}`;
+      const avatarFullPath = `${URL_SERVICES}:${PORT_SERVICE_ROOT}/${user?.images[imageType]}`;
       console.log(avatarFullPath);
       setNewAvatar(avatarFullPath);
     }

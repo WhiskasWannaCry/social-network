@@ -1,10 +1,8 @@
 import logoImg from "../images/icons/logo.png";
 import notificationImg from "../images/icons/notification.svg";
-import openUserMenuImg from "../images/icons/open_user_menu.svg";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../shared/Context";
 import { useContext, useEffect, useState } from "react";
-import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Fade from "@mui/material/Fade";
@@ -22,9 +20,8 @@ import {
   createTheme,
 } from "@mui/material";
 import styled from "@emotion/styled";
-import { connectToSocket } from "../shared/SocketFunctions";
 import { getUsersInfo } from "../http/Fetches";
-import env from "react-dotenv";
+import { PORT_SERVICE_ROOT, URL_SERVICES } from "../shared/config";
 
 const OuterContainer = styled("div")`
   position: fixed;
@@ -157,7 +154,7 @@ const Header = () => {
     chats,
   } = currentUserContext;
 
-  const avatarFullPath = `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${currentUser.images.avatar}`;
+  const avatarFullPath = `${URL_SERVICES}:${PORT_SERVICE_ROOT}/${currentUser.images.avatar}`;
 
   const open = Boolean(anchorEl);
   const handleClick = (event) => {

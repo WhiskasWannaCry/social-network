@@ -5,17 +5,15 @@ import { Context } from "../../shared/Context";
 import {
   Avatar,
   Box,
-  Button,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
-  Typography,
 } from "@mui/material";
 import ImageCropper from "../../shared/ImageCropper";
 import { postChangeUserInfo } from "../../http/Fetches";
 import { useNavigate } from "react-router-dom";
-import env from "react-dotenv";
+import { PORT_SERVICE_ROOT, URL_SERVICES } from "../../shared/config";
 
 const Container = styled("div")`
   display: flex;
@@ -96,7 +94,7 @@ const EditProfile = () => {
   const { currentUser, setCurrentUser, userInit } = currentUserContext;
 
   let avatarFullPath =
-    `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${currentUser?.images.avatar}` || userImg;
+    `${URL_SERVICES}:${PORT_SERVICE_ROOT}/${currentUser?.images.avatar}` || userImg;
 
   const [newDateOfBirth, setNewDateOfBirth] = useState("");
   const [newAvatar, setNewAvatar] = useState("");

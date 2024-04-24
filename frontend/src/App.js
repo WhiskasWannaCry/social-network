@@ -105,7 +105,6 @@ function App() {
 
   // Effects
   useEffect(() => {
-
     const tokenLS = JSON.parse(localStorage.getItem("token"));
 
     if (!tokenLS) {
@@ -184,6 +183,9 @@ function App() {
       socketConnectState.on(
         "last-message-for-notification",
         ({ senderData, lastMessageData }) => {
+          console.log(lastMessageData);
+          console.log(selectedChat);
+
           enqueueSnackbar(
             <NotifyMessage
               notifData={{

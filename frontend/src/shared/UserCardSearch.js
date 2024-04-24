@@ -12,9 +12,7 @@ import {
   postUnfollow,
 } from "../http/Fetches";
 import { calculateAge } from "./functions";
-import { enqueueSnackbar } from "notistack";
-import NotifyMessage from "./NotifyMessage";
-import env from "react-dotenv";
+import { PORT_SERVICE_ROOT, URL_SERVICES } from "./config";
 
 const Container = styled("div")`
   display: flex;
@@ -87,7 +85,8 @@ const UserCardSearch = ({ user }) => {
   const { currentUser, setUsersFromSearch, socketConnectState } =
     currentUserContext;
   const navigate = useNavigate();
-  const avatarFullPath = user && `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${user.images.avatar}`;
+  const avatarFullPath =
+    user && `${URL_SERVICES}:${PORT_SERVICE_ROOT}/${user.images.avatar}`;
 
   // States for managing user's state in socialContacts
   const [isFollowing, setIsFollowing] = useState(false);
@@ -216,17 +215,6 @@ const UserCardSearch = ({ user }) => {
           <UserAge>{calculateAge(user.primary.dateOfBirth)} years</UserAge>
         ) : null}
       </UserInfo>
-      {/* {currentUser &&
-        // user._id != currentUser._id &&
-        (!isFollowing && !isFollower && !isFriend ? ( // если никто не подписан то кнопка "Следить"
-          <DoBtn onClick={handleFollow}>Follow</DoBtn>
-        ) : isFollowing && !isFollower && !isFriend ? ( // если юзер подписан безответно то кнопка "Отписаться"
-          <DoBtn onClick={handleUnfollow}>Unfollow</DoBtn>
-        ) : !isFollowing && isFollower && !isFriend ? (
-          <DoBtn onClick={handleAddAsFriend}>Add as friend</DoBtn>
-        ) : isFriend && !isFollowing && !isFollower ? (
-          <DoBtn onClick={handleRemoveFriend}>Remove friend</DoBtn>
-        ) : null)} */}
       {isFriend && <DoBtn onClick={handleRemoveFriend}>Remove friend</DoBtn>}
       {isFollower && <DoBtn onClick={handleAddAsFriend}>Add as friend</DoBtn>}
       {isFollowing && <DoBtn onClick={handleUnfollow}>Unfollow</DoBtn>}
