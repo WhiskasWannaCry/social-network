@@ -1,4 +1,5 @@
 import { Avatar, Box, Slide, Snackbar, Typography } from "@mui/material";
+import env from "react-dotenv";
 
 const NotifyMessage = ({ notifData }) => {
   return (
@@ -18,7 +19,7 @@ const NotifyMessage = ({ notifData }) => {
     >
       <Avatar
         title="avatar"
-        src={`http://localhost:8000/${notifData?.senderData?.images.avatar}`}
+        src={`${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${notifData?.senderData?.images.avatar}`}
       ></Avatar>
       <Box
         sx={{

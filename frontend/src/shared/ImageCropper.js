@@ -12,6 +12,7 @@ import { Context } from "./Context";
 import { postUploadImage } from "../http/Fetches";
 import uploadImageIcon from "../images/icons/add-image.png";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import env from "react-dotenv";
 
 const StyledInputFile = styled("input")``;
 
@@ -99,7 +100,7 @@ const ImageCropper = ({
       }
       const { user } = data;
       setCurrentUser(user);
-      const avatarFullPath = `http://localhost:8000/${user?.images[imageType]}`;
+      const avatarFullPath = `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${user?.images[imageType]}`;
       console.log(avatarFullPath);
       setNewAvatar(avatarFullPath);
     }

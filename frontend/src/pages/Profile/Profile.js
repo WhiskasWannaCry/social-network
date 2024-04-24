@@ -24,6 +24,7 @@ import {
 import { calculateAge } from "../../shared/functions";
 import { PageLoader } from "../../shared/Loaders";
 import ImageCropper from "../../shared/ImageCropper";
+import env from "react-dotenv";
 
 
 const Container = styled("div")`
@@ -196,14 +197,14 @@ const Profile = () => {
   const [isOnline, setIsOnline] = useState(false);
 
   let avatarFullPath =
-    `http://localhost:8000/${profileOwner?.images.avatar}` || userImg;
+    `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${profileOwner?.images.avatar}` || userImg;
   let backgroundFullPath =
-    `http://localhost:8000/${profileOwner?.images.background}` ||
+    `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${profileOwner?.images.background}` ||
     backgroundImage;
 
   useEffect(() => {
     setNewBackground(
-      `http://localhost:8000/${profileOwner?.images.background}`
+      `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}${profileOwner?.images.background}`
     );
   }, []);
 
@@ -318,7 +319,7 @@ const Profile = () => {
       currUserIsFollower ? setIsFollower(true) : setIsFollower(false);
 
       setProfileOwner(user);
-      setNewBackground(`http://localhost:8000/${user.images.background}`);
+      setNewBackground(`${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${user.images.background}`);
       setLoading(false);
     };
     fetchUserInfo(profileId);

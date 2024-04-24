@@ -10,8 +10,7 @@ import { useNavigate } from "react-router-dom";
 import LoadingButton from "@mui/lab/LoadingButton";
 import EmojiPicker from "emoji-picker-react";
 import emojiPickerImg from "../images/icons/emoji-picker.png";
-
-import VideoPlayer from "react-video-markers";
+import env from "react-dotenv";
 
 const Container = styled("div")`
   position: relative;
@@ -170,20 +169,20 @@ const Post = ({ post }) => {
     volume: 0.7,
   });
 
-  const avatarFullPath = `http://localhost:8000/${author.images.avatar}`;
-  const postImgFullPath = `http://localhost:8000/${image}`;
+  const avatarFullPath = `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${author.images.avatar}`;
+  const postImgFullPath = `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${image}`;
 
-  // const handlePlay = () => {
-  //   setVideoState((prev) => ({ ...prev, isPlaying: true }));
-  // };
+  const handlePlay = () => {
+    setVideoState((prev) => ({ ...prev, isPlaying: true }));
+  };
 
-  // const handlePause = () => {
-  //   setVideoState((prev) => ({ ...prev, isPlaying: false }));
-  // };
+  const handlePause = () => {
+    setVideoState((prev) => ({ ...prev, isPlaying: false }));
+  };
 
-  // const handleVolume = (value) => {
-  //   setVideoState((prev) => ({ ...prev, volume: value }));
-  // };
+  const handleVolume = (value) => {
+    setVideoState((prev) => ({ ...prev, volume: value }));
+  };
 
   const handleLikeBtn = async () => {
     if (postLikes.isLiked) {
@@ -304,18 +303,11 @@ const Post = ({ post }) => {
           <BlurredBackground postImg={postImgFullPath}></BlurredBackground>
         </ImgContainer>
       ) : null}
-      {/* {video !== null && video !== undefined && (
-        <VideoPlayer
-          url={`http://localhost:8000/${video}`}
-          isPlaying={videoState.isPlaying}
-          volume={videoState.volume}
-          onPlay={handlePlay}
-          onPause={handlePause}
-          onVolume={handleVolume}
-          width={"100%"}
-          height={"auto"}
-        />
-      )} */}
+      {video && (
+        <video src={`${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${video}`} controls>
+          <a href="videofile.ogg">download it</a>
+        </video>
+      )}
       <Footer>
         <FooterBtnContainer onClick={handleLikeBtn}>
           <FooterBtnImg
@@ -355,7 +347,7 @@ const Post = ({ post }) => {
                 >
                   <Avatar
                     onClick={() => navigate(`./profile/${comment.author._id}`)}
-                    src={`http://localhost:8000/${comment?.author?.images?.avatar}`}
+                    src={`${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${comment?.author?.images?.avatar}`}
                     alt="avatar"
                     sx={{
                       cursor: "pointer",
@@ -423,7 +415,7 @@ const Post = ({ post }) => {
                       onClick={() =>
                         navigate(`./profile/${comment.author._id}`)
                       }
-                      src={`http://localhost:8000/${comment?.author?.images?.avatar}`}
+                      src={`${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${comment?.author?.images?.avatar}`}
                       alt="avatar"
                       sx={{
                         cursor: "pointer",

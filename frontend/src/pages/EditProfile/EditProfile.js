@@ -15,6 +15,7 @@ import {
 import ImageCropper from "../../shared/ImageCropper";
 import { postChangeUserInfo } from "../../http/Fetches";
 import { useNavigate } from "react-router-dom";
+import env from "react-dotenv";
 
 const Container = styled("div")`
   display: flex;
@@ -95,7 +96,7 @@ const EditProfile = () => {
   const { currentUser, setCurrentUser, userInit } = currentUserContext;
 
   let avatarFullPath =
-    `http://localhost:8000/${currentUser?.images.avatar}` || userImg;
+    `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${currentUser?.images.avatar}` || userImg;
 
   const [newDateOfBirth, setNewDateOfBirth] = useState("");
   const [newAvatar, setNewAvatar] = useState("");

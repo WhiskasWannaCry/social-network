@@ -14,6 +14,7 @@ import {
 import { calculateAge } from "./functions";
 import { enqueueSnackbar } from "notistack";
 import NotifyMessage from "./NotifyMessage";
+import env from "react-dotenv";
 
 const Container = styled("div")`
   display: flex;
@@ -86,7 +87,7 @@ const UserCardSearch = ({ user }) => {
   const { currentUser, setUsersFromSearch, socketConnectState } =
     currentUserContext;
   const navigate = useNavigate();
-  const avatarFullPath = user && `http://localhost:8000/${user.images.avatar}`;
+  const avatarFullPath = user && `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${user.images.avatar}`;
 
   // States for managing user's state in socialContacts
   const [isFollowing, setIsFollowing] = useState(false);

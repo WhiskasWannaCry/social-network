@@ -6,7 +6,8 @@ const { Server } = require("socket.io");
 const { Chat } = require("./models");
 const socketIO = new Server(server, {
   cors: {
-    origin: "http://localhost:3001",
+    // origin: "http://localhost:3001",
+    origin: "http://46.37.194.186:3002/",
     optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
   },
 });
@@ -375,7 +376,7 @@ socketIO.on("connect", (socket) => {
 
 const startSocketServer = () => {
   try {
-    server.listen(9000, () => {
+    server.listen(9002, () => {
       console.log("Socket server listening on port 9000");
     });
   } catch (e) {

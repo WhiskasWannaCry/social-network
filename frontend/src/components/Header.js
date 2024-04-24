@@ -24,6 +24,7 @@ import {
 import styled from "@emotion/styled";
 import { connectToSocket } from "../shared/SocketFunctions";
 import { getUsersInfo } from "../http/Fetches";
+import env from "react-dotenv";
 
 const OuterContainer = styled("div")`
   position: fixed;
@@ -156,7 +157,7 @@ const Header = () => {
     chats,
   } = currentUserContext;
 
-  const avatarFullPath = `http://localhost:8000/${currentUser.images.avatar}`;
+  const avatarFullPath = `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${currentUser.images.avatar}`;
 
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -261,7 +262,7 @@ const Header = () => {
             }}
             getOptionLabel={(selectUser) =>
               //
-              selectUser.primary.name + " " + selectUser.primary.surname  
+              selectUser.primary.name + " " + selectUser.primary.surname
             }
             isOptionEqualToValue={
               (optionUser, value) => optionUser._id === value._id

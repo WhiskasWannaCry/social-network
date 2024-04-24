@@ -8,6 +8,7 @@ import emojiPickerImg from "../../images/icons/emoji-picker.png";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { postUploadImage } from "../../http/Fetches";
 import { useNavigate } from "react-router-dom";
+import env from "react-dotenv";
 
 const {
   Box,
@@ -319,7 +320,7 @@ const ChatMessages = ({
                                 }}
                               >
                                 <Avatar
-                                  src={`http://localhost:8000/${message.image}`}
+                                  src={`${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${message.image}`}
                                   alt="message-image"
                                   sx={{
                                     borderRadius: "12px",

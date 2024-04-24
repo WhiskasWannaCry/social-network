@@ -5,6 +5,7 @@ import { useContext, useState } from "react";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { postUploadImage, postNewPost } from "../http/Fetches";
 import ImageCropper from "./ImageCropper";
+import uploadImageIcon from "../images/icons/add-image.png";
 
 const Container = styled("div")`
   display: flex;
@@ -16,6 +17,18 @@ const Container = styled("div")`
   border: 1px solid ${(props) => props.theme.palette.primary.grey[3]};
   padding: 16px;
 `;
+
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
 
 const AddNewPost = () => {
   const currentUserContext = useContext(Context);
@@ -50,15 +63,19 @@ const AddNewPost = () => {
 
     let imgPathOnServer;
 
-    if(postImage) { 
-      const { data } = await postUploadImage(postImage, currentUser._id, "post");
-      const {success} = data;
-      if(!success) {
-        const {message} = data;
-        console.log(message)
-        return alert(message)
+    if (postImage) {
+      const { data } = await postUploadImage(
+        postImage,
+        currentUser._id,
+        "post"
+      );
+      const { success } = data;
+      if (!success) {
+        const { message } = data;
+        console.log(message);
+        return alert(message);
       }
-      const {relativePath} = data;
+      const { relativePath } = data;
       imgPathOnServer = relativePath;
     }
 
@@ -79,7 +96,7 @@ const AddNewPost = () => {
       date: formattedDate,
       image: "",
     };
-    if(imgPathOnServer) {
+    if (imgPathOnServer) {
       newPost.image = imgPathOnServer;
     }
     const { data } = await postNewPost(currentUser._id, "profile", newPost);
@@ -95,16 +112,16 @@ const AddNewPost = () => {
       return alert(message);
     }
     const { allPosts } = data;
-    console.log(allPosts)
+    console.log(allPosts);
     setPosts(allPosts);
-    setPostData(prev => ({
+    setPostData((prev) => ({
       ...prev,
       authorID: "",
       date: "",
       text: "",
       image: "",
-    }))
-    setPostImage("")
+    }));
+    setPostImage("");
     setNewPostSending(false);
   };
 
@@ -146,11 +163,17 @@ const AddNewPost = () => {
             },
         }}
       />
-      {postImage && <Avatar title="post_img" src={postImage} sx={{
-        width: "100%",
-        height: "auto",
-        borderRadius: 0,
-      }}></Avatar>}
+      {postImage && (
+        <Avatar
+          title="post_img"
+          src={postImage}
+          sx={{
+            width: "100%",
+            height: "auto",
+            borderRadius: 0,
+          }}
+        ></Avatar>
+      )}
       <Box
         sx={{
           display: "flex",
@@ -170,6 +193,36 @@ const AddNewPost = () => {
             MIN_DEMENSION={150}
             setNewAvatar={setPostImage}
           ></ImageCropper>
+          <Button
+            component="label"
+            role={undefined}
+            variant="contained"
+            tabIndex={-1}
+            // startIcon={<CloudUploadIcon />}
+            // onChange={onSelectFile}
+            sx={{
+              // backgroundColor: (theme) => theme.palette.primary.grey[3],
+              width: "20px",
+              minWidth: 0,
+              maxWidth: "20px",
+              height: "20px",
+              backgroundColor: "transparent",
+              "&:hover": {
+                backgroundColor: "transparent",
+              },
+            }}
+          >
+            <Avatar
+              title="post_img"
+              src={uploadImageIcon}
+              sx={{
+                width: "20px",
+                height: "auto",
+                borderRadius: 0,
+              }}
+            ></Avatar>
+            <VisuallyHiddenInput type="file" accept="video/*" />
+          </Button>
         </Box>
         <LoadingButton
           loading={newPostSending}

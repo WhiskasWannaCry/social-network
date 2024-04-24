@@ -3,6 +3,7 @@ import { Avatar, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { getUserInfo } from "../http/Fetches";
 import { useNavigate } from "react-router-dom";
+import env from "react-dotenv";
 
 const Container = styled("div")`
   display: flex;
@@ -35,7 +36,7 @@ const UserCardForProfile = ({ userId }) => {
     getUser();
   }, [userId]);
   const avatarFullPath =
-    friend && `http://localhost:8000/${friend.images.avatar}`;
+    friend && `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${friend.images.avatar}`;
 
   return (
     <Container>

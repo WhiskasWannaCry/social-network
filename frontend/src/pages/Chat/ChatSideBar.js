@@ -4,6 +4,7 @@ import { PageLoader } from "../../shared/Loaders";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import Autocomplete from "@mui/material/Autocomplete";
+import env from "react-dotenv";
 
 const { Box, Avatar, Typography } = require("@mui/material");
 
@@ -49,8 +50,8 @@ const ChatSideBar = ({
             let monthName;
             let avatarFullPath =
               sender._id === currentUser._id
-                ? `http://localhost:8000/${recipient.images.avatar}`
-                : `http://localhost:8000/${sender.images.avatar}`;
+                ? `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${recipient.images.avatar}`
+                : `${env.URL_SERVICES}:${env.PORT_SERVICE_ROOT}/${sender.images.avatar}`;
             if (messages.length) {
               lastMessage = messages.sort(
                 (a, b) => new Date(b.date) - new Date(a.date)
