@@ -148,20 +148,22 @@ const FriendsMainSide = ({ peopleSearchParams, setPeopleSearchParams }) => {
 
   useEffect(() => {
     fetchCurrentUser();
-    const filteredFriends = [];
-    const filteredOtherUsers = [];
+    let filteredFriends = [];
+    let filteredOtherUsers = [];
     if (currentUser.socialContacts.friends.length) {
-      usersFromSearch.forEach((userFromSearch) => {
-        currentUser.socialContacts.friends.forEach((friendId) => {
-          if (friendId === userFromSearch._id) {
-            return filteredFriends.push(userFromSearch);
-          } else {
-            if (userFromSearch._id !== currentUser._id) {
-              return filteredOtherUsers.push(userFromSearch);
-            }
-          }
-        });
-      });
+      filteredFriends = usersFromSearch.filter((userFromSearch) =>
+        currentUser.socialContacts.friends.includes(
+          userFromSearch._id.toString()
+        )
+      );
+
+      filteredOtherUsers = usersFromSearch.filter(
+        (userFromSearch) =>
+          !currentUser.socialContacts.friends.includes(
+            userFromSearch._id.toString()
+          ) && userFromSearch._id !== currentUser._id
+      );
+
       setUserFriends(filteredFriends);
       setOtherUsers(filteredOtherUsers);
       setLoading(false);
