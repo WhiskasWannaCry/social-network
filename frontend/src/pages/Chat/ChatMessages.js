@@ -66,6 +66,7 @@ const ChatMessages = ({
     setImageForPreviewMsg(URL.createObjectURL(e.target.files[0]));
     setImageForMessage(e.target.files[0]);
     setOpenModalMsg(true);
+    setIsValidText(true);
   }
 
   const handleOpen = () => setOpenModalMsg(true);
@@ -84,11 +85,26 @@ const ChatMessages = ({
     }
   }
 
+  const handlePaste = (e) => {
+    const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+    for (let index in items) {
+      const item = items[index];
+      if (item.kind === "file") {
+        const blob = item.getAsFile();
+
+        setImageForPreviewMsg(URL.createObjectURL(blob));
+        setImageForMessage(blob);
+        setOpenModalMsg(true);
+        setIsValidText(true);
+      }
+    }
+  };
+
   const handleSendMessageBtn = async (event) => {
     event.preventDefault();
     const newMessage = {
       date: new Date(),
-      text: inputMessageText,
+      text: inputMessageText || "",
       read: false,
     };
 
@@ -590,6 +606,7 @@ const ChatMessages = ({
                   <Input
                     placeholder="Enter your message"
                     value={inputMessageText}
+                    onPaste={handlePaste}
                     onChange={(e) => {
                       validateMessage(e.target.value);
                       setInputMessageText(e.target.value);

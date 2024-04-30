@@ -32,7 +32,7 @@ const chatSchema = new Schema({
   recipient: { type: Schema.Types.ObjectId, ref: "User" },
   messages: [
     {
-      text: { type: String, required: true },
+      text: { type: String },
       id: { type: String, required: true },
       date: { type: Date, required: true },
       sender: { type: Schema.Types.ObjectId, ref: "User", required: true },
