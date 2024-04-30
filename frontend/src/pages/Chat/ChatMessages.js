@@ -1,14 +1,14 @@
 import { useContext, useEffect, useState } from "react";
 import { PageLoader } from "../../shared/Loaders";
 import { Context } from "../../shared/Context";
-import blueDone from "../../images/icons/blue-done.png";
-import grayDone from "../../images/icons/gray-done.png";
+
 import EmojiPicker from "emoji-picker-react";
 import emojiPickerImg from "../../images/icons/emoji-picker.png";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { postUploadImage } from "../../http/Fetches";
 import { useNavigate } from "react-router-dom";
 import { PORT_SERVICE_ROOT, URL_SERVICES } from "../../shared/config";
+import Message from "../../shared/Message";
 
 const {
   Box,
@@ -308,110 +308,7 @@ const ChatMessages = ({
                               : "flex-start",
                         }}
                       >
-                        <Box // Box container for 1 message
-                          sx={{
-                            display: "flex",
-                            flexDirection: "column",
-                            border: (theme) =>
-                              `1px solid ${theme.palette.primary.grey[3]}`,
-                            backgroundColor: (theme) =>
-                              theme.palette.primary.grey[4],
-                            minHeight: "24px",
-                            minWidth: "64px",
-                            padding: "8px",
-                            borderRadius:
-                              message.sender._id === currentUser._id
-                                ? "8px 8px 0 8px"
-                                : "8px 8px 8px 0",
-                            wordWrap: "break-word",
-                            maxWidth: "80%",
-                            boxSizing: "border-box",
-                          }}
-                        >
-                          <Box // Container for image and text
-                            sx={{
-                              display: "flex",
-                              flexDirection: "column",
-                              gap: "12px",
-                            }}
-                          >
-                            {message.image ? (
-                              <Box
-                                sx={{
-                                  display: "flex",
-                                  // justifyContent: "flex-end",
-                                  width: "100%",
-                                }}
-                              >
-                                <Avatar
-                                  src={`${URL_SERVICES}:${PORT_SERVICE_ROOT}/${message.image}`}
-                                  alt="message-image"
-                                  sx={{
-                                    borderRadius: "12px",
-                                    width: "100%",
-                                    height: "auto",
-                                    maxHeight: "300px",
-                                  }}
-                                ></Avatar>
-                              </Box>
-                            ) : null}
-                            <Typography
-                              sx={{
-                                display: "flex",
-                                justifyContent:
-                                  message.sender._id === currentUser._id
-                                    ? "flex-end"
-                                    : "flex-start",
-                                // maxWidth: "100%",
-                                fontFamily: "Roboto",
-                                fontSize: "14px",
-                                fontStyle: "normal",
-                                fontWeight: 500,
-                              }}
-                            >
-                              {message.text}
-                            </Typography>
-                          </Box>
-
-                          <Box // Box for date and read status
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "flex-end",
-                              gap: "2px",
-                              width: "100%",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                color: (theme) => theme.palette.primary.grey[3],
-                                fontFamily: "Roboto",
-                                fontSize: "10px",
-                                fontStyle: "normal",
-                                fontWeight: 500,
-                              }}
-                            >
-                              {new Date(message.date).getHours() +
-                                ":" +
-                                new Date(message.date).getMinutes()}
-                            </Typography>
-                            <Box></Box>
-                            <Avatar
-                              alt="readStatus"
-                              src={message.read ? blueDone : grayDone}
-                              variant="square"
-                              sx={{
-                                width: "10px",
-                                height: "10px",
-                              }}
-                            ></Avatar>
-                            {/* <Typography sx={{ color: "gray" }}>
-                              {message.read ? "read" : "not read"}
-                            </Typography> */}
-                          </Box>
-                        </Box>
+                        {message? <Message message={message}></Message> : null}
                       </Box>
                     ))}
                 </Box>
