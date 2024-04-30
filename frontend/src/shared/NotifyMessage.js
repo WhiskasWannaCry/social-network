@@ -1,4 +1,4 @@
-import { Avatar, Box, Slide, Snackbar, Typography } from "@mui/material";
+import { Avatar, Box, Button, Typography } from "@mui/material";
 import { PORT_SERVICE_ROOT, URL_SERVICES } from "./config";
 
 const NotifyMessage = ({ notifData }) => {

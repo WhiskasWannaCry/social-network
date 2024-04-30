@@ -10,7 +10,7 @@ import {
 import Profile from "./pages/Profile/Profile";
 import Header from "./components/Header";
 import MainNavigation from "./components/MainNavigation";
-import { useEffect, useState } from "react";
+import { createRef, useEffect, useState } from "react";
 import Feed from "./pages/Feed/Feed";
 import EditProfile from "./pages/EditProfile/EditProfile";
 import Login from "./pages/Auth/Login";
@@ -19,10 +19,10 @@ import { Context } from "./shared/Context.js";
 import Friends from "./pages/Friends/Friends.js";
 import { getIsValidToken } from "./http/Fetches.js";
 import { theme } from "./shared/styles.js";
-import { Box, ThemeProvider } from "@mui/material";
+import { Box, Button, ThemeProvider } from "@mui/material";
 import { PageLoader } from "./shared/Loaders.js";
 
-import { useSnackbar } from "notistack";
+import { closeSnackbar, useSnackbar } from "notistack";
 
 import { connectToSocket } from "./shared/SocketFunctions.js";
 import Chat from "./pages/Chat/Chat.js";
@@ -79,6 +79,8 @@ const userInit = {
 
 function App() {
   const { enqueueSnackbar } = useSnackbar();
+  const notistackRef = createRef();
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -183,11 +185,13 @@ function App() {
       socketConnectState.on(
         "last-message-for-notification",
         ({ senderData, lastMessageData }) => {
-          console.log(lastMessageData);
-          console.log(selectedChat);
+          const action = (key) => (
+            <Button onClick={() => closeSnackbar(key)}>x</Button>
+          );
 
           enqueueSnackbar(
             <NotifyMessage
+              ref={notistackRef}
               notifData={{
                 senderData,
                 messageData: lastMessageData,
@@ -195,9 +199,10 @@ function App() {
               }}
             />,
             {
+              action,
               style: {
                 padding: 0,
-                border: (theme) => `1px solid ${theme.palette.primary.grey[1]}`,
+                border: (theme) => `2px solid ${theme.palette.primary.grey[1]}`,
                 borderRadius: "8px",
               },
             }

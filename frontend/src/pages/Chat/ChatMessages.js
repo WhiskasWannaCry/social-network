@@ -18,6 +18,7 @@ const {
   Avatar,
   styled,
   Modal,
+  FormControl,
 } = require("@mui/material");
 
 const VisuallyHiddenInput = styled("input")({
@@ -31,6 +32,12 @@ const VisuallyHiddenInput = styled("input")({
   whiteSpace: "nowrap",
   width: 1,
 });
+
+const FormForMsg = styled("form")`
+  display: flex;
+  gap: 8px;
+  width: 100%;
+`;
 
 const ChatMessages = ({
   chatsLoading,
@@ -69,7 +76,7 @@ const ChatMessages = ({
   };
 
   function validateMessage(message) {
-    const regex = /^\S[\s\S]{0,254}$/;
+    const regex = /^[\S\s]*\S+[\S\s]*$/;
     if (regex.test(message)) {
       setIsValidText(true);
     } else {
@@ -77,7 +84,8 @@ const ChatMessages = ({
     }
   }
 
-  const handleSendMessageBtn = async () => {
+  const handleSendMessageBtn = async (event) => {
+    event.preventDefault();
     const newMessage = {
       date: new Date(),
       text: inputMessageText,
@@ -488,39 +496,42 @@ const ChatMessages = ({
                           padding: "12px",
                         }}
                       >
-                        <Input
-                          placeholder="Enter your message"
-                          value={inputMessageText}
-                          onChange={(e) => {
-                            validateMessage(e.target.value);
-                            setInputMessageText(e.target.value);
-                          }}
-                          sx={{
-                            display: "flex",
-                            width: "100%",
-                            color: (theme) => theme.palette.primary.grey[1],
-                            border: (theme) =>
-                              `1px solid ${theme.palette.primary.grey[3]}`,
-                            padding: "8px",
-                            borderRadius: "8px",
-                            fontFamily: "Roboto",
-                            fontSize: "13px",
-                            fontStyle: "normal",
-                            fontWeight: 500,
-                          }}
-                        ></Input>
-                        <Button
-                          variant="contained"
-                          disabled={!isValidText}
-                          onClick={handleSendMessageBtn}
-                          sx={{
-                            backgroundColor: (theme) =>
-                              theme.palette.primary.grey[3],
-                            color: (theme) => theme.palette.primary.grey[1],
-                          }}
-                        >
-                          Send
-                        </Button>
+                        <FormForMsg onSubmit={handleSendMessageBtn}>
+                          <Input
+                            placeholder="Enter your message"
+                            value={inputMessageText}
+                            onChange={(e) => {
+                              validateMessage(e.target.value);
+                              setInputMessageText(e.target.value);
+                            }}
+                            sx={{
+                              display: "flex",
+                              width: "100%",
+                              color: (theme) => theme.palette.primary.grey[1],
+                              border: (theme) =>
+                                `1px solid ${theme.palette.primary.grey[3]}`,
+                              padding: "8px",
+                              borderRadius: "8px",
+                              fontFamily: "Roboto",
+                              fontSize: "13px",
+                              fontStyle: "normal",
+                              fontWeight: 500,
+                            }}
+                          ></Input>
+                          <Button
+                            type="submit"
+                            variant="contained"
+                            disabled={!isValidText}
+                            // onClick={handleSendMessageBtn}
+                            sx={{
+                              backgroundColor: (theme) =>
+                                theme.palette.primary.grey[3],
+                              color: (theme) => theme.palette.primary.grey[1],
+                            }}
+                          >
+                            Send
+                          </Button>
+                        </FormForMsg>
                       </Box>
                     </Box>
                   </Modal>
@@ -569,38 +580,47 @@ const ChatMessages = ({
                     height: "24px",
                   }}
                 ></Avatar>
-                <Input
-                  placeholder="Enter your message"
-                  value={inputMessageText}
-                  onChange={(e) => {
-                    validateMessage(e.target.value);
-                    setInputMessageText(e.target.value);
-                  }}
+                <FormForMsg
                   sx={{
                     display: "flex",
+                    flexDirection: "row",
                     width: "100%",
-                    color: (theme) => theme.palette.primary.grey[1],
-                    border: (theme) =>
-                      `1px solid ${theme.palette.primary.grey[3]}`,
-                    padding: "8px",
-                    borderRadius: "8px",
-                    fontFamily: "Roboto",
-                    fontSize: "13px",
-                    fontStyle: "normal",
-                    fontWeight: 500,
-                  }}
-                ></Input>
-                <Button
-                  variant="contained"
-                  disabled={!isValidText}
-                  onClick={handleSendMessageBtn}
-                  sx={{
-                    backgroundColor: (theme) => theme.palette.primary.grey[3],
-                    color: (theme) => theme.palette.primary.grey[1],
                   }}
                 >
-                  Send
-                </Button>
+                  <Input
+                    placeholder="Enter your message"
+                    value={inputMessageText}
+                    onChange={(e) => {
+                      validateMessage(e.target.value);
+                      setInputMessageText(e.target.value);
+                    }}
+                    sx={{
+                      display: "flex",
+                      width: "100%",
+                      color: (theme) => theme.palette.primary.grey[1],
+                      border: (theme) =>
+                        `1px solid ${theme.palette.primary.grey[3]}`,
+                      padding: "8px",
+                      borderRadius: "8px",
+                      fontFamily: "Roboto",
+                      fontSize: "13px",
+                      fontStyle: "normal",
+                      fontWeight: 500,
+                    }}
+                  ></Input>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    disabled={!isValidText}
+                    onClick={handleSendMessageBtn}
+                    sx={{
+                      backgroundColor: (theme) => theme.palette.primary.grey[3],
+                      color: (theme) => theme.palette.primary.grey[1],
+                    }}
+                  >
+                    Send
+                  </Button>
+                </FormForMsg>
               </Box>
             </>
           ) : (

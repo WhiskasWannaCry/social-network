@@ -93,7 +93,7 @@ const UserInfoContainer = styled(Box)`
   width: 100%;
   min-height: 95px;
   padding: 20px;
-  padding-left: 20%;
+  padding-left: 15%;
   transition: background-color 0.3s;
   transition: color 0.3s;
 `;
