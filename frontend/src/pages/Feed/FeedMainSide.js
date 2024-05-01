@@ -6,12 +6,13 @@ import { Context } from "../../shared/Context";
 import { useContext, useEffect, useState } from "react";
 import { PageLoader } from "../../shared/Loaders";
 import nonePostsImg from "../../images/icons/none_posts.svg";
+import { Box } from "@mui/material";
 
-const Container = styled("div")`
+const Container = styled(Box)`
   width: 60%;
 `;
 
-const PostsContainer = styled("div")`
+const PostsContainer = styled(Box)`
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -61,7 +62,17 @@ const FeedMainSide = () => {
     handleGetPosts();
   }, []);
   return (
-    <Container>
+    <Box
+      sx={{
+        width: {
+          xl: "70%",
+          lg: "70%",
+          md: "90%",
+          sm: "90%",
+          xs: "90%",
+        },
+      }}
+    >
       <AddNewPost></AddNewPost>
       <PostsContainer>
         {loadingPosts ? (
@@ -71,7 +82,9 @@ const FeedMainSide = () => {
             {posts && posts.length ? (
               posts
                 .sort((a, b) => new Date(b.date) - new Date(a.date))
-                .map((post) => <Post key={"PostComponent-" + post._id} post={post}></Post>)
+                .map((post) => (
+                  <Post key={"PostComponent-" + post._id} post={post}></Post>
+                ))
             ) : (
               <NonePostsContainer>
                 <NonePostsImg src={nonePostsImg} alt="nonePosts"></NonePostsImg>
@@ -83,7 +96,7 @@ const FeedMainSide = () => {
           </>
         )}
       </PostsContainer>
-    </Container>
+    </Box>
   );
 };
 

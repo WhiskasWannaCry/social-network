@@ -11,6 +11,7 @@ import {
   Avatar,
   Badge,
   Box,
+  Button,
   CircularProgress,
   IconButton,
   TextField,
@@ -22,6 +23,13 @@ import {
 import styled from "@emotion/styled";
 import { getUsersInfo } from "../http/Fetches";
 import { PORT_SERVICE_ROOT, URL_SERVICES } from "../shared/config";
+
+import profileImg from "../images/icons/Navigation_icons/Profile.svg";
+import messagesImg from "../images/icons/Navigation_icons/Messages.svg";
+import friendsImg from "../images/icons/Navigation_icons/Friends.svg";
+import photosImg from "../images/icons/Navigation_icons/Photos.svg";
+import newsImg from "../images/icons/Navigation_icons/News.svg";
+import logoutImg from "../images/icons/Navigation_icons/logout.png";
 
 const OuterContainer = styled("div")`
   position: fixed;
@@ -38,7 +46,7 @@ const OuterContainer = styled("div")`
   box-shadow: ${({ theme }) => theme.palette.primary.blackShadow.small};
 `;
 
-const Container = styled("div")`
+const Container = styled(Box)`
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -47,7 +55,7 @@ const Container = styled("div")`
   height: 100%;
 `;
 
-const LogoContainer = styled("div")`
+const LogoContainer = styled(Box)`
   cursor: pointer;
   display: flex;
   gap: 12px;
@@ -66,6 +74,10 @@ const LogoText = styled("span")`
   }
 `;
 
+const NavImg = styled("img")`
+  width: 20px;
+`;
+
 const UserMenuContainer = styled("div")`
   display: flex;
   align-items: center;
@@ -75,6 +87,9 @@ const UserMenuContainer = styled("div")`
 `;
 
 const StyledMenuItem = styled(MenuItem)`
+  display: flex;
+  gap: 8px;
+  padding: 8px;
   &:hover {
     background-color: ${({ theme }) => theme.palette.primary.grey[3]};
   }
@@ -132,10 +147,42 @@ const AutoCompleteTheme = createTheme({
   },
 });
 
+const NavTextStyles = {
+  display: {
+    xl: "flex",
+    lg: "flex",
+    md: "flex",
+    sm: "none",
+    xs: "none",
+  },
+  color: (theme) => theme.palette.primary.grey[1],
+  fontFamily: "Roboto",
+  fontSize: "13px",
+  fontStyle: "normal",
+  fontWeight: 400,
+};
+
+const NavNotificationCounter = styled("div")`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: ${(props) => props.theme.palette.primary.grey[5]};
+  font-family: Roboto;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  padding: 4px;
+`;
+
 const Header = () => {
   const [openAutoComplete, setOpenAutoComplete] = useState(false);
   const [dataOptions, setDataOptions] = useState([]);
   const [unreadMsgCounter, setUnreadMsgCounter] = useState(0);
+
+  const [openDrawer, setOpenDrawer] = useState(false);
 
   const load = openAutoComplete && dataOptions.length === 0;
 
@@ -244,7 +291,18 @@ const Header = () => {
   return (
     <OuterContainer>
       <Container>
-        <LogoContainer onClick={() => navigate("/feed")}>
+        <LogoContainer
+          onClick={() => navigate("/feed")}
+          sx={{
+            display: {
+              xl: "flex",
+              lg: "flex",
+              md: "none",
+              sm: "none",
+              xs: "none",
+            },
+          }}
+        >
           <Logo src={logoImg} alt="logoImg"></Logo>
           <LogoText>Social Network</LogoText>
         </LogoContainer>
@@ -379,16 +437,53 @@ const Header = () => {
                 navigate(`profile/${currentUser._id}`);
               }}
             >
-              Profile
+              <NavImg src={profileImg} alt="navImg"></NavImg>
+              <Typography sx={NavTextStyles}>Profile</Typography>
             </StyledMenuItem>
-            <StyledMenuItem onClick={handleClose}>Settings</StyledMenuItem>
+            <StyledMenuItem
+              onClick={() => {
+                handleClose();
+                navigate("/feed");
+              }}
+            >
+              <NavImg src={newsImg} alt="navImg"></NavImg>
+              <Typography sx={NavTextStyles}>Feed</Typography>
+            </StyledMenuItem>
+            <StyledMenuItem
+              onClick={() => {
+                handleClose();
+                navigate(`chat/${currentUser._id}`);
+              }}
+            >
+              <NavImg src={messagesImg} alt="navImg"></NavImg>
+              <Typography sx={NavTextStyles}>Messages</Typography>
+              {unreadMsgCounter ? (
+                <NavNotificationCounter>
+                  {unreadMsgCounter}
+                </NavNotificationCounter>
+              ) : null}
+            </StyledMenuItem>
+            <StyledMenuItem
+              onClick={() => {
+                handleClose();
+                navigate("/friends");
+              }}
+            >
+              <NavImg src={friendsImg} alt="navImg"></NavImg>
+              <Typography sx={NavTextStyles}>Friends</Typography>
+            </StyledMenuItem>
+            <StyledMenuItem>
+              <NavImg src={photosImg} alt="navImg"></NavImg>
+              <Typography sx={NavTextStyles}>Photos</Typography>
+            </StyledMenuItem>
             <StyledMenuItem
               onClick={() => {
                 handleClose();
                 handleLogout();
               }}
             >
-              Logout
+              <NavImg src={logoutImg} alt="navImg"></NavImg>
+              <Typography sx={NavTextStyles}>Logout</Typography>
             </StyledMenuItem>
           </Menu>
         </UserMenuContainer>

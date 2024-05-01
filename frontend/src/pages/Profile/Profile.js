@@ -342,8 +342,6 @@ const Profile = () => {
       } else {
         setIsOnline(false);
       }
-      // console.log(isConnProfOwner)
-      // console.log(connectedUsers);
     }
   }, [connectedUsers, profileOwner]);
 
@@ -355,25 +353,8 @@ const Profile = () => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   if (socketConnectState) {
-  //     socketConnectState.on(
-  //       "last-message-for-notification",
-  //       ({ senderData, lastMessageData }) => {
-  //         setNotifData({ senderData, lastMessageData });
-  //       }
-  //     );
-  //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   if (notifData) {
-  //     setNotifOpen(true);
-  //   }
-  // }, [notifData]);
-
   return (
-    <Container sx={{}}>
+    <Container>
       <UserHeaderContainer
         sx={{
           height: {

@@ -77,7 +77,6 @@ const MainNavigation = () => {
 
   const [unreadMsgCounter, setUnreadMsgCounter] = useState(0);
 
-  // console.log(chats);
   useEffect(() => {
     if (chats && chats.length) {
       let counter = 0;
@@ -94,7 +93,13 @@ const MainNavigation = () => {
   return (
     <Box
       sx={{
-        display: "flex",
+        display: {
+          xl: "flex",
+          lg: "flex",
+          md: "none",
+          sm: "none",
+          xs: "none",
+        },
         flexDirection: "column",
         width: {
           xl: "15%",
