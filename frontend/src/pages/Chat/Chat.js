@@ -18,6 +18,8 @@ const Chat = () => {
 
   const [messages, setMessages] = useState(null);
 
+  // Effects
+
   useEffect(() => {
     socketConnectState.emit("get-all-user-chats", currentUser._id);
     socketConnectState.on("get-all-user-chats", (chatsData) => {
@@ -25,10 +27,15 @@ const Chat = () => {
       setChatsLoading(false);
     });
     return () => {
-      setChats([])
-      setSelectedChat(null)
-    }
+      setChats([]);
+      setSelectedChat(null);
+    };
   }, []);
+
+  useEffect(() => {
+    document.title = "Chats";
+  }, []);
+  
   return (
     <Box
       sx={{
