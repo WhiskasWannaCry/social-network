@@ -148,13 +148,7 @@ const AutoCompleteTheme = createTheme({
 });
 
 const NavTextStyles = {
-  display: {
-    xl: "flex",
-    lg: "flex",
-    md: "flex",
-    sm: "none",
-    xs: "none",
-  },
+  display: "flex",
   color: (theme) => theme.palette.primary.grey[1],
   fontFamily: "Roboto",
   fontSize: "13px",
