@@ -53,7 +53,7 @@ const ChatSideBar = ({
               lastMessage = messages.sort(
                 (a, b) => new Date(b.date) - new Date(a.date)
               )[0];
-              
+
               // Дата последнего сообщения
               formattedDate = new Date(messages[0].date);
               day = formattedDate.getDate();

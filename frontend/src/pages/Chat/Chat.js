@@ -20,6 +20,8 @@ const Chat = () => {
 
   const [replyMessage, setReplyMessage] = useState(null);
 
+  const [msgSendStatusText, setMsgSendStatusText] = useState(null);
+
   // Effects
 
   useEffect(() => {
@@ -49,7 +51,13 @@ const Chat = () => {
 
       const { chat } = data;
       setMessages(chat.messages);
+      setReplyMessage(null);
     });
+    return () => {
+      setMessages([]);
+      setSelectedChat(null);
+      setReplyMessage(null);
+    };
   }, []);
 
   useEffect(() => {
@@ -78,6 +86,8 @@ const Chat = () => {
         setSelectedChat={setSelectedChat}
         messages={messages}
         setMessages={setMessages}
+        msgSendStatusText={msgSendStatusText}
+        setMsgSendStatusText={setMsgSendStatusText}
       ></ChatMessages>
     </Box>
   );

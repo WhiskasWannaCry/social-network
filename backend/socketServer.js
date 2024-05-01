@@ -144,17 +144,9 @@ socketIO.on("connect", (socket) => {
     "send-private-message",
     async ({ userId, newMessage, recipient }) => {
       // Формирую сообщение в вид по схеме
-      newMessage.id = newMessage.date;
-      newMessage.sender = userId;
-      newMessage.recipient = recipient;
-      newMessage.date = new Date(newMessage.date);
-      newMessage.read = false;
 
-      if (newMessage.replyMessage) {
-        newMessage.replyMessage.sender.name =
-          newMessage.replyMessage.sender.primary.name;
-        newMessage.replyMessage.sender._id = newMessage.replyMessage.sender._id;
-      }
+      newMessage.date = new Date(newMessage.date);
+
       // Ищу получателя в списке подключенных
       const connRecipient = CONNECTED_USERS.find(
         (connUser) => connUser.userId === recipient
@@ -250,6 +242,18 @@ socketIO.on("connect", (socket) => {
       foundChat.messages.splice(messageForRemoveIdx, 1);
 
       await foundChat.save();
+
+      // Ищу получателя в списке подключенных
+      const connRecipient = CONNECTED_USERS.find(
+        (connUser) => connUser.userId === message.recipient._id
+      );
+
+      if (connRecipient) {
+        socketIO.to(connRecipient.socketId).emit("remove-private-message", {
+          success: true,
+          chat: foundChat,
+        });
+      }
 
       return socketIO.to(socket.id).emit("remove-private-message", {
         success: true,

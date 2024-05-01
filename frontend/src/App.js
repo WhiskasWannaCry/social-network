@@ -79,7 +79,6 @@ const userInit = {
 
 function App() {
   const { enqueueSnackbar } = useSnackbar();
-  const notistackRef = createRef();
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -191,7 +190,6 @@ function App() {
 
           enqueueSnackbar(
             <NotifyMessage
-              ref={notistackRef}
               notifData={{
                 senderData,
                 messageData: lastMessageData,

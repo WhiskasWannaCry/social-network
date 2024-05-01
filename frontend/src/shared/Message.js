@@ -5,7 +5,7 @@ import grayDone from "../images/icons/gray-done.png";
 import { useContext, useEffect, useState } from "react";
 import { Context } from "./Context";
 
-const Message = ({ message, setReplyMessage }) => {
+const Message = ({ message, setReplyMessage, msgSendStatusText }) => {
   const currentUserContext = useContext(Context);
   const { currentUser, socketConnectState } = currentUserContext;
 
@@ -30,8 +30,6 @@ const Message = ({ message, setReplyMessage }) => {
       userId: currentUser._id,
     });
   };
-
-  
 
   return (
     <Box // Box container for 1 message
@@ -232,15 +230,34 @@ const Message = ({ message, setReplyMessage }) => {
             new Date(message.date).getMinutes()}
         </Typography>
         <Box></Box>
-        <Avatar
-          alt="readStatus"
-          src={message.read ? blueDone : grayDone}
-          variant="square"
-          sx={{
-            width: "10px",
-            height: "10px",
-          }}
-        ></Avatar>
+        {message.status ? (
+          <Typography
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              color: (theme) =>
+                message.status === "Sending..."
+                  ? theme.palette.primary.grey[3]
+                  : "red",
+              fontFamily: "Roboto",
+              fontSize: "10px",
+              fontStyle: "normal",
+              fontWeight: 500,
+            }}
+          >
+            {message.status}
+          </Typography>
+        ) : (
+          <Avatar
+            alt="readStatus"
+            src={message.read ? blueDone : grayDone}
+            variant="square"
+            sx={{
+              width: "10px",
+              height: "10px",
+            }}
+          ></Avatar>
+        )}
       </Box>
     </Box>
   );

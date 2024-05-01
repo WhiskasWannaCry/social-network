@@ -51,6 +51,8 @@ const ChatMessages = ({
   setMessages,
   replyMessage,
   setReplyMessage,
+  msgSendStatusText,
+  setMsgSendStatusText,
 }) => {
   const currentUserContext = useContext(Context);
   const { currentUser, socketConnectState, chats, setChats } =
@@ -108,15 +110,29 @@ const ChatMessages = ({
 
   const handleSendMessageBtn = async (event) => {
     event.preventDefault();
+
     const newMessage = {
       date: new Date(),
       text: inputMessageText || "",
       read: false,
+      id: new Date(),
+      sender: currentUser,
+      recipient:
+        selectedChat.recipient._id === currentUser._id
+          ? selectedChat.sender
+          : selectedChat.recipient,
     };
 
     if (replyMessage) {
       newMessage.replyMessage = replyMessage;
+      newMessage.replyMessage.sender.name =
+        newMessage.replyMessage.sender.primary.name;
+      newMessage.replyMessage.sender._id = newMessage.replyMessage.sender._id;
     }
+
+    const messagesBeforeSend = messages.slice();
+
+    setMessages((prev) => [...prev, { ...newMessage, status: "Sending..." }]);
 
     if (imageForMessage && imageForPreviewMsg) {
       const { data } = await postUploadImage(
@@ -128,6 +144,7 @@ const ChatMessages = ({
       const { success } = data;
       if (!success) {
         const { message } = data;
+        setMessages([...messagesBeforeSend, { newMessage, status: "Error" }]);
         setOpenModalMsg(false);
         setImageForMessage(null);
         setImageForPreviewMsg(null);
@@ -140,14 +157,16 @@ const ChatMessages = ({
       console.log(newMessage);
     }
 
-    socketConnectState.emit("send-private-message", {
-      userId: currentUser._id,
-      newMessage,
-      recipient:
-        selectedChat.recipient._id === currentUser._id
-          ? selectedChat.sender._id
-          : selectedChat.recipient._id,
-    });
+    setTimeout(() => {
+      socketConnectState.emit("send-private-message", {
+        userId: currentUser._id,
+        newMessage,
+        recipient:
+          selectedChat.recipient._id === currentUser._id
+            ? selectedChat.sender._id
+            : selectedChat.recipient._id,
+      });
+    }, 3000);
     setInputMessageText("");
     setIsValidText(false);
     setOpenModalMsg(false);
@@ -174,6 +193,7 @@ const ChatMessages = ({
       setSelectedChat(chat);
       setMessages(chat.messages);
     }
+    setMsgSendStatusText(null);
     setChats(allUserChats);
     setIsOpenPicker(false);
   });
@@ -327,6 +347,7 @@ const ChatMessages = ({
                           <Message // Single component for 1 message
                             message={message}
                             setReplyMessage={setReplyMessage}
+                            msgSendStatusText={msgSendStatusText}
                           ></Message>
                         ) : null}
                       </Box>
