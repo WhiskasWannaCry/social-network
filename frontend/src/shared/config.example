@@ -1,0 +1,4 @@
+export const URL_SERVICES = String: "http://localhost";
+export const PORT_CLIENT = Number: 9000;
+export const PORT_SERVICE_ROOT = Number: 9000;
+export const PORT_SERVICE_SOCKET = Number: 9000;
