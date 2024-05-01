@@ -225,6 +225,45 @@ socketIO.on("connect", (socket) => {
     }
   );
 
+  socket.on("remove-private-message", async ({ message, userId }) => {
+    try {
+      const foundChat = await getPrivateChat(message.sender, message.recipient);
+
+      if (!foundChat) {
+        return socketIO.to(socket.id).emit("remove-private-message", {
+          success: false,
+          message: "Chat not found",
+        });
+      }
+
+      const messageForRemoveIdx = foundChat.messages.findIndex(
+        (foundChatMsg) => foundChatMsg._id.toString() === message._id.toString()
+      );
+
+      if (messageForRemoveIdx === -1) {
+        return socketIO.to(socket.id).emit("remove-private-message", {
+          success: false,
+          message: "Error during finding message idx",
+        });
+      }
+
+      foundChat.messages.splice(messageForRemoveIdx, 1);
+
+      await foundChat.save();
+
+      return socketIO.to(socket.id).emit("remove-private-message", {
+        success: true,
+        chat: foundChat,
+      });
+    } catch (e) {
+      console.error(e);
+      return socketIO.to(socket.id).emit("remove-private-message", {
+        success: false,
+        message: "Caught error remove-private-message",
+      });
+    }
+  });
+
   // Когда юзер нажал кнопку "Написать сообщение" в профиле
   socket.on("open-chat-with-user", async ({ userId, recipient }) => {
     try {

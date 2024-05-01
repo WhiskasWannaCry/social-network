@@ -2,12 +2,12 @@ import { Avatar, Box, Menu, MenuItem, Typography } from "@mui/material";
 import { PORT_SERVICE_ROOT, URL_SERVICES } from "./config";
 import blueDone from "../images/icons/blue-done.png";
 import grayDone from "../images/icons/gray-done.png";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Context } from "./Context";
 
 const Message = ({ message, setReplyMessage }) => {
   const currentUserContext = useContext(Context);
-  const { currentUser } = currentUserContext;
+  const { currentUser, socketConnectState } = currentUserContext;
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -23,9 +23,18 @@ const Message = ({ message, setReplyMessage }) => {
     setReplyMessage(message);
   };
 
+  const handleRemoveMessage = () => {
+    handleClose();
+    socketConnectState.emit("remove-private-message", {
+      message,
+      userId: currentUser._id,
+    });
+  };
+
+  
+
   return (
     <Box // Box container for 1 message
-      onClick={() => console.log(message)}
       aria-controls={open ? "basic-menu" : undefined}
       aria-haspopup="true"
       aria-expanded={open ? "true" : undefined}
@@ -72,7 +81,7 @@ const Message = ({ message, setReplyMessage }) => {
       >
         <MenuItem onClick={handleReplyMessage}>Reply</MenuItem>
         {message.sender._id === currentUser._id && (
-          <MenuItem onClick={handleClose}>Remove</MenuItem>
+          <MenuItem onClick={handleRemoveMessage}>Remove</MenuItem>
         )}
       </Menu>
       {message.replyMessage && (

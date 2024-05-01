@@ -35,6 +35,24 @@ const Chat = () => {
   }, []);
 
   useEffect(() => {
+    socketConnectState.on("remove-private-message", (data) => {
+      if (!data) {
+        return alert("Something wrong at remove-private-message Effect");
+      }
+
+      const { success } = data;
+      if (!success) {
+        const { message } = data;
+        console.log(message);
+        return alert(message);
+      }
+
+      const { chat } = data;
+      setMessages(chat.messages);
+    });
+  }, []);
+
+  useEffect(() => {
     document.title = "Chats";
   }, []);
 

@@ -210,9 +210,9 @@ const ChatMessages = ({
       }
     });
 
-    // return () => {
-    //   setReplyMessage(null);
-    // };
+    return () => {
+      setReplyMessage(null);
+    };
   }, [selectedChat]);
 
   return (
