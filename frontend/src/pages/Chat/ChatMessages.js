@@ -10,6 +10,9 @@ import { useNavigate } from "react-router-dom";
 import { PORT_SERVICE_ROOT, URL_SERVICES } from "../../shared/config";
 import Message from "../../shared/Message";
 
+import replyIcon from "../../images/icons/reply.png";
+import crossMarkIcon from "../../images/icons/cross-mark.png";
+
 const {
   Box,
   Typography,
@@ -19,6 +22,7 @@ const {
   styled,
   Modal,
   FormControl,
+  IconButton,
 } = require("@mui/material");
 
 const VisuallyHiddenInput = styled("input")({
@@ -45,6 +49,8 @@ const ChatMessages = ({
   setSelectedChat,
   messages,
   setMessages,
+  replyMessage,
+  setReplyMessage,
 }) => {
   const currentUserContext = useContext(Context);
   const { currentUser, socketConnectState, chats, setChats } =
@@ -108,6 +114,10 @@ const ChatMessages = ({
       read: false,
     };
 
+    if (replyMessage) {
+      newMessage.replyMessage = replyMessage;
+    }
+
     if (imageForMessage && imageForPreviewMsg) {
       const { data } = await postUploadImage(
         imageForMessage,
@@ -143,6 +153,7 @@ const ChatMessages = ({
     setOpenModalMsg(false);
     setImageForMessage(null);
     setImageForPreviewMsg(null);
+    setReplyMessage(null);
   };
 
   useEffect(() => {
@@ -198,6 +209,10 @@ const ChatMessages = ({
         setMessages(chat.messages);
       }
     });
+
+    // return () => {
+    //   setReplyMessage(null);
+    // };
   }, [selectedChat]);
 
   return (
@@ -308,7 +323,12 @@ const ChatMessages = ({
                               : "flex-start",
                         }}
                       >
-                        {message? <Message message={message}></Message> : null}
+                        {message ? (
+                          <Message // Single component for 1 message
+                            message={message}
+                            setReplyMessage={setReplyMessage}
+                          ></Message>
+                        ) : null}
                       </Box>
                     ))}
                 </Box>
@@ -336,12 +356,13 @@ const ChatMessages = ({
                   </Typography>
                 </Box>
               )}
-              <Box //Container for message input and send button
+              <Box // Main Container for message input area
                 sx={{
                   display: "flex",
+                  flexDirection: "column",
                   gap: "12px",
                   width: "100%",
-                  height: "84px",
+                  // height: "84px",
                   borderTop: (theme) =>
                     `1px solid ${theme.palette.primary.grey[3]}`,
                   backgroundColor: (theme) => theme.palette.primary.grey[4],
@@ -349,6 +370,119 @@ const ChatMessages = ({
                   padding: "12px",
                 }}
               >
+                {replyMessage && (
+                  <Box // Root Container for reply message and buttons for it
+                    sx={{
+                      display: "flex",
+                      gap: "8px",
+                      width: "100%",
+                    }}
+                  >
+                    <Avatar
+                      src={replyIcon}
+                      alt="reply-icon"
+                      sx={{
+                        borderRadius: 0,
+                        height: "100%",
+                        padding: "8px",
+                        width: "auto",
+                      }}
+                    ></Avatar>
+                    <Box // Container for reply message texts and image
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "8px",
+                        backgroundColor: (theme) =>
+                          theme.palette.primary.grey[3],
+                        borderRadius: "4px",
+                        width: {
+                          xl: "80%",
+                          lg: "80%",
+                          md: "70%",
+                          sm: "60%",
+                          xs: "60%",
+                        },
+                        padding: "4px",
+                        maxHeight: "46px",
+                      }}
+                    >
+                      {replyMessage.image && (
+                        <Avatar
+                          src={
+                            URL_SERVICES +
+                            ":" +
+                            PORT_SERVICE_ROOT +
+                            "/" +
+                            replyMessage.image
+                          }
+                          alt="reply-message-image"
+                          sx={{
+                            borderRadius: 0,
+                          }}
+                        ></Avatar>
+                      )}
+                      <Box // Container for texts
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          width: "100%",
+                        }}
+                      >
+                        <Typography
+                          sx={{
+                            color: "#71aaeb",
+                            fontFamily: "Roboto",
+                            fontSize: "13px",
+                            fontStyle: "normal",
+                            fontWeight: 500,
+                          }}
+                        >
+                          Reply to {replyMessage.sender.primary.name}
+                        </Typography>
+                        {replyMessage.text ? (
+                          <Typography
+                            sx={{
+                              color: (theme) => theme.palette.primary.grey[2],
+                              fontFamily: "Roboto",
+                              fontSize: "13px",
+                              fontStyle: "normal",
+                              fontWeight: 500,
+                              maxWidth: "100%",
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              wordWrap: "break-word",
+                            }}
+                          >
+                            {replyMessage.text}
+                          </Typography>
+                        ) : (
+                          <Typography
+                            sx={{
+                              color: "#71aaeb",
+                              fontFamily: "Roboto",
+                              fontSize: "13px",
+                              fontStyle: "normal",
+                              fontWeight: 500,
+                            }}
+                          >
+                            Image
+                          </Typography>
+                        )}
+                      </Box>
+                    </Box>
+                    <Avatar
+                      src={crossMarkIcon}
+                      onClick={() => setReplyMessage(null)}
+                      sx={{
+                        cursor: "pointer",
+                        minWidth: 0,
+                        padding: "8px",
+                      }}
+                    ></Avatar>
+                  </Box>
+                )}
                 {imageForPreviewMsg ? (
                   <Modal // Modal for message with image
                     open={openModalMsg}
@@ -449,92 +583,100 @@ const ChatMessages = ({
                     </Box>
                   </Modal>
                 ) : null}
-                <Box
+                <Box // Container for Emoji piker, image uploader, input and button
                   sx={{
                     display: "flex",
+                    gap: "8px",
                   }}
                 >
-                  <Button
-                    component="label"
-                    role={undefined}
-                    variant="contained"
-                    tabIndex={-1}
-                    startIcon={<CloudUploadIcon />}
-                    onChange={handleChangeImgForMsg}
+                  <Box
                     sx={{
                       display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      backgroundColor: "transparent",
-                      boxShadow: "0",
-                      padding: "0",
-                      minWidth: 0,
-                      borderRadius: 0,
-                      width: "30px",
-                      height: "30px",
-                      "& span": {
-                        margin: 0,
-                      },
-                      "& :hover": {
+                    }}
+                  >
+                    <Button
+                      component="label"
+                      role={undefined}
+                      variant="contained"
+                      tabIndex={-1}
+                      startIcon={<CloudUploadIcon />}
+                      onChange={handleChangeImgForMsg}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
                         backgroundColor: "transparent",
-                      },
+                        boxShadow: "0",
+                        padding: "0",
+                        minWidth: 0,
+                        borderRadius: 0,
+                        width: "30px",
+                        height: "30px",
+                        "& span": {
+                          margin: 0,
+                        },
+                        "& :hover": {
+                          backgroundColor: "transparent",
+                        },
+                      }}
+                    >
+                      <VisuallyHiddenInput type="file" accept="image/*" />
+                    </Button>
+                  </Box>
+                  <Avatar
+                    alt="emoji-picker"
+                    src={emojiPickerImg}
+                    onClick={() => setIsOpenPicker(!isOpenPicker)}
+                    sx={{
+                      cursor: "pointer",
+                      width: "24px",
+                      height: "24px",
                     }}
-                  >
-                    <VisuallyHiddenInput type="file" accept="image/*" />
-                  </Button>
-                </Box>
-                <Avatar
-                  alt="emoji-picker"
-                  src={emojiPickerImg}
-                  onClick={() => setIsOpenPicker(!isOpenPicker)}
-                  sx={{
-                    cursor: "pointer",
-                    width: "24px",
-                    height: "24px",
-                  }}
-                ></Avatar>
-                <FormForMsg
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    width: "100%",
-                  }}
-                >
-                  <Input
-                    placeholder="Enter your message"
-                    value={inputMessageText}
-                    onPaste={handlePaste}
-                    onChange={(e) => {
-                      validateMessage(e.target.value);
-                      setInputMessageText(e.target.value);
-                    }}
+                  ></Avatar>
+                  <FormForMsg
                     sx={{
                       display: "flex",
+                      flexDirection: "row",
                       width: "100%",
-                      color: (theme) => theme.palette.primary.grey[1],
-                      border: (theme) =>
-                        `1px solid ${theme.palette.primary.grey[3]}`,
-                      padding: "8px",
-                      borderRadius: "8px",
-                      fontFamily: "Roboto",
-                      fontSize: "13px",
-                      fontStyle: "normal",
-                      fontWeight: 500,
-                    }}
-                  ></Input>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    disabled={!isValidText}
-                    onClick={handleSendMessageBtn}
-                    sx={{
-                      backgroundColor: (theme) => theme.palette.primary.grey[3],
-                      color: (theme) => theme.palette.primary.grey[1],
                     }}
                   >
-                    Send
-                  </Button>
-                </FormForMsg>
+                    <Input
+                      placeholder="Enter your message"
+                      value={inputMessageText}
+                      onPaste={handlePaste}
+                      onChange={(e) => {
+                        validateMessage(e.target.value);
+                        setInputMessageText(e.target.value);
+                      }}
+                      sx={{
+                        display: "flex",
+                        width: "100%",
+                        color: (theme) => theme.palette.primary.grey[1],
+                        border: (theme) =>
+                          `1px solid ${theme.palette.primary.grey[3]}`,
+                        padding: "8px",
+                        borderRadius: "8px",
+                        fontFamily: "Roboto",
+                        fontSize: "13px",
+                        fontStyle: "normal",
+                        fontWeight: 500,
+                      }}
+                    ></Input>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      disabled={!isValidText}
+                      onClick={handleSendMessageBtn}
+                      sx={{
+                        backgroundColor: (theme) =>
+                          theme.palette.primary.grey[3],
+                        color: (theme) => theme.palette.primary.grey[1],
+                      }}
+                    >
+                      Send
+                    </Button>
+                  </FormForMsg>
+                </Box>
               </Box>
             </>
           ) : (

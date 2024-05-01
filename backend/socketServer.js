@@ -150,6 +150,11 @@ socketIO.on("connect", (socket) => {
       newMessage.date = new Date(newMessage.date);
       newMessage.read = false;
 
+      if (newMessage.replyMessage) {
+        newMessage.replyMessage.sender.name =
+          newMessage.replyMessage.sender.primary.name;
+        newMessage.replyMessage.sender._id = newMessage.replyMessage.sender._id;
+      }
       // Ищу получателя в списке подключенных
       const connRecipient = CONNECTED_USERS.find(
         (connUser) => connUser.userId === recipient

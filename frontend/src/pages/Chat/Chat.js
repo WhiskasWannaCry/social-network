@@ -18,6 +18,8 @@ const Chat = () => {
 
   const [messages, setMessages] = useState(null);
 
+  const [replyMessage, setReplyMessage] = useState(null);
+
   // Effects
 
   useEffect(() => {
@@ -35,7 +37,7 @@ const Chat = () => {
   useEffect(() => {
     document.title = "Chats";
   }, []);
-  
+
   return (
     <Box
       sx={{
@@ -51,6 +53,8 @@ const Chat = () => {
         setMessages={setMessages}
       ></ChatSideBar>
       <ChatMessages
+        replyMessage={replyMessage}
+        setReplyMessage={setReplyMessage}
         chatsLoading={chatsLoading}
         selectedChat={selectedChat}
         setSelectedChat={setSelectedChat}

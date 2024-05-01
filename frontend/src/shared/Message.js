@@ -5,7 +5,7 @@ import grayDone from "../images/icons/gray-done.png";
 import { useContext, useState } from "react";
 import { Context } from "./Context";
 
-const Message = ({ message }) => {
+const Message = ({ message, setReplyMessage }) => {
   const currentUserContext = useContext(Context);
   const { currentUser } = currentUserContext;
 
@@ -18,8 +18,14 @@ const Message = ({ message }) => {
     setAnchorEl(null);
   };
 
+  const handleReplyMessage = () => {
+    handleClose();
+    setReplyMessage(message);
+  };
+
   return (
     <Box // Box container for 1 message
+      onClick={() => console.log(message)}
       aria-controls={open ? "basic-menu" : undefined}
       aria-haspopup="true"
       aria-expanded={open ? "true" : undefined}
@@ -30,6 +36,7 @@ const Message = ({ message }) => {
       sx={{
         display: "flex",
         flexDirection: "column",
+        gap: "4px",
         border: (theme) => `1px solid ${theme.palette.primary.grey[3]}`,
         backgroundColor: (theme) => theme.palette.primary.grey[4],
         minHeight: "24px",
@@ -63,11 +70,89 @@ const Message = ({ message }) => {
           },
         }}
       >
-        <MenuItem onClick={handleClose}>Reply</MenuItem>
+        <MenuItem onClick={handleReplyMessage}>Reply</MenuItem>
         {message.sender._id === currentUser._id && (
           <MenuItem onClick={handleClose}>Remove</MenuItem>
         )}
       </Menu>
+      {message.replyMessage && (
+        <Box // Container for reply message texts and image
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            gap: "8px",
+            backgroundColor: (theme) => theme.palette.primary.grey[3],
+            borderRadius: "4px",
+            padding: "4px",
+            minWidth: "64px",
+          }}
+        >
+          {message.replyMessage.image && (
+            <Avatar
+              src={
+                URL_SERVICES +
+                ":" +
+                PORT_SERVICE_ROOT +
+                "/" +
+                message.replyMessage.image
+              }
+              alt="reply-message-image"
+              sx={{
+                borderRadius: 0,
+              }}
+            ></Avatar>
+          )}
+          <Box // Container for texts
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              width: "100%",
+            }}
+          >
+            <Typography
+              sx={{
+                color: "#71aaeb",
+                fontFamily: "Roboto",
+                fontSize: "13px",
+                fontStyle: "normal",
+                fontWeight: 500,
+              }}
+            >
+              {message.replyMessage.sender.name}
+            </Typography>
+            {message.replyMessage.text ? (
+              <Typography
+                sx={{
+                  color: (theme) => theme.palette.primary.grey[2],
+                  fontFamily: "Roboto",
+                  fontSize: "13px",
+                  fontStyle: "normal",
+                  fontWeight: 500,
+                  maxWidth: "100%",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  wordWrap: "break-word",
+                }}
+              >
+                {message.replyMessage.text}
+              </Typography>
+            ) : (
+              <Typography
+                sx={{
+                  color: "#71aaeb",
+                  fontFamily: "Roboto",
+                  fontSize: "13px",
+                  fontStyle: "normal",
+                  fontWeight: 500,
+                }}
+              >
+                Image
+              </Typography>
+            )}
+          </Box>
+        </Box>
+      )}
       <Box // Container for image and text
         sx={{
           display: "flex",

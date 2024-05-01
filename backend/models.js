@@ -39,6 +39,16 @@ const chatSchema = new Schema({
       recipient: { type: Schema.Types.ObjectId, ref: "User", required: true },
       read: { type: Boolean, required: true },
       image: { type: String },
+      replyMessage: {
+        text: { type: String },
+        id: { type: String },
+        date: { type: Date },
+        sender: {
+          _id: { type: Schema.Types.ObjectId, ref: "User" },
+          name: { type: String },
+        },
+        image: { type: String },
+      },
     },
   ],
 });
