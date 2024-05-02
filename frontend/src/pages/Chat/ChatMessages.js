@@ -159,16 +159,14 @@ const ChatMessages = ({
       console.log(newMessage);
     }
 
-    setTimeout(() => {
-      socketConnectState.emit("send-private-message", {
-        userId: currentUser._id,
-        newMessage,
-        recipient:
-          selectedChat.recipient._id === currentUser._id
-            ? selectedChat.sender._id
-            : selectedChat.recipient._id,
-      });
-    }, 3000);
+    socketConnectState.emit("send-private-message", {
+      userId: currentUser._id,
+      newMessage,
+      recipient:
+        selectedChat.recipient._id === currentUser._id
+          ? selectedChat.sender._id
+          : selectedChat.recipient._id,
+    });
     setInputMessageText("");
     setIsValidText(false);
     setOpenModalMsg(false);
