@@ -8,12 +8,9 @@ import { PageLoader } from "../../shared/Loaders";
 import nonePostsImg from "../../images/icons/none_posts.svg";
 import { Box } from "@mui/material";
 
-const Container = styled(Box)`
-  width: 60%;
-`;
-
 const PostsContainer = styled(Box)`
   display: flex;
+  justify-content: "center";
   flex-direction: column;
   gap: 16px;
   margin-top: 16px;
@@ -74,28 +71,27 @@ const FeedMainSide = () => {
       }}
     >
       <AddNewPost></AddNewPost>
-      <PostsContainer>
-        {loadingPosts ? (
-          <PageLoader></PageLoader>
-        ) : (
-          <>
-            {posts && posts.length ? (
-              posts
-                .sort((a, b) => new Date(b.date) - new Date(a.date))
-                .map((post) => (
-                  <Post key={"PostComponent-" + post._id} post={post}></Post>
-                ))
-            ) : (
-              <NonePostsContainer>
-                <NonePostsImg src={nonePostsImg} alt="nonePosts"></NonePostsImg>
-                <NonePostsTitle>
-                  There are no posts on the wall yet
-                </NonePostsTitle>
-              </NonePostsContainer>
-            )}
-          </>
-        )}
-      </PostsContainer>
+
+      {loadingPosts ? (
+        <PageLoader></PageLoader>
+      ) : (
+        <PostsContainer>
+          {posts && posts.length ? (
+            posts
+              .sort((a, b) => new Date(b.date) - new Date(a.date))
+              .map((post) => (
+                <Post key={"PostComponent-" + post._id} post={post}></Post>
+              ))
+          ) : (
+            <NonePostsContainer>
+              <NonePostsImg src={nonePostsImg} alt="nonePosts"></NonePostsImg>
+              <NonePostsTitle>
+                There are no posts on the wall yet
+              </NonePostsTitle>
+            </NonePostsContainer>
+          )}{" "}
+        </PostsContainer>
+      )}
     </Box>
   );
 };
