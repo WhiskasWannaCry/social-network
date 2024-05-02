@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { PageLoader } from "../../shared/Loaders";
 import { Context } from "../../shared/Context";
-
+import MenuIcon from "@mui/icons-material/Menu";
 import EmojiPicker from "emoji-picker-react";
 import emojiPickerImg from "../../images/icons/emoji-picker.png";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -53,6 +53,8 @@ const ChatMessages = ({
   setReplyMessage,
   msgSendStatusText,
   setMsgSendStatusText,
+  handleDrawerOpen,
+  openDrawer,
 }) => {
   const currentUserContext = useContext(Context);
   const { currentUser, socketConnectState, chats, setChats } =
@@ -240,12 +242,33 @@ const ChatMessages = ({
       sx={{
         display: "flex",
         flexDirection: "column",
-        width: "70%",
+        width: {
+          xl: "70%",
+          lg: "70%",
+          md: "100%",
+          sm: "100%",
+          xs: "100%",
+        },
+        maxWidth: "100%",
+        minWidth: "400px",
         backgroundColor: (theme) => theme.palette.primary.grey[5],
-        borderRadius: "0 12px 12px 0",
+        borderRadius: {
+          xl: "0 12px 12px 0",
+          lg: "0 12px 12px 0",
+          md: "12px",
+          sm: "12px",
+          xs: "12px",
+        },
         borderTop: (theme) => `1px solid ${theme.palette.primary.grey[3]}`,
         borderRight: (theme) => `1px solid ${theme.palette.primary.grey[3]}`,
         borderBottom: (theme) => `1px solid ${theme.palette.primary.grey[3]}`,
+        borderLeft: (theme) => ({
+          xl: `1px solid ${theme.palette.primary.grey[3]}`,
+          lg: `1px solid ${theme.palette.primary.grey[3]}`,
+          md: `1px solid ${theme.palette.primary.grey[3]}`,
+          sm: `1px solid ${theme.palette.primary.grey[3]}`,
+          xs: `1px solid ${theme.palette.primary.grey[3]}`,
+        }),
       }}
     >
       {chatsLoading ? (
@@ -263,6 +286,25 @@ const ChatMessages = ({
                 `1px solid ${theme.palette.primary.grey[3]}`,
             }}
           >
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={{
+                mr: 2,
+                display: {
+                  xl: "none",
+                  lg: "none",
+                  md: "flex",
+                  sm: "flex",
+                  xs: "flex",
+                },
+                ...(openDrawer && { display: "none" }),
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
             {selectedChat ? (
               selectedChat.sender._id === currentUser._id ? (
                 // console.log(selectedChat.recipient._id)

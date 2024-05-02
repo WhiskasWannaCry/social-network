@@ -10,6 +10,7 @@ const ChatSideBar = ({
   selectedChat,
   setSelectedChat,
   setMessages,
+  handleDrawerClose,
 }) => {
   const currentUserContext = useContext(Context);
   const { currentUser, chats } = currentUserContext;
@@ -19,11 +20,24 @@ const ChatSideBar = ({
       sx={{
         display: "flex",
         flexDirection: "column",
-        width: "30%",
+        width: "100%",
+        maxWidth: "300px",
         height: "100%",
         backgroundColor: (theme) => theme.palette.primary.grey[5],
-        borderRadius: "12px 0 0 12px",
-        border: (theme) => `1px solid ${theme.palette.primary.grey[3]}`,
+        borderRadius: {
+          xl: "12px 0 0 12px",
+          lg: "12px 0 0 12px",
+          md: "0",
+          sm: "0",
+          xs: "0",
+        },
+        border: (theme) => ({
+          xl: `1px solid ${theme.palette.primary.grey[3]}`,
+          lg: `1px solid ${theme.palette.primary.grey[3]}`,
+          md: "none",
+          sm: "none",
+          xs: "none",
+        }),
       }}
     >
       {chatsLoading ? (
@@ -32,7 +46,13 @@ const ChatSideBar = ({
         <>
           <Box
             sx={{
-              display: "flex",
+              display: {
+                xl: "flex",
+                lg: "flex",
+                md: "none",
+                sm: "none",
+                xs: "none",
+              },
               height: "42px",
               width: "100%",
               borderBottom: (theme) =>
@@ -67,6 +87,7 @@ const ChatSideBar = ({
                 onClick={() => {
                   setSelectedChat(chat);
                   setMessages(chat.messages);
+                  handleDrawerClose && handleDrawerClose();
                 }}
                 sx={{
                   cursor: "pointer",
@@ -81,6 +102,13 @@ const ChatSideBar = ({
                   "&:hover": {
                     backgroundColor: (theme) => theme.palette.primary.grey[3],
                   },
+                  borderBottom: (theme) => ({
+                    xl: "none",
+                    lg: "none",
+                    md: `1px solid ${theme.palette.primary.grey[6]}`,
+                    sm: `1px solid ${theme.palette.primary.grey[6]}`,
+                    xs: `1px solid ${theme.palette.primary.grey[6]}`,
+                  }),
                 }}
               >
                 <Avatar titie={"user-avatar"} src={avatarFullPath}></Avatar>
